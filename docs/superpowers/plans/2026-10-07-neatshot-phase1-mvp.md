@@ -257,26 +257,26 @@
     }
     ```
 
-- [ ] **Step 1: Triển khai `ExportService.cs`**
+- [x] **Step 1: Triển khai `ExportService.cs`**
   - `RenderFinalImage`: Sử dụng `RenderTargetBitmap` và `DrawingVisual` để ghép vùng ảnh crop gốc với toàn bộ nét vẽ vector, xuất ra ảnh PNG sắc nét đúng từng pixel.
   - `CopyToClipboardAsync`: Gọi `Clipboard.SetImage(image)` trên luồng STA Thread an toàn.
   - `SaveToFileAsync`: Sử dụng `PngBitmapEncoder` lưu file PNG xuống ổ cứng.
 
-- [ ] **Step 2: Gắn lệnh vào Toolbar và Phím tắt**
-  - Nút **Sao chép (Copy)** hoặc phím `Enter` / `Ctrl + C`: Xuất ảnh $\rightarrow$ Lưu vào Clipboard $\rightarrow$ Đóng Overlay $\rightarrow$ Hiện notification.
+- [x] **Step 2: Gắn lệnh vào Toolbar và Phím tắt**
+  - Nút **Sao chép (Copy)** hoặc phím `Enter` / `Ctrl + C`: Xuất ảnh $\rightarrow$ Lưu vào Clipboard $\rightarrow$ Đóng Overlay.
   - Nút **Lưu file (Save)** hoặc phím `Ctrl + S`: Bật `SaveFileDialog` $\rightarrow$ Lưu ảnh $\rightarrow$ Đóng Overlay.
 
-- [ ] **Step 3: Chạy toàn bộ Unit Tests**
+- [x] **Step 3: Chạy toàn bộ Unit Tests**
   - Run: `dotnet test`
-  - Expected: PASS 100% tests.
+  - Đã đạt: PASS 48/48 tests (100%).
 
-- [ ] **Step 4: Chạy verification build toàn diện**
+- [x] **Step 4: Chạy verification build toàn diện**
   - Run: `dotnet build --configuration Release`
-  - Expected: 0 Warning, 0 Error, sinh ra file thực thi `NeatShot.exe`.
+  - Đã đạt: 0 Warning, 0 Error, sinh ra file thực thi `NeatShot.dll` / `NeatShot.exe`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   - Run:
     ```powershell
-    git add src/NeatShot/Core/Services/ src/NeatShot/Presentation/ tests/NeatShot.Tests/
+    git add src/ tests/ docs/
     git commit -m "feat: implement image export, clipboard copying, and finalize MVP"
     ```

@@ -35,6 +35,7 @@ public partial class App : Application
         // Core services
         services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
         services.AddSingleton<IHotkeyService, HotkeyService>();
+        services.AddSingleton<IExportService, ExportService>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();

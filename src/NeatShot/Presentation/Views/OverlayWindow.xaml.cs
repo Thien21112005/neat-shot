@@ -1,4 +1,6 @@
+using Microsoft.Win32;
 using NeatShot.Core.Models;
+using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.ViewModels;
 using System.ComponentModel;
 using System.Windows;
@@ -10,13 +12,15 @@ namespace NeatShot.Presentation.Views;
 
 public partial class OverlayWindow : Window
 {
+    private readonly IExportService _exportService;
     public OverlayViewModel ViewModel { get; }
 
-    public OverlayWindow(OverlayViewModel viewModel)
+    public OverlayWindow(OverlayViewModel viewModel, IExportService exportService)
     {
         InitializeComponent();
 
         ViewModel = viewModel;
+        _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
@@ -31,8 +35,61 @@ public partial class OverlayWindow : Window
         Toolbar.ColorSelected += (s, color) => DrawingControl.CurrentColor = color;
         Toolbar.UndoRequested += (s, e) => DrawingControl.Undo();
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);
+        Toolbar.CopyRequested += async (s, e) => await ExecuteCopyAsync();
+        Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
+    }
 
-        // Copy và Save sẽ được xử lý trong Task 7
+    private async Task ExecuteCopyAsync()
+    {
+        if (ViewModel.BackgroundImage == null || !ViewModel.SelectedRegion.IsValid)
+            return;
+
+        try
+        {
+            var finalImage = _exportService.RenderFinalImage(
+                ViewModel.BackgroundImage,
+                ViewModel.SelectedRegion,
+                DrawingControl.UndoStack.Items);
+
+            await _exportService.CopyToClipboardAsync(finalImage);
+            Close();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi sao chép ảnh vào Clipboard: {ex.Message}");
+        }
+    }
+
+    private async Task ExecuteSaveAsync()
+    {
+        if (ViewModel.BackgroundImage == null || !ViewModel.SelectedRegion.IsValid)
+            return;
+
+        try
+        {
+            var finalImage = _exportService.RenderFinalImage(
+                ViewModel.BackgroundImage,
+                ViewModel.SelectedRegion,
+                DrawingControl.UndoStack.Items);
+
+            var dialog = new SaveFileDialog
+            {
+                Title = "Lưu ảnh chụp màn hình NeatShot",
+                Filter = "PNG Image (*.png)|*.png",
+                DefaultExt = ".png",
+                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png"
+            };
+
+            if (dialog.ShowDialog(this) == true)
+            {
+                await _exportService.SaveToFileAsync(finalImage, dialog.FileName);
+                Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi lưu file ảnh: {ex.Message}");
+        }
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -96,6 +153,16 @@ public partial class OverlayWindow : Window
         else if (e.Key == Key.Z && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             DrawingControl.Undo();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Enter || (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control))
+        {
+            _ = ExecuteCopyAsync();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            _ = ExecuteSaveAsync();
             e.Handled = true;
         }
     }
