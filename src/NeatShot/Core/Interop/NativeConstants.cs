@@ -23,4 +23,7 @@ public static class NativeConstants
     public const uint MOD_SHIFT = 0x0004;
     public const uint MOD_WIN = 0x0008;
     public const uint MOD_NOREPEAT = 0x4000;
+
+    // Console Attach Constants
+    public const int ATTACH_PARENT_PROCESS = -1;
 }
