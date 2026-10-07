@@ -155,30 +155,16 @@
     }
     ```
 
-- [ ] **Step 1: Triển khai `HotkeyService.cs`**
-  - Đăng ký `RegisterHotKey` Win32 API.
-  - Sử dụng `HwndSource.FromHwnd` để gắn `AddHook` lắng nghe thông điệp `WM_HOTKEY (0x0312)`.
-  - Kích hoạt sự kiện `HotkeyPressed` khi khớp mã phím.
-
-- [ ] **Step 2: Cấu hình Tray Icon trong `App.xaml`**
-  - Sử dụng `<tb:TaskbarIcon>` từ `H.NotifyIcon.Wpf`.
-  - Khai báo ContextMenu: "Chụp vùng (PrtSc)", "Chụp toàn màn hình", "Cài đặt", "Thoát".
-  - Gắn sự kiện `TrayIcon_TrayLeftMouseDown` gọi lệnh chụp màn hình.
-
-- [ ] **Step 3: Đăng ký dịch vụ vào DI Container trong `App.xaml.cs`**
-  - Đăng ký `IScreenCaptureService`, `IHotkeyService` dạng Singleton.
-  - Trong `OnStartup`, khởi tạo HotkeyService với phím mặc định `PrintScreen` (hoặc phím phụ nếu PrtSc bị chiếm).
-
-- [ ] **Step 4: Kiểm tra build và chạy thử**
-  - Run: `dotnet build`
-  - Expected: Build succeeded 0 warning, 0 error.
-
-- [ ] **Step 5: Commit**
-  - Run:
-    ```powershell
-    git add src/NeatShot/Core/Services/ src/NeatShot/App.xaml*
-    git commit -m "feat: integrate global hotkey manager and system tray icon"
-    ```
+- [x] **Step 1: Triển khai `HotkeyService.cs`**
+  - Đã triển khai `IHotkeyService`, `HotkeyService.cs` bằng `RegisterHotKey` Win32 API và `HwndSource` bắt thông điệp `WM_HOTKEY (0x0312)`.
+- [x] **Step 2: Cấu hình Tray Icon trong `App.xaml` & `App.xaml.cs`**
+  - Đã tích hợp `TaskbarIcon` (`H.NotifyIcon`), context menu chuột phải ("Chụp vùng chọn", "Chụp toàn màn hình", "Thoát") và sự kiện click chuột trái.
+- [x] **Step 3: Đăng ký dịch vụ vào DI Container trong `App.xaml.cs`**
+  - Đã đăng ký `IScreenCaptureService`, `IHotkeyService` dạng Singleton trong DI; tự động đăng ký `PrintScreen` (fallback `Ctrl+Shift+A`).
+- [x] **Step 4: Kiểm tra build và chạy thử**
+  - Chạy `dotnet test` -> Passed 33/33 tests; `dotnet build --configuration Release` -> 0 Error, 0 Warning.
+- [x] **Step 5: Commit**
+  - Đã commit: `feat: integrate global hotkey manager and system tray icon`.
 
 ---
 
