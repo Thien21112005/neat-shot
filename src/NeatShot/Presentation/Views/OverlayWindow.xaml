@@ -1,0 +1,30 @@
+<Window x:Class="NeatShot.Presentation.Views.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:NeatShot.Presentation.Controls"
+        xmlns:vm="clr-namespace:NeatShot.Presentation.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:OverlayViewModel}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        KeyDown="OnWindowKeyDown">
+
+    <Grid>
+        <!-- Ảnh màn hình đóng băng làm nền -->
+        <Image Source="{Binding BackgroundImage}"
+               Stretch="Fill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch" />
+
+        <!-- Canvas kéo chọn vùng và phủ bóng tối mờ -->
+        <controls:SelectionCanvas SelectedRegion="{Binding SelectedRegion, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch" />
+    </Grid>
+</Window>

@@ -186,34 +186,18 @@
     - Vùng trong trong suốt hiển thị ảnh chụp gốc.
     - Nhấn phím `Esc` $\rightarrow$ Đóng OverlayWindow.
 
-- [ ] **Step 1: Tạo `OverlayViewModel.cs` với CommunityToolkit.Mvvm**
-  - Thuộc tính `[ObservableProperty] BitmapSource? _backgroundImage`.
-  - Thuộc tính `[ObservableProperty] CaptureRegion _selectedRegion`.
-  - Lệnh `[RelayCommand] void Cancel()` $\rightarrow$ Đóng overlay.
-
-- [ ] **Step 2: Thiết kế `OverlayWindow.xaml`**
-  - `WindowStyle="None"`, `AllowsTransparency="True"`, `Topmost="True"`, `ShowInTaskbar="False"`.
-  - Thiết lập `Left`, `Top`, `Width`, `Height` theo bounds của `VirtualScreen`.
-  - Bắt sự kiện `KeyDown`: nếu bấm `Key.Escape` gọi `ViewModel.CancelCommand`.
-
-- [ ] **Step 3: Triển khai UserControl `SelectionCanvas`**
-  - Xử lý các sự kiện chuột `MouseDown`, `MouseMove`, `MouseUp`.
-  - Tính toán toạ độ hình chữ nhật bằng `CaptureRegion.Normalize()`.
-  - Sử dụng `Path` với `GeometryGroup` (kết hợp hình chữ nhật toàn màn hình và hình chữ nhật vùng chọn) để đục lỗ trong suốt hiển thị vùng chụp.
-
-- [ ] **Step 4: Kết nối luồng Chụp từ Tray / Hotkey vào OverlayWindow**
-  - Khi bấm chụp: `CaptureService.CaptureCleanScreenAsync()` $\rightarrow$ truyền ảnh vào `OverlayWindow` $\rightarrow$ `OverlayWindow.Show()`.
-
-- [ ] **Step 5: Kiểm tra nghiệm thu thủ công và build**
-  - Run: `dotnet build`
-  - Expected: Build thành công.
-
-- [ ] **Step 6: Commit**
-  - Run:
-    ```powershell
-    git add src/NeatShot/Presentation/
-    git commit -m "feat: implement fullscreen freeze OverlayWindow and SelectionCanvas"
-    ```
+- [x] **Step 1: Tạo `OverlayViewModel.cs` với CommunityToolkit.Mvvm**
+  - Đã triển khai `OverlayViewModel` với `BackgroundImage`, `SelectedRegion`, `HasSelection`, lệnh `CancelCommand` và sự kiện `RequestClose`.
+- [x] **Step 2: Thiết kế `OverlayWindow.xaml`**
+  - Cửa sổ không viền, `AllowsTransparency="True"`, `Topmost="True"`, bao phủ toàn bộ màn hình ảo, đóng bằng phím `Esc`.
+- [x] **Step 3: Triển khai UserControl `SelectionCanvas`**
+  - Kéo chuột chọn vùng, tự động chuẩn hóa toạ độ, đục lỗ hiển thị vùng chụp, viền xanh hiện đại và badge kích thước `W x H` pixel.
+- [x] **Step 4: Kết nối luồng Chụp từ Tray / Hotkey vào OverlayWindow**
+  - Kích hoạt qua Tray click hoặc Hotkey PrtSc -> `CaptureCleanScreenAsync()` -> hiển thị `OverlayWindow`.
+- [x] **Step 5: Kiểm tra nghiệm thu thủ công và build**
+  - Chạy `dotnet test` -> Passed 36/36 tests; `dotnet build --configuration Release` -> 0 Error, 0 Warning.
+- [x] **Step 6: Commit**
+  - Đã commit: `feat: implement fullscreen freeze OverlayWindow and SelectionCanvas`.
 
 ---
 

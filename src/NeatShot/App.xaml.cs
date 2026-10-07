@@ -2,6 +2,8 @@ using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
+using NeatShot.Presentation.ViewModels;
+using NeatShot.Presentation.Views;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,6 +35,12 @@ public partial class App : Application
         // Core services
         services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
         services.AddSingleton<IHotkeyService, HotkeyService>();
+
+        // ViewModels
+        services.AddTransient<OverlayViewModel>();
+
+        // Views
+        services.AddTransient<OverlayWindow>();
     }
 
     private void InitializeTrayIcon()
@@ -72,14 +80,26 @@ public partial class App : Application
         var registered = hotkeyService.Register(Key.PrintScreen, ModifierKeys.None);
         if (!registered)
         {
-            // Dự phòng đăng ký F1 hoặc Ctrl+Shift+A nếu PrintScreen bị chiếm bởi ứng dụng khác
+            // Dự phòng đăng ký Ctrl+Shift+A nếu PrintScreen bị chiếm bởi ứng dụng khác
             hotkeyService.Register(Key.A, ModifierKeys.Control | ModifierKeys.Shift);
         }
     }
 
-    private void TriggerCapture()
+    private async void TriggerCapture()
     {
-        // Task 5 sẽ hiển thị OverlayWindow tại đây
+        try
+        {
+            var captureService = Services.GetRequiredService<IScreenCaptureService>();
+            var capturedScreen = await captureService.CaptureCleanScreenAsync();
+            var virtualBounds = captureService.GetVirtualScreenBounds();
+
+            var overlayWindow = Services.GetRequiredService<OverlayWindow>();
+            overlayWindow.Display(virtualBounds, capturedScreen);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi chụp màn hình: {ex.Message}");
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
