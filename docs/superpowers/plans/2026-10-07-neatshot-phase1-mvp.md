@@ -83,31 +83,18 @@
   - `DpiHelper.TransformToDevice(Point wpfPoint, double dpiScaleX, double dpiScaleY)`
   - `ColorHelper.ToHex(Color color)` và `ColorHelper.FromHex(string hex)`
 
-- [ ] **Step 1: Viết failing test cho `CaptureRegion.Normalize()`**
-  - Test case: Điểm bắt đầu (100, 100), kéo chuột đến (50, 40) $\rightarrow$ Normalize phải ra X=50, Y=40, Width=50, Height=60.
-  - Test case: Width hoặc Height <= 0 $\rightarrow$ `IsEmpty` trả về true.
-
-- [ ] **Step 2: Chạy test kiểm tra FAIL**
-  - Run: `dotnet test --filter FullyQualifiedName~CaptureRegionTests`
-  - Expected: FAIL do chưa có class `CaptureRegion`.
-
-- [ ] **Step 3: Triển khai `CaptureRegion.cs`**
-  - Cung cấp constructor, thuộc tính `X, Y, Width, Height`, property `IsValid`, và phương thức `Normalize()`.
-
-- [ ] **Step 4: Viết test và triển khai `DpiHelper.cs` và `ColorHelper.cs`**
-  - Test chuyển đổi toạ độ và chuyển đổi HEX/RGB.
-  - Implement logic trong `DpiHelper` và `ColorHelper`.
-
-- [ ] **Step 5: Chạy toàn bộ test để kiểm tra PASS**
-  - Run: `dotnet test`
-  - Expected: PASS toàn bộ.
-
-- [ ] **Step 6: Commit**
-  - Run:
-    ```powershell
-    git add src/NeatShot/Core/Models/ src/NeatShot/Common/ tests/NeatShot.Tests/
-    git commit -m "feat: add CaptureRegion, DpiHelper, ColorHelper with unit tests"
-    ```
+- [x] **Step 1: Viết failing test cho `CaptureRegion.Normalize()`**
+  - Đã viết unit test cho các trường hợp kéo xuôi và kéo ngược toạ độ cả 2 trục.
+- [x] **Step 2: Chạy test kiểm tra FAIL**
+  - Chạy `dotnet test --filter FullyQualifiedName~CaptureRegionTests` -> FAIL xác thực pha RED.
+- [x] **Step 3: Triển khai `CaptureRegion.cs`**
+  - Đã triển khai struct `CaptureRegion` với `Normalize()`, `ToRect()`, `FromPoints()`.
+- [x] **Step 4: Viết test và triển khai `DpiHelper.cs` và `ColorHelper.cs`**
+  - Đã viết test và triển khai `DpiHelper` (chuyển đổi toạ độ Per-Monitor DPI) và `ColorHelper` (HEX/RGB converter).
+- [x] **Step 5: Chạy toàn bộ test để kiểm tra PASS**
+  - Chạy `dotnet test` -> Passed 27/27 tests, 0 error, 0 warning.
+- [x] **Step 6: Commit**
+  - Đã commit theo Conventional Commit: `feat: implement CaptureRegion, DpiHelper, and ColorHelper with comprehensive unit tests`.
 
 ---
 
