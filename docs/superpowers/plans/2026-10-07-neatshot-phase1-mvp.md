@@ -122,30 +122,16 @@
   - `NativeMethods`: `BitBlt`, `GetDesktopWindow`, `SetForegroundWindow`, `ShowWindow`, `GetDC`, `ReleaseDC`.
 
 - [ ] **Step 1: Định nghĩa Structs và P/Invoke trong `NativeMethods.cs`**
-  - Định nghĩa `RECT`, `POINT`, hằng số Win32 (`SRCCOPY = 0x00CC0020`, `SW_HIDE = 0`).
-  - Khai báo các hàm Win32 với `[DefaultDllImportSearchPaths]` và `SetLastError = true`.
-
-- [ ] **Step 2: Viết failing test cho `ScreenCaptureService.Crop`**
-  - Tạo một bitmap giả lập 500x500 trong memory, crop vùng 100x100 tại (50, 50) $\rightarrow$ kết quả phải có đúng kích thước 100x100.
-
-- [ ] **Step 3: Triển khai `ScreenCaptureService.cs`**
-  - `GetVirtualScreenBounds()`: Sử dụng `SystemParameters.VirtualScreenLeft`, `VirtualScreenTop`, `VirtualScreenWidth`, `VirtualScreenHeight`.
-  - `CaptureCleanScreenAsync()`:
-    1. Gửi tín hiệu ẩn giao diện, gọi `SetForegroundWindow(GetDesktopWindow())`.
-    2. `await Task.Delay(120, cancellationToken)` để Windows hoàn tất đóng popup.
-    3. Chụp bằng GDI `BitBlt` hoặc `Graphics.CopyFromScreen` bao phủ toàn bộ Virtual Screen.
-    4. Chuyển đổi an toàn sang `BitmapSource` và đóng băng (`Freeze()`) để share giữa các thread.
-
-- [ ] **Step 4: Chạy test kiểm tra crop và get virtual screen bounds**
-  - Run: `dotnet test --filter FullyQualifiedName~ScreenCaptureServiceTests`
-  - Expected: PASS.
-
-- [ ] **Step 5: Commit**
-  - Run:
-    ```powershell
-    git add src/NeatShot/Core/Interop/ src/NeatShot/Core/Services/ tests/NeatShot.Tests/
-    git commit -m "feat: implement Win32 Interop and ScreenCaptureService with clean shot delay"
-    ```
+- [x] **Step 1: Định nghĩa Structs và P/Invoke trong `NativeMethods.cs`**
+  - Đã định nghĩa `RECT`, `POINT`, `NativeConstants` (`SRCCOPY`, `CAPTUREBLT`, `SW_HIDE`, `WM_HOTKEY`) và các hàm P/Invoke `BitBlt`, `GetDC`, `ReleaseDC`, `SetForegroundWindow`, `RegisterHotKey`.
+- [x] **Step 2: Viết failing test cho `ScreenCaptureService.Crop`**
+  - Đã viết unit test cho các kịch bản crop hợp lệ, crop vùng kéo ngược (Normalize), crop vùng vượt biên (clamp).
+- [x] **Step 3: Triển khai `ScreenCaptureService.cs`**
+  - Đã triển khai `IScreenCaptureService`, `GetVirtualScreenBounds()`, thuật toán Clean Shot `CaptureCleanScreenAsync` với độ trễ 120ms ẩn popup và `BitBlt` GDI, hàm `Crop()`.
+- [x] **Step 4: Chạy test kiểm tra crop và get virtual screen bounds**
+  - Chạy `dotnet test --filter FullyQualifiedName~ScreenCaptureServiceTests` -> Passed 4/4 tests.
+- [x] **Step 5: Commit**
+  - Đã commit: `feat: implement Win32 Interop and ScreenCaptureService with clean shot delay`.
 
 ---
 
