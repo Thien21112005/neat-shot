@@ -23,8 +23,20 @@
                VerticalAlignment="Stretch" />
 
         <!-- Canvas kéo chọn vùng và phủ bóng tối mờ -->
-        <controls:SelectionCanvas SelectedRegion="{Binding SelectedRegion, Mode=TwoWay}"
+        <controls:SelectionCanvas x:Name="SelectionControl"
+                                  SelectedRegion="{Binding SelectedRegion, Mode=TwoWay}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch" />
+
+        <!-- Lớp vẽ chú thích vector (Pencil, Rectangle, Arrow) -->
+        <controls:DrawingCanvas x:Name="DrawingControl"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+
+        <!-- Thanh công cụ nổi cạnh vùng chọn -->
+        <Canvas x:Name="OverlayCanvas">
+            <controls:AnnotationToolbar x:Name="Toolbar"
+                                        Visibility="Collapsed" />
+        </Canvas>
     </Grid>
 </Window>

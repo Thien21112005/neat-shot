@@ -221,30 +221,18 @@
     - Chọn màu sắc (Đỏ, Xanh, Vàng, Trắng) và kích thước nét vẽ
     - Nút Hoàn tác (Undo / Ctrl+Z)
 
-- [ ] **Step 1: Viết failing test cho `UndoStack<T>`**
-  - Test case: Push 3 phần tử $\rightarrow$ Pop ra đúng phần tử thứ 3 $\rightarrow$ CanUndo còn true $\rightarrow$ Pop tiếp 2 lần $\rightarrow$ CanUndo thành false.
-
-- [ ] **Step 2: Triển khai `UndoStack.cs`**
-  - Viết generic class `UndoStack<T>` dựa trên `Stack<T>`.
-
-- [ ] **Step 3: Chạy test UndoStack**
-  - Run: `dotnet test --filter FullyQualifiedName~UndoStackTests`
-  - Expected: PASS.
-
-- [ ] **Step 4: Triển khai `DrawingCanvas.cs` và Render nét vẽ**
-  - Hỗ trợ công cụ vẽ: Bút chì (danh sách điểm Polyline), Hình chữ nhật, Mũi tên (đường thẳng kèm đầu tam giác).
-  - Kết nối phím tắt `Ctrl + Z` để kích hoạt Undo từ `UndoStack`.
-
-- [ ] **Step 5: Thiết kế `AnnotationToolbar.xaml`**
-  - Nổi phía dưới (hoặc phía trên nếu sát cạnh đáy) của vùng chọn hình chữ nhật.
-  - Sử dụng Style và Icon từ thư viện `Wpf.Ui`.
-
-- [ ] **Step 6: Commit**
-  - Run:
-    ```powershell
-    git add src/NeatShot/Core/Services/UndoStack.cs src/NeatShot/Presentation/Controls/ tests/NeatShot.Tests/
-    git commit -m "feat: implement vector drawing canvas, undo stack, and annotation toolbar"
-    ```
+- [x] **Step 1: Viết failing test cho `UndoStack<T>`**
+  - Đã viết unit test cho các thao tác Push, Pop, Clear, IsEmpty, CanUndo và sự kiện StateChanged.
+- [x] **Step 2: Triển khai `UndoStack.cs`**
+  - Đã triển khai class generic `UndoStack<T>` với `Push()`, `Pop()`, `Clear()`, `CanUndo`.
+- [x] **Step 3: Chạy test UndoStack**
+  - Chạy `dotnet test --filter FullyQualifiedName~UndoStackTests` -> Passed 6/6 tests.
+- [x] **Step 4: Triển khai `DrawingCanvas.cs` và Render nét vẽ**
+  - Đã triển khai `DrawingCanvas` hỗ trợ bút vẽ chì (Pencil), khung chữ nhật (Rectangle), mũi tên chỉ dẫn (Arrow), độ dày nét vẽ, kết nối phím tắt `Ctrl + Z`.
+- [x] **Step 5: Thiết kế `AnnotationToolbar.xaml`**
+  - Thanh công cụ nổi sát vùng chọn với các nút chọn công cụ vẽ, bảng 5 màu cơ bản, nút Undo, nút Sao chép, Lưu ảnh và Hủy.
+- [x] **Step 6: Commit**
+  - Đã commit: `feat: implement vector drawing canvas, undo stack, and annotation toolbar`.
 
 ---
 
