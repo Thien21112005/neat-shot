@@ -202,7 +202,7 @@ git commit -m "feat: implement rendering for ellipse, line, highlight, and text"
 - Consumes: `DrawingToolType.Ellipse`, `DrawingToolType.Line`, `DrawingToolType.Highlight`
 - Produces: `DrawingCanvas` xu ly `OnMouseMove` va `OnMouseLeftButtonUp` de tao doi tuong `DrawingElement` phu hop va cap nhat visual
 
-- [ ] **Step 1: Viet test that bai cho viec switch tool va mouse movement tren DrawingCanvas**
+- [x] **Step 1: Viet test that bai cho viec switch tool va mouse movement tren DrawingCanvas**
 
 ```csharp
 [Fact]
@@ -239,12 +239,12 @@ public void DrawingCanvas_SupportsEllipseLineAndHighlight_ToolSwitching_OnStaThr
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "DrawingCanvas_SupportsEllipseLineAndHighlight"`
 Expected: FAIL vi cursor va trang thai cua `DrawingCanvas` chua xu ly cac case nay.
 
-- [ ] **Step 3: Cap nhat `DrawingCanvas.cs` ho tro Ellipse, Line, Highlight**
+- [x] **Step 3: Cap nhat `DrawingCanvas.cs` ho tro Ellipse, Line, Highlight**
 
 1. Trong `UpdateToolState`:
    - Cursor switch:
@@ -264,12 +264,12 @@ Expected: FAIL vi cursor va trang thai cua `DrawingCanvas` chua xu ly cac case n
        `_currentElement.Rect = new Rect(minX, minY, width, height);`
        `_currentElement.EndPoint = currentPoint;`
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~DrawingCanvasTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Presentation/Controls/DrawingCanvas.cs tests/NeatShot.Tests/Controls/DrawingCanvasTests.cs
