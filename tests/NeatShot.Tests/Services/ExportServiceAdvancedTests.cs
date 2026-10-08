@@ -66,4 +66,26 @@ public class ExportServiceAdvancedTests
             }
         }
     }
+
+    [Fact]
+    public void ExportService_RenderFinalImage_WithBeautifyOptions_AppliesBeautifier()
+    {
+        var background = new RenderTargetBitmap(500, 400, 96, 96, PixelFormats.Pbgra32);
+        var region = new CaptureRegion(50, 50, 200, 150);
+        var annotations = new List<DrawingElement>();
+
+        var beautifyOptions = new BeautifyOptions
+        {
+            IsEnabled = true,
+            Padding = 32.0,
+            CornerRadius = 12.0,
+            Preset = BeautifyPreset.Ocean
+        };
+
+        var finalImage = _service.RenderFinalImage(background, region, annotations, beautifyOptions);
+
+        Assert.NotNull(finalImage);
+        Assert.Equal(264, finalImage.PixelWidth);
+        Assert.Equal(214, finalImage.PixelHeight);
+    }
 }

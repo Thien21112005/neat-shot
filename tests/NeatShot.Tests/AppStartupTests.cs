@@ -20,6 +20,7 @@ public class AppStartupTests
         services.AddSingleton<IHotkeyService, HotkeyService>();
         services.AddSingleton<IExportService, ExportService>();
         services.AddSingleton<IOcrService, WindowsOcrService>();
+        services.AddSingleton<IBeautifyService, BeautifyService>();
         services.AddTransient<OverlayViewModel>();
         services.AddTransient<PinViewModel>();
         services.AddTransient<OverlayWindow>();
@@ -32,6 +33,7 @@ public class AppStartupTests
         Assert.NotNull(provider.GetRequiredService<IHotkeyService>());
         Assert.NotNull(provider.GetRequiredService<IExportService>());
         Assert.NotNull(provider.GetRequiredService<IOcrService>());
+        Assert.NotNull(provider.GetRequiredService<IBeautifyService>());
         Assert.NotNull(provider.GetRequiredService<OverlayViewModel>());
         Assert.NotNull(provider.GetRequiredService<PinViewModel>());
     }

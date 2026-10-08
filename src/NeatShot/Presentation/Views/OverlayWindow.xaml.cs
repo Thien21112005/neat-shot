@@ -100,7 +100,8 @@ public partial class OverlayWindow : Window
             var finalImage = _exportService.RenderFinalImage(
                 ViewModel.BackgroundImage,
                 ViewModel.SelectedRegion,
-                DrawingControl.UndoStack.Items);
+                DrawingControl.UndoStack.Items,
+                Toolbar.SelectedBeautifyOptions);
 
             await _exportService.CopyToClipboardAsync(finalImage);
             Close();
@@ -121,7 +122,8 @@ public partial class OverlayWindow : Window
             var finalImage = _exportService.RenderFinalImage(
                 ViewModel.BackgroundImage,
                 ViewModel.SelectedRegion,
-                DrawingControl.UndoStack.Items);
+                DrawingControl.UndoStack.Items,
+                Toolbar.SelectedBeautifyOptions);
 
             var dialog = new SaveFileDialog
             {
@@ -153,7 +155,8 @@ public partial class OverlayWindow : Window
             var finalImage = _exportService.RenderFinalImage(
                 ViewModel.BackgroundImage,
                 ViewModel.SelectedRegion,
-                DrawingControl.UndoStack.Items);
+                DrawingControl.UndoStack.Items,
+                Toolbar.SelectedBeautifyOptions);
 
             var pinWindow = new PinWindow(new PinViewModel());
             var screenX = Left + ViewModel.SelectedRegion.X;

@@ -238,6 +238,25 @@
                 <TextBlock Text="OCR" FontWeight="SemiBold" FontSize="11" />
             </Button>
 
+            <!-- Tùy chọn Làm đẹp ảnh (Beautify: Padding, Shadow & Gradient) -->
+            <ComboBox x:Name="BeautifyComboBox"
+                      ToolTip="Làm đẹp ảnh: Đổ bóng, bo góc &amp; nền Gradient"
+                      Margin="2,0"
+                      Height="28"
+                      MaxDropDownHeight="180"
+                      Padding="6,2"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="OnBeautifySelectionChanged">
+                <ComboBoxItem Content="✨ Gốc" Tag="None" IsSelected="True" />
+                <ComboBoxItem Content="🌅 Sunset" Tag="Sunset" />
+                <ComboBoxItem Content="🌊 Ocean" Tag="Ocean" />
+                <ComboBoxItem Content="🔮 Purple" Tag="Purple" />
+                <ComboBoxItem Content="🌑 Dark Slate" Tag="DarkSlate" />
+            </ComboBox>
+
+            <!-- Nút ẩn BeautifyButton phục vụ API và kiểm thử -->
+            <Button x:Name="BeautifyButton" Visibility="Collapsed" Click="OnBeautifyButtonClick" />
+
             <!-- Nút Copy vào Clipboard -->
             <Button x:Name="CopyButton"
                     ToolTip="Sao chép vào Clipboard (Enter)"

@@ -11,8 +11,13 @@ public interface IExportService
 {
     /// <summary>
     /// Ghép ảnh nền crop với toàn bộ nét vẽ vector trong vùng chọn thành ảnh RenderTargetBitmap sắc nét.
+    /// Hỗ trợ tùy chọn làm đẹp ảnh BeautifyOptions (khoảng đệm, bo góc, nền gradient).
     /// </summary>
-    RenderTargetBitmap RenderFinalImage(BitmapSource background, CaptureRegion region, IEnumerable<DrawingElement> annotations);
+    RenderTargetBitmap RenderFinalImage(
+        BitmapSource background,
+        CaptureRegion region,
+        IEnumerable<DrawingElement> annotations,
+        BeautifyOptions? beautifyOptions = null);
 
     /// <summary>
     /// Sao chép ảnh vào Windows Clipboard trên luồng STA Thread an toàn.

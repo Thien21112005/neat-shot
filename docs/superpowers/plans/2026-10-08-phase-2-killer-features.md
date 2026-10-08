@@ -209,13 +209,13 @@ graph TD
   - Preset gradients: Sunset, Ocean, Violet, Mesh Dark
   - `AnnotationToolbar.BeautifyToggled` / `BeautifyRequested`
 
-- [ ] **Step 1: Viết failing test cho `BeautifyService` (kiểm tra kích thước xuất tăng thêm padding, format ARGB, áp dụng shadow và bo góc)**
-- [ ] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 3: Triển khai `BeautifyOptions.cs` và `BeautifyService.cs` qua DrawingVisual kết xuất RenderTargetBitmap**
-- [ ] **Step 4: Tích hợp `IBeautifyService` vào `ExportService.cs` và đăng ký trong `App.xaml.cs`**
-- [ ] **Step 5: Thêm nút `BeautifyButton` (✨) trên `AnnotationToolbar.xaml` và hộp tùy chọn preset nhanh**
-- [ ] **Step 6: Chạy `dotnet test` xác nhận test xanh (GREEN)**
-- [ ] **Step 7: Commit `feat(beautify): add screenshot beautifier with gradient padding and drop shadow`**
+- [x] **Step 1: Viết failing test cho `BeautifyService` (kiểm tra kích thước xuất tăng thêm padding, format ARGB, áp dụng shadow và bo góc)**
+- [x] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 3: Triển khai `BeautifyOptions.cs` và `BeautifyService.cs` qua DrawingVisual kết xuất RenderTargetBitmap**
+- [x] **Step 4: Tích hợp `IBeautifyService` vào `ExportService.cs` và đăng ký trong `App.xaml.cs`**
+- [x] **Step 5: Thêm nút `BeautifyButton` (✨) trên `AnnotationToolbar.xaml` và hộp tùy chọn preset nhanh**
+- [x] **Step 6: Chạy `dotnet test` xác nhận test xanh (GREEN)**
+- [x] **Step 7: Commit `feat(beautify): add screenshot beautifier with gradient padding and drop shadow`**
 
 ---
 

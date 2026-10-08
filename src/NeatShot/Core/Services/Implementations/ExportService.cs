@@ -16,17 +16,20 @@ namespace NeatShot.Core.Services.Implementations;
 public class ExportService : IExportService
 {
     private readonly IScreenCaptureService _screenCaptureService;
+    private readonly IBeautifyService _beautifyService;
 
-    public ExportService(IScreenCaptureService screenCaptureService)
+    public ExportService(IScreenCaptureService screenCaptureService, IBeautifyService? beautifyService = null)
     {
         _screenCaptureService = screenCaptureService ?? throw new ArgumentNullException(nameof(screenCaptureService));
+        _beautifyService = beautifyService ?? new BeautifyService();
     }
 
     /// <inheritdoc />
     public RenderTargetBitmap RenderFinalImage(
         BitmapSource background,
         CaptureRegion region,
-        IEnumerable<DrawingElement> annotations)
+        IEnumerable<DrawingElement> annotations,
+        BeautifyOptions? beautifyOptions = null)
     {
         ArgumentNullException.ThrowIfNull(background);
 
@@ -64,6 +67,13 @@ public class ExportService : IExportService
 
         var rtb = new RenderTargetBitmap(pixelWidth, pixelHeight, dpiX, dpiY, PixelFormats.Pbgra32);
         rtb.Render(visual);
+        rtb.Freeze();
+
+        if (beautifyOptions != null && beautifyOptions.IsEnabled && beautifyOptions.Preset != BeautifyPreset.None)
+        {
+            return _beautifyService.ApplyBeautify(rtb, beautifyOptions);
+        }
+
         return rtb;
     }
 
