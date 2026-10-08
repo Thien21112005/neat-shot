@@ -94,11 +94,12 @@ public static class DrawingRenderer
                 if (!string.IsNullOrWhiteSpace(element.Text))
                 {
                     var fontSize = element.FontSize > 0 ? element.FontSize : 16.0;
+                    var fontFamilyName = !string.IsNullOrWhiteSpace(element.FontFamily) ? element.FontFamily : "Segoe UI";
                     var formattedText = new FormattedText(
                         element.Text,
                         System.Globalization.CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
-                        new Typeface("Segoe UI"),
+                        new Typeface(fontFamilyName),
                         fontSize,
                         brush,
                         1.0);

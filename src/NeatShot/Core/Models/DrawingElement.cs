@@ -35,6 +35,11 @@ public class DrawingElement
     public double FontSize { get; set; } = 16.0;
 
     /// <summary>
+    /// Phông chữ hiển thị (dùng cho công cụ Text, ví dụ: "Segoe UI", "Arial", "Times New Roman").
+    /// </summary>
+    public string FontFamily { get; set; } = "Segoe UI";
+
+    /// <summary>
     /// Danh sách các điểm toạ độ dùng cho nét vẽ tự do (Pencil, Highlight).
     /// </summary>
     public List<Point> Points { get; set; } = new();

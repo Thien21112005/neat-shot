@@ -58,6 +58,35 @@ public class DrawingCanvas : Canvas
         set => SetValue(CurrentThicknessProperty, value);
     }
 
+    public static readonly DependencyProperty CurrentFontSizeProperty =
+        DependencyProperty.Register(
+            nameof(CurrentFontSize),
+            typeof(double),
+            typeof(DrawingCanvas),
+            new PropertyMetadata(16.0));
+
+    public double CurrentFontSize
+    {
+        get => (double)GetValue(CurrentFontSizeProperty);
+        set => SetValue(CurrentFontSizeProperty, value);
+    }
+
+    public static readonly DependencyProperty CurrentFontFamilyProperty =
+        DependencyProperty.Register(
+            nameof(CurrentFontFamily),
+            typeof(string),
+            typeof(DrawingCanvas),
+            new PropertyMetadata("Segoe UI"));
+
+    public string CurrentFontFamily
+    {
+        get => (string)GetValue(CurrentFontFamilyProperty);
+        set => SetValue(CurrentFontFamilyProperty, value);
+    }
+
+    private TextBox? _inlineEditor;
+    private Point _inlineEditorPosition;
+
     public DrawingCanvas()
     {
         Background = null;
@@ -205,14 +234,101 @@ public class DrawingCanvas : Canvas
         InvalidateVisual();
     }
 
+    public void CommitText(string text, Point position, double? fontSize = null, string? fontFamily = null)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        var effFontSize = fontSize ?? CurrentFontSize;
+        var effFontFamily = !string.IsNullOrWhiteSpace(fontFamily) ? fontFamily : CurrentFontFamily;
+
+        var element = new DrawingElement
+        {
+            ToolType = DrawingToolType.Text,
+            Color = CurrentColor,
+            FontSize = effFontSize > 0 ? effFontSize : 16.0,
+            FontFamily = effFontFamily,
+            StartPoint = position,
+            Text = text.Trim()
+        };
+
+        UndoStack.Push(element);
+        InvalidateVisual();
+    }
+
+    public void DismissInlineEditor(bool commit = true)
+    {
+        if (_inlineEditor == null) return;
+
+        var editor = _inlineEditor;
+        var pos = _inlineEditorPosition;
+        _inlineEditor = null;
+
+        if (Children.Contains(editor))
+        {
+            Children.Remove(editor);
+        }
+
+        if (commit && !string.IsNullOrWhiteSpace(editor.Text))
+        {
+            CommitText(editor.Text, pos);
+        }
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
 
         if (CurrentTool == DrawingToolType.None) return;
 
+        var pos = e.GetPosition(this);
+
+        if (CurrentTool == DrawingToolType.Text)
+        {
+            DismissInlineEditor(commit: true);
+
+            _inlineEditorPosition = pos;
+            _inlineEditor = new TextBox
+            {
+                FontFamily = new FontFamily(CurrentFontFamily),
+                FontSize = CurrentFontSize,
+                Foreground = new SolidColorBrush(CurrentColor),
+                Background = new SolidColorBrush(Color.FromArgb(180, 24, 24, 24)),
+                BorderBrush = new SolidColorBrush(CurrentColor),
+                BorderThickness = new Thickness(1.5),
+                Padding = new Thickness(4, 2, 4, 2),
+                MinWidth = 90,
+                AcceptsReturn = false
+            };
+
+            _inlineEditor.KeyDown += (s, args) =>
+            {
+                if (args.Key == Key.Enter)
+                {
+                    DismissInlineEditor(commit: true);
+                    args.Handled = true;
+                }
+                else if (args.Key == Key.Escape)
+                {
+                    DismissInlineEditor(commit: false);
+                    args.Handled = true;
+                }
+            };
+
+            _inlineEditor.LostFocus += (s, args) =>
+            {
+                DismissInlineEditor(commit: true);
+            };
+
+            Children.Add(_inlineEditor);
+            Canvas.SetLeft(_inlineEditor, pos.X);
+            Canvas.SetTop(_inlineEditor, pos.Y);
+            _inlineEditor.Focus();
+            e.Handled = true;
+            return;
+        }
+
         CaptureMouse();
-        StartDrawing(e.GetPosition(this));
+        StartDrawing(pos);
         e.Handled = true;
     }
 
