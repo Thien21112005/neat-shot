@@ -17,8 +17,10 @@ Một skill cung cấp cho AI:
 Trong dự án NeatShot, các skill được đặt tại thư mục:
 ```text
 NeatShot/
+├── AGENTS.md                          # Rule vĩnh viễn: Tự động kích hoạt Orchestrator
 └── .agents/
     └── skills/
+        ├── workflow-orchestrator/     # [MASTER] Nhạc trưởng điều phối & định tuyến toàn bộ
         ├── csharp-async/
         ├── csharp-xunit/
         ├── dotnet-best-practices/
@@ -34,12 +36,14 @@ NeatShot/
 
 ---
 
-## 2. Các Skill đã sử dụng trong dự án NeatShot
+## 2. Các Skill trong dự án NeatShot
 
-Dự án sử dụng **11 skills** được chia thành 3 nhóm rõ rệt, kết hợp chặt chẽ trong suốt quá trình phát triển tính năng:
+Dự án sử dụng **12 skills** (bao gồm 1 Master Orchestrator chỉ huy và 11 Domain Skills chuyên biệt), được xâu chuỗi thông minh như một dây chuyền kỹ thuật chuẩn mực:
 
 ```mermaid
 flowchart TD
+    User([Yêu cầu từ Người dùng<br/>Chat tự nhiên bằng tiếng Việt hoặc tiếng Anh]) --> Router{"workflow-orchestrator<br/>(Master Tech Lead)"}
+
     subgraph WorkflowGroup ["1. Nhóm Quy trình Kỹ sư Phần mềm"]
         P1["writing-plans<br/>(Lập kế hoạch)"]
         P2["executing-plans<br/>(Thực thi kế hoạch)"]
@@ -60,14 +64,28 @@ flowchart TD
         C1["find-skills<br/>(Quản lý & Cài đặt qua npx skills)"]
     end
 
+    Router -->|"Tính năng mới / Refactor"| P1
+    Router -->|"Làm task theo plan"| P2
+    Router -->|"Sửa lỗi / Báo crash"| P4
+    Router -->|"Tìm skill mới"| C1
+
     P1 --> P2
     P2 --> DomainGroup
     DomainGroup --> P3
     P3 --> P5
     P3 -. Gặp Bug .-> P4
+    P4 -. Regression Test .-> P3
 ```
 
+### Nhóm 0: Master Meta-Skill (Nhạc trưởng Điều phối)
+
+| Tên Skill | Mô tả & Vai trò | Cách hoạt động |
+| :--- | :--- | :--- |
+| **`workflow-orchestrator`** | **"Tech Lead ảo"** của dự án. Tự động nhận diện ý định người dùng (phát triển tính năng, sửa bug, refactor, kiểm thử...), chọn đúng combo skills cần dùng và xâu chuỗi theo thứ tự chuẩn. | Tự động kích hoạt qua file `AGENTS.md` ở gốc repo hoặc khi gõ lệnh `/workflow-orchestrator`. Bạn chỉ cần chat tự nhiên, không cần nhớ từng lệnh con! |
+
 ### Nhóm 1: Quy trình Kỹ sư Phần mềm (Engineering Workflow)
+
+| Tên Skill | Mô tả & Vai trò | Ứng dụng thực tế trong cuộc trò chuyện |
 
 | Tên Skill | Mô tả & Vai trò | Ứng dụng thực tế trong cuộc trò chuyện |
 | :--- | :--- | :--- |
@@ -224,9 +242,26 @@ Bất kỳ thư mục nào có chứa file `SKILL.md` hợp lệ đều sẽ đ�
 
 ---
 
-## 6. Mẹo phối hợp các Skill hiệu quả khi làm việc với AI
+## 6. Trải nghiệm Tự Động Hóa với `workflow-orchestrator`
 
-1. **Bắt đầu tính năng lớn luôn dùng `/writing-plans`:** Đừng vội yêu cầu AI viết code ngay. Hãy để AI đọc tài liệu đặc tả và lập ra danh sách các task nhỏ, có kiểm thử rõ ràng.
-2. **Thực thi từng bước bằng `/executing-plans`:** Yêu cầu AI làm từng task một (Task 1, Task 2...). Điều này giúp kiểm soát chất lượng, tránh việc AI sửa quá nhiều file một lúc dẫn đến lỗi khó debug.
-3. **Kết hợp TDD:** Luôn nhắc AI: *"Áp dụng test-driven-development và wpf-best-practices"* để AI viết test trước và đảm bảo code giao diện không bị giật lag, memory leak.
-4. **Nghiệm thu trước khi chốt:** Luôn yêu cầu AI chạy test kiểm tra thực tế bằng lệnh `dotnet test` trước khi commit code.
+Nhờ có file cấu hình vĩnh viễn [`AGENTS.md`](file:///d:/Tu-hoc/project/NeatShot/AGENTS.md) và skill [`workflow-orchestrator`](file:///d:/Tu-hoc/project/NeatShot/.agents/skills/workflow-orchestrator/SKILL.md), bạn **không cần phải ghi nhớ hay gõ thủ công từng slash command** nữa:
+
+### 6.1. Bạn chỉ cần yêu cầu tự nhiên:
+- *“Mình muốn thêm tính năng phím tắt F9 để chụp nhanh”*  
+  ➔ AI tự nhận diện **Phase 1 (Planning)**: kích hoạt `writing-plans` + `wpf-best-practices`.
+- *“Bắt đầu làm task 1 đi bạn”*  
+  ➔ AI tự nhận diện **Phase 2 & 3 (Execution & TDD)**: kích hoạt `executing-plans` + `test-driven-development` + `csharp-xunit`.
+- *“Sao nút bấm bị lệch khi chuyển màn hình 4K?”*  
+  ➔ AI tự nhận diện **Phase 4 (Debugging)**: kích hoạt `systematic-debugging` + `wpf-best-practices` để tìm root cause theo DPI scale.
+- *“Kiểm tra lại xem ổn chưa rồi commit nha”*  
+  ➔ AI tự nhận diện **Phase 5 (Verification)**: kích hoạt `verification-before-completion`, chạy `dotnet test` và đưa ra bằng chứng kết quả.
+
+### 6.2. Hoặc dùng Slash Command khi muốn chỉ định rõ:
+Nếu bạn vẫn thích chỉ định dứt khoát một quy trình cụ thể, bạn có thể gõ trực tiếp:
+- `/workflow-orchestrator`: Nhắc AI quét toàn diện dự án và định vị đúng quy trình.
+- `/writing-plans`: Yêu cầu lập kế hoạch công việc mới.
+- `/executing-plans`: Tiếp tục thực thi kế hoạch đang dang dở.
+- `/systematic-debugging`: Điều tra một bug cụ thể.
+- `/test-driven-development`: Viết test trước theo chuẩn TDD.
+- `/verification-before-completion`: Chạy kiểm thử nghiệm thu.
+
