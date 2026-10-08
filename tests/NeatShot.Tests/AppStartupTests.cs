@@ -21,6 +21,7 @@ public class AppStartupTests
         services.AddSingleton<IExportService, ExportService>();
         services.AddSingleton<IOcrService, WindowsOcrService>();
         services.AddSingleton<IBeautifyService, BeautifyService>();
+        services.AddSingleton<ISettingsService, SettingsService>();
         services.AddTransient<OverlayViewModel>();
         services.AddTransient<PinViewModel>();
         services.AddTransient<OverlayWindow>();
@@ -34,6 +35,7 @@ public class AppStartupTests
         Assert.NotNull(provider.GetRequiredService<IExportService>());
         Assert.NotNull(provider.GetRequiredService<IOcrService>());
         Assert.NotNull(provider.GetRequiredService<IBeautifyService>());
+        Assert.NotNull(provider.GetRequiredService<ISettingsService>());
         Assert.NotNull(provider.GetRequiredService<OverlayViewModel>());
         Assert.NotNull(provider.GetRequiredService<PinViewModel>());
     }
@@ -202,5 +204,58 @@ public class AppStartupTests
         thread.Join();
 
         Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void OverlayWindow_InitializesColorHistory_FromSettingsService_OnStaThread()
+    {
+        var tempFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "neatshot_test_settings_" + Guid.NewGuid().ToString("N") + ".json");
+        try
+        {
+            var settingsService = new SettingsService(tempFile);
+            settingsService.SaveSettings(new NeatShot.Core.Models.AppSettings
+            {
+                RecentColorsHex = new List<string> { "#FFFF0000", "#FF00FF00" }
+            });
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
+            services.AddSingleton<IHotkeyService, HotkeyService>();
+            services.AddSingleton<IExportService, ExportService>();
+            services.AddSingleton<IOcrService, WindowsOcrService>();
+            services.AddSingleton<IBeautifyService, BeautifyService>();
+            services.AddSingleton<ISettingsService>(settingsService);
+            services.AddTransient<OverlayViewModel>();
+            services.AddTransient<OverlayWindow>();
+
+            var provider = services.BuildServiceProvider();
+
+            Exception? threadException = null;
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    var window = provider.GetRequiredService<OverlayWindow>();
+                    Assert.NotNull(window);
+                    var history = window.Toolbar.GetColorHistoryHex();
+                    Assert.Equal(2, history.Count);
+                    Assert.Equal("#FFFF0000", history[0]);
+                    Assert.Equal("#FF00FF00", history[1]);
+                }
+                catch (Exception ex)
+                {
+                    threadException = ex;
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+
+            Assert.Null(threadException);
+        }
+        finally
+        {
+            if (System.IO.File.Exists(tempFile)) System.IO.File.Delete(tempFile);
+        }
     }
 }

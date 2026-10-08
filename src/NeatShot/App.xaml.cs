@@ -66,6 +66,7 @@ public partial class App : Application
         services.AddSingleton<IExportService, ExportService>();
         services.AddSingleton<IOcrService, WindowsOcrService>();
         services.AddSingleton<IBeautifyService, BeautifyService>();
+        services.AddSingleton<ISettingsService, SettingsService>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();

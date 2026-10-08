@@ -337,4 +337,35 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_LoadColorHistory_And_GetColorHistoryHex_PreservesColors_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var hexList = new List<string> { "#FFFF0000", "#FF00FF00", "#FF0000FF" };
+
+                toolbar.LoadColorHistory(hexList);
+
+                var retrievedHex = toolbar.GetColorHistoryHex();
+                Assert.Equal(3, retrievedHex.Count);
+                Assert.Equal("#FFFF0000", retrievedHex[0]);
+                Assert.Equal("#FF00FF00", retrievedHex[1]);
+                Assert.Equal("#FF0000FF", retrievedHex[2]);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

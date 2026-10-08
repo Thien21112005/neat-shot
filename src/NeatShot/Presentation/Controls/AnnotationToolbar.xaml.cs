@@ -260,6 +260,40 @@ public partial class AnnotationToolbar : UserControl
         SelectColor(color);
     }
 
+    /// <summary>
+    /// Nạp danh sách lịch sử màu sắc từ mảng mã màu Hex đã lưu.
+    /// </summary>
+    public void LoadColorHistory(IEnumerable<string>? hexColors)
+    {
+        if (hexColors == null) return;
+        History.Clear();
+        var list = hexColors.Where(h => !string.IsNullOrWhiteSpace(h)).ToList();
+        // Duyệt ngược để phần tử đầu tiên (gần nhất) kết thúc ở index 0 của History.Colors
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            try
+            {
+                var color = ColorHelper.FromHex(list[i]);
+                History.AddColor(color);
+            }
+            catch
+            {
+                // Bỏ qua mã màu không hợp lệ
+            }
+        }
+        UpdateColorButtonVisuals();
+    }
+
+    /// <summary>
+    /// Lấy danh sách mã Hex của các màu hiện có trong lịch sử màu.
+    /// </summary>
+    public List<string> GetColorHistoryHex()
+    {
+        return History.Colors
+            .Select(c => $"#{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}")
+            .ToList();
+    }
+
     private void ToggleTool(DrawingToolType tool)
     {
         _activeTool = _activeTool == tool ? DrawingToolType.None : tool;

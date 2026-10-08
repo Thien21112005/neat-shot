@@ -239,13 +239,13 @@ graph TD
   - `ISettingsService.SaveSettings(AppSettings settings) -> Task`
   - Tự động duy trì danh sách màu Color History giữa các lần chụp
 
-- [ ] **Step 1: Viết failing test cho `SettingsService` (ghi/đọc file JSON, xử lý lỗi file hỏng, giá trị mặc định)**
-- [ ] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 3: Triển khai `AppSettings.cs`, `ISettingsService.cs` và `SettingsService.cs`**
-- [ ] **Step 4: Đăng ký `ISettingsService` Singleton trong `App.xaml.cs`**
-- [ ] **Step 5: Kết nối `AnnotationToolbar.History` với `SettingsService` để lưu/nạp màu tự động**
-- [ ] **Step 6: Chạy `dotnet test` xác nhận test xanh (GREEN)**
-- [ ] **Step 7: Commit `feat(settings): add JSON settings persistence for app options and color history`**
+- [x] **Step 1: Viết failing test cho `SettingsService` (ghi/đọc file JSON, xử lý lỗi file hỏng, giá trị mặc định)**
+- [x] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 3: Triển khai `AppSettings.cs`, `ISettingsService.cs` và `SettingsService.cs`**
+- [x] **Step 4: Đăng ký `ISettingsService` Singleton trong `App.xaml.cs`**
+- [x] **Step 5: Kết nối `AnnotationToolbar.History` với `SettingsService` để lưu/nạp màu tự động**
+- [x] **Step 6: Chạy `dotnet test` xác nhận test xanh (GREEN)**
+- [x] **Step 7: Commit `feat(settings): add JSON settings persistence for app options and color history`**
 
 ---
 

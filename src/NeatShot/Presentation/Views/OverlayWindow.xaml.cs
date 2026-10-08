@@ -16,18 +16,24 @@ public partial class OverlayWindow : Window
 {
     private readonly IExportService _exportService;
     private readonly IOcrService _ocrService;
+    private readonly ISettingsService? _settingsService;
     private DrawingToolType _previousTool = DrawingToolType.None;
     private bool _isToolbarManuallyPositioned;
     private Point _manualToolbarPosition;
     public OverlayViewModel ViewModel { get; }
 
-    public OverlayWindow(OverlayViewModel viewModel, IExportService exportService, IOcrService? ocrService = null)
+    public OverlayWindow(
+        OverlayViewModel viewModel,
+        IExportService exportService,
+        IOcrService? ocrService = null,
+        ISettingsService? settingsService = null)
     {
         InitializeComponent();
 
         ViewModel = viewModel;
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         _ocrService = ocrService ?? new NeatShot.Core.Services.Implementations.WindowsOcrService();
+        _settingsService = settingsService;
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
@@ -46,6 +52,22 @@ public partial class OverlayWindow : Window
 
     private void InitializeToolbar()
     {
+        if (_settingsService != null)
+        {
+            var settings = _settingsService.LoadSettings();
+            if (settings.RecentColorsHex?.Count > 0)
+            {
+                Toolbar.LoadColorHistory(settings.RecentColorsHex);
+            }
+
+            Toolbar.History.Colors.CollectionChanged += (s, e) =>
+            {
+                var current = _settingsService.CurrentSettings;
+                current.RecentColorsHex = Toolbar.GetColorHistoryHex();
+                _ = _settingsService.SaveSettingsAsync(current);
+            };
+        }
+
         Toolbar.ToolSelected += (s, tool) =>
         {
             if (tool == DrawingToolType.Eyedropper)
@@ -125,16 +147,32 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
+            var defaultDir = _settingsService?.CurrentSettings.DefaultSaveDirectory;
+            var initialDir = !string.IsNullOrEmpty(defaultDir) && System.IO.Directory.Exists(defaultDir)
+                ? defaultDir
+                : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
             var dialog = new SaveFileDialog
             {
                 Title = "Lưu ảnh chụp màn hình NeatShot",
                 Filter = "PNG Image (*.png)|*.png",
                 DefaultExt = ".png",
-                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png"
+                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png",
+                InitialDirectory = initialDir
             };
 
             if (dialog.ShowDialog(this) == true)
             {
+                if (_settingsService != null)
+                {
+                    var dir = System.IO.Path.GetDirectoryName(dialog.FileName);
+                    if (!string.IsNullOrEmpty(dir))
+                    {
+                        _settingsService.CurrentSettings.DefaultSaveDirectory = dir;
+                        _ = _settingsService.SaveSettingsAsync(_settingsService.CurrentSettings);
+                    }
+                }
+
                 await _exportService.SaveToFileAsync(finalImage, dialog.FileName);
                 Close();
             }
@@ -539,6 +577,17 @@ public partial class OverlayWindow : Window
         if (ProcessShortcut(e.Key, Keyboard.Modifiers, e.OriginalSource))
         {
             e.Handled = true;
+        }
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        if (_settingsService != null)
+        {
+            var current = _settingsService.CurrentSettings;
+            current.RecentColorsHex = Toolbar.GetColorHistoryHex();
+            _settingsService.SaveSettings(current);
         }
     }
 }
