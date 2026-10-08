@@ -11,8 +11,13 @@ public enum DrawingToolType
     None,
     Pencil,
     Rectangle,
+    Ellipse,
+    Line,
     Arrow,
-    Text
+    Highlight,
+    Text,
+    Select,
+    Eyedropper
 }
 
 /// <summary>
@@ -25,17 +30,22 @@ public class DrawingElement
     public double Thickness { get; set; } = 3.0;
 
     /// <summary>
-    /// Danh sách các điểm toạ độ dùng cho nét vẽ tự do (Pencil).
+    /// Kích thước chữ (dùng cho công cụ Text).
+    /// </summary>
+    public double FontSize { get; set; } = 16.0;
+
+    /// <summary>
+    /// Danh sách các điểm toạ độ dùng cho nét vẽ tự do (Pencil, Highlight).
     /// </summary>
     public List<Point> Points { get; set; } = new();
 
     /// <summary>
-    /// Vùng hình chữ nhật (dùng cho Rectangle hoặc bounding box của Arrow/Text).
+    /// Vùng hình chữ nhật (dùng cho Rectangle, Ellipse, hoặc bounding box của Text).
     /// </summary>
     public Rect Rect { get; set; }
 
     /// <summary>
-    /// Điểm bắt đầu của mũi tên hoặc đường kẻ.
+    /// Điểm bắt đầu của mũi tên, đường kẻ hoặc văn bản.
     /// </summary>
     public Point StartPoint { get; set; }
 
@@ -48,4 +58,50 @@ public class DrawingElement
     /// Nội dung văn bản (dùng cho công cụ Text).
     /// </summary>
     public string? Text { get; set; }
+
+    /// <summary>
+    /// Tính toán hộp bao quanh (bounding box) của phần tử vẽ.
+    /// </summary>
+    public Rect GetBoundingBox()
+    {
+        switch (ToolType)
+        {
+            case DrawingToolType.Rectangle:
+            case DrawingToolType.Ellipse:
+                return Rect;
+
+            case DrawingToolType.Line:
+            case DrawingToolType.Arrow:
+                var minX = Math.Min(StartPoint.X, EndPoint.X);
+                var minY = Math.Min(StartPoint.Y, EndPoint.Y);
+                var w = Math.Abs(EndPoint.X - StartPoint.X);
+                var h = Math.Abs(EndPoint.Y - StartPoint.Y);
+                return new Rect(minX, minY, w, h);
+
+            case DrawingToolType.Pencil:
+            case DrawingToolType.Highlight:
+                if (Points != null && Points.Count > 0)
+                {
+                    var pMinX = Points.Min(p => p.X);
+                    var pMaxX = Points.Max(p => p.X);
+                    var pMinY = Points.Min(p => p.Y);
+                    var pMaxY = Points.Max(p => p.Y);
+                    return new Rect(pMinX, pMinY, Math.Max(0, pMaxX - pMinX), Math.Max(0, pMaxY - pMinY));
+                }
+                return Rect.IsEmpty ? new Rect(StartPoint, EndPoint) : Rect;
+
+            case DrawingToolType.Text:
+                if (!Rect.IsEmpty && Rect.Width > 0 && Rect.Height > 0)
+                {
+                    return Rect;
+                }
+                var textLen = string.IsNullOrEmpty(Text) ? 1 : Text.Length;
+                var estWidth = textLen * FontSize * 0.65;
+                var estHeight = FontSize * 1.3;
+                return new Rect(StartPoint.X, StartPoint.Y, estWidth, estHeight);
+
+            default:
+                return Rect.IsEmpty ? new Rect(StartPoint, EndPoint) : Rect;
+        }
+    }
 }
