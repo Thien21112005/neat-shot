@@ -46,8 +46,64 @@ public static class DrawingRenderer
                 dc.DrawRectangle(null, pen, element.Rect);
                 break;
 
+            case DrawingToolType.Ellipse:
+                if (!element.Rect.IsEmpty && element.Rect.Width > 0 && element.Rect.Height > 0)
+                {
+                    var center = new Point(
+                        element.Rect.X + element.Rect.Width / 2.0,
+                        element.Rect.Y + element.Rect.Height / 2.0);
+                    dc.DrawEllipse(null, pen, center, element.Rect.Width / 2.0, element.Rect.Height / 2.0);
+                }
+                break;
+
+            case DrawingToolType.Line:
+                dc.DrawLine(pen, element.StartPoint, element.EndPoint);
+                break;
+
             case DrawingToolType.Arrow:
                 DrawArrow(dc, pen, brush, element.StartPoint, element.EndPoint, element.Thickness);
+                break;
+
+            case DrawingToolType.Highlight:
+                if (element.Points != null && element.Points.Count > 1)
+                {
+                    var highlightColor = Color.FromArgb(120, element.Color.R, element.Color.G, element.Color.B);
+                    var highlightBrush = new SolidColorBrush(highlightColor);
+                    highlightBrush.Freeze();
+
+                    var highlightPen = new Pen(highlightBrush, Math.Max(16.0, element.Thickness * 3.5))
+                    {
+                        StartLineCap = PenLineCap.Square,
+                        EndLineCap = PenLineCap.Square,
+                        LineJoin = PenLineJoin.Round
+                    };
+                    highlightPen.Freeze();
+
+                    var geometry = new StreamGeometry();
+                    using (var ctx = geometry.Open())
+                    {
+                        ctx.BeginFigure(element.Points[0], false, false);
+                        ctx.PolyLineTo(element.Points.Skip(1).ToList(), true, true);
+                    }
+                    geometry.Freeze();
+                    dc.DrawGeometry(null, highlightPen, geometry);
+                }
+                break;
+
+            case DrawingToolType.Text:
+                if (!string.IsNullOrWhiteSpace(element.Text))
+                {
+                    var fontSize = element.FontSize > 0 ? element.FontSize : 16.0;
+                    var formattedText = new FormattedText(
+                        element.Text,
+                        System.Globalization.CultureInfo.CurrentCulture,
+                        FlowDirection.LeftToRight,
+                        new Typeface("Segoe UI"),
+                        fontSize,
+                        brush,
+                        1.0);
+                    dc.DrawText(formattedText, element.StartPoint);
+                }
                 break;
         }
     }
