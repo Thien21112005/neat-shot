@@ -380,7 +380,7 @@ git commit -m "feat: implement inline text annotation tool in DrawingCanvas"
   - Keo chuot di chuyen rieng le doi tuong duoc chon (`TranslateElement`)
   - Ho tro xoa phan tu duoc chon khi nhan phan tu Delete
 
-- [ ] **Step 1: Viet test that bai cho Select va Move doi tuong ve**
+- [x] **Step 1: Viet test that bai cho Select va Move doi tuong ve**
 
 ```csharp
 [Fact]
@@ -424,12 +424,12 @@ public void SelectAndMove_TranslatesSpecificElement_OnStaThread()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "SelectAndMove_TranslatesSpecificElement"`
 Expected: FAIL vi `SelectElementAt` va `MoveSelectedElement` chua duoc cai dat.
 
-- [ ] **Step 3: Trien khai Select va Move trong `DrawingCanvas.cs`**
+- [x] **Step 3: Trien khai Select va Move trong `DrawingCanvas.cs`**
 
 1. Khai bao thuoc tinh `public DrawingElement? SelectedElement { get; private set; }`.
 2. Trien khai `public bool SelectElementAt(Point pos)`:
@@ -449,12 +449,12 @@ Expected: FAIL vi `SelectElementAt` va `MoveSelectedElement` chua duoc cai dat.
 5. Trong `OnRender`:
    - Neu co `SelectedElement`, ve khung vien cham dut (dashed bounding box) mau xanh duong nhat bao quanh hop gioi han cua doi tuong de nguoi dung nhan biet doi tuong dang duoc chon.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~DrawingCanvasSelectMoveTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Presentation/Controls/DrawingCanvas.cs tests/NeatShot.Tests/Controls/DrawingCanvasSelectMoveTests.cs
