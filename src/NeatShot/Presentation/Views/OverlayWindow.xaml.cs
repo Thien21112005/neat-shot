@@ -234,43 +234,117 @@ public partial class OverlayWindow : Window
         Toolbar.SetActiveTool(_previousTool == DrawingToolType.None || _previousTool == DrawingToolType.Eyedropper ? DrawingToolType.Pencil : _previousTool);
     }
 
-    private void OnWindowKeyDown(object sender, KeyEventArgs e)
+    /// <summary>
+    /// Xử lý các phím tắt hệ thống và chuyển đổi công cụ vẽ (hỗ trợ kiểm thử trực tiếp).
+    /// </summary>
+    public bool ProcessShortcut(Key key, ModifierKeys modifiers, object? source = null)
     {
-        if (e.Key == Key.Escape)
+        if (source is TextBox)
+        {
+            return false;
+        }
+
+        if (key == Key.Escape)
         {
             if (DrawingControl.CurrentTool == DrawingToolType.Eyedropper)
             {
                 ExitEyedropperMode();
-                e.Handled = true;
-                return;
+                return true;
             }
 
             ViewModel.CancelCommand.Execute(null);
-            e.Handled = true;
+            return true;
         }
-        else if (e.Key == Key.Z && (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+
+        if (key == Key.Delete)
+        {
+            if (DrawingControl.SelectedElement != null)
+            {
+                DrawingControl.DeleteSelectedElement();
+                return true;
+            }
+        }
+
+        if (key == Key.Z && (modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
         {
             DrawingControl.Redo();
-            e.Handled = true;
+            return true;
         }
-        else if (e.Key == Key.Y && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+
+        if (key == Key.Y && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             DrawingControl.Redo();
-            e.Handled = true;
+            return true;
         }
-        else if (e.Key == Key.Z && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+
+        if (key == Key.Z && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             DrawingControl.Undo();
-            e.Handled = true;
+            return true;
         }
-        else if (e.Key == Key.Enter || (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control))
+
+        if (key == Key.Enter || (key == Key.C && (modifiers & ModifierKeys.Control) == ModifierKeys.Control))
         {
             _ = ExecuteCopyAsync();
-            e.Handled = true;
+            return true;
         }
-        else if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+
+        if (key == Key.S && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             _ = ExecuteSaveAsync();
+            return true;
+        }
+
+        if (modifiers == ModifierKeys.None)
+        {
+            switch (key)
+            {
+                case Key.V:
+                    Toolbar.SetActiveTool(DrawingToolType.Select);
+                    DrawingControl.CurrentTool = DrawingToolType.Select;
+                    return true;
+                case Key.P:
+                    Toolbar.SetActiveTool(DrawingToolType.Pencil);
+                    DrawingControl.CurrentTool = DrawingToolType.Pencil;
+                    return true;
+                case Key.R:
+                    Toolbar.SetActiveTool(DrawingToolType.Rectangle);
+                    DrawingControl.CurrentTool = DrawingToolType.Rectangle;
+                    return true;
+                case Key.O:
+                    Toolbar.SetActiveTool(DrawingToolType.Ellipse);
+                    DrawingControl.CurrentTool = DrawingToolType.Ellipse;
+                    return true;
+                case Key.L:
+                    Toolbar.SetActiveTool(DrawingToolType.Line);
+                    DrawingControl.CurrentTool = DrawingToolType.Line;
+                    return true;
+                case Key.A:
+                    Toolbar.SetActiveTool(DrawingToolType.Arrow);
+                    DrawingControl.CurrentTool = DrawingToolType.Arrow;
+                    return true;
+                case Key.H:
+                    Toolbar.SetActiveTool(DrawingToolType.Highlight);
+                    DrawingControl.CurrentTool = DrawingToolType.Highlight;
+                    return true;
+                case Key.T:
+                    Toolbar.SetActiveTool(DrawingToolType.Text);
+                    DrawingControl.CurrentTool = DrawingToolType.Text;
+                    return true;
+                case Key.I:
+                    Toolbar.SetActiveTool(DrawingToolType.Eyedropper);
+                    EnterEyedropperMode();
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void OnWindowKeyDown(object sender, KeyEventArgs e)
+    {
+        if (ProcessShortcut(e.Key, Keyboard.Modifiers, e.OriginalSource))
+        {
             e.Handled = true;
         }
     }

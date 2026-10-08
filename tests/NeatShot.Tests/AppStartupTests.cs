@@ -3,6 +3,8 @@ using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.ViewModels;
 using NeatShot.Presentation.Views;
+using System.Windows;
+using System.Windows.Input;
 using Xunit;
 
 namespace NeatShot.Tests;
@@ -115,6 +117,68 @@ public class AppStartupTests
 
                 window.ExitEyedropperMode();
                 Assert.Equal(System.Windows.Visibility.Collapsed, window.EyedropperLoupe.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void OverlayWindow_KeyboardShortcuts_SwitchToolsAndDeleteSelected_OnStaThread()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
+        services.AddSingleton<IHotkeyService, HotkeyService>();
+        services.AddSingleton<IExportService, ExportService>();
+        services.AddTransient<OverlayViewModel>();
+        services.AddTransient<OverlayWindow>();
+
+        var provider = services.BuildServiceProvider();
+
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var window = provider.GetRequiredService<OverlayWindow>();
+
+                // 1. Tool shortcut: T -> Text
+                Assert.True(window.ProcessShortcut(Key.T, ModifierKeys.None));
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.Text, window.DrawingControl.CurrentTool);
+
+                // 2. Tool shortcut: H -> Highlight
+                Assert.True(window.ProcessShortcut(Key.H, ModifierKeys.None));
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.Highlight, window.DrawingControl.CurrentTool);
+
+                // 3. Tool shortcut: V -> Select
+                Assert.True(window.ProcessShortcut(Key.V, ModifierKeys.None));
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.Select, window.DrawingControl.CurrentTool);
+
+                // 4. Tool shortcut: I -> Eyedropper & Loupe visible
+                Assert.True(window.ProcessShortcut(Key.I, ModifierKeys.None));
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.Eyedropper, window.DrawingControl.CurrentTool);
+                Assert.Equal(Visibility.Visible, window.EyedropperLoupe.Visibility);
+
+                // 5. Esc exits Eyedropper mode
+                Assert.True(window.ProcessShortcut(Key.Escape, ModifierKeys.None));
+                Assert.Equal(Visibility.Collapsed, window.EyedropperLoupe.Visibility);
+
+                // 6. Delete shortcut deletes selected element
+                var elem = new NeatShot.Core.Models.DrawingElement { ToolType = NeatShot.Core.Models.DrawingToolType.Rectangle, Rect = new Rect(0, 0, 50, 50) };
+                window.DrawingControl.UndoStack.Push(elem);
+                window.DrawingControl.SelectElementAt(new Point(25, 25));
+                Assert.NotNull(window.DrawingControl.SelectedElement);
+
+                Assert.True(window.ProcessShortcut(Key.Delete, ModifierKeys.None));
+                Assert.Null(window.DrawingControl.SelectedElement);
+                Assert.Empty(window.DrawingControl.UndoStack.Items);
             }
             catch (Exception ex)
             {
