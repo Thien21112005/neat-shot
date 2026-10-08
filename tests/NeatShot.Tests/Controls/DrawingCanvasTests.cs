@@ -91,4 +91,95 @@ public class DrawingCanvasTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void DrawingCanvas_SupportsEllipseLineAndHighlight_ToolSwitching_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var canvas = new DrawingCanvas();
+
+                canvas.CurrentTool = DrawingToolType.Ellipse;
+                Assert.True(canvas.IsHitTestVisible);
+                Assert.Equal(Cursors.Cross, canvas.Cursor);
+
+                canvas.CurrentTool = DrawingToolType.Line;
+                Assert.True(canvas.IsHitTestVisible);
+                Assert.Equal(Cursors.Cross, canvas.Cursor);
+
+                canvas.CurrentTool = DrawingToolType.Highlight;
+                Assert.True(canvas.IsHitTestVisible);
+                Assert.Equal(Cursors.Pen, canvas.Cursor);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void DrawingCanvas_DrawsEllipseLineAndHighlight_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var canvas = new DrawingCanvas();
+
+                // 1. Draw Ellipse
+                canvas.CurrentTool = DrawingToolType.Ellipse;
+                canvas.StartDrawing(new Point(10, 20));
+                canvas.MoveDrawing(new Point(70, 80));
+                canvas.EndDrawing();
+
+                Assert.Single(canvas.UndoStack.Items);
+                var ellipse = canvas.UndoStack.Items.First();
+                Assert.Equal(DrawingToolType.Ellipse, ellipse.ToolType);
+                Assert.Equal(new Rect(10, 20, 60, 60), ellipse.Rect);
+
+                // 2. Draw Line
+                canvas.CurrentTool = DrawingToolType.Line;
+                canvas.StartDrawing(new Point(0, 0));
+                canvas.MoveDrawing(new Point(50, 100));
+                canvas.EndDrawing();
+
+                Assert.Equal(2, canvas.UndoStack.Items.Count);
+                var line = canvas.UndoStack.Items.Last();
+                Assert.Equal(DrawingToolType.Line, line.ToolType);
+                Assert.Equal(new Point(0, 0), line.StartPoint);
+                Assert.Equal(new Point(50, 100), line.EndPoint);
+
+                // 3. Draw Highlight
+                canvas.CurrentTool = DrawingToolType.Highlight;
+                canvas.StartDrawing(new Point(10, 10));
+                canvas.MoveDrawing(new Point(20, 10));
+                canvas.MoveDrawing(new Point(30, 10));
+                canvas.EndDrawing();
+
+                Assert.Equal(3, canvas.UndoStack.Items.Count);
+                var highlight = canvas.UndoStack.Items.Last();
+                Assert.Equal(DrawingToolType.Highlight, highlight.ToolType);
+                Assert.Equal(3, highlight.Points.Count);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

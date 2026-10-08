@@ -88,8 +88,14 @@ public class DrawingCanvas : Canvas
             Cursor = tool switch
             {
                 DrawingToolType.Pencil => Cursors.Pen,
+                DrawingToolType.Highlight => Cursors.Pen,
                 DrawingToolType.Rectangle => Cursors.Cross,
+                DrawingToolType.Ellipse => Cursors.Cross,
+                DrawingToolType.Line => Cursors.Cross,
                 DrawingToolType.Arrow => Cursors.Cross,
+                DrawingToolType.Text => Cursors.IBeam,
+                DrawingToolType.Select => Cursors.Hand,
+                DrawingToolType.Eyedropper => Cursors.Cross,
                 _ => Cursors.Arrow
             };
         }
@@ -140,16 +146,11 @@ public class DrawingCanvas : Canvas
         InvalidateVisual();
     }
 
-    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    public void StartDrawing(Point startPoint)
     {
-        base.OnMouseLeftButtonDown(e);
-
         if (CurrentTool == DrawingToolType.None) return;
 
-        var startPoint = e.GetPosition(this);
         _isDrawing = true;
-        CaptureMouse();
-
         _currentElement = new DrawingElement
         {
             ToolType = CurrentTool,
@@ -162,6 +163,56 @@ public class DrawingCanvas : Canvas
         };
 
         InvalidateVisual();
+    }
+
+    public void MoveDrawing(Point currentPoint)
+    {
+        if (!_isDrawing || _currentElement == null) return;
+
+        switch (_currentElement.ToolType)
+        {
+            case DrawingToolType.Pencil:
+            case DrawingToolType.Highlight:
+                _currentElement.Points.Add(currentPoint);
+                break;
+
+            case DrawingToolType.Rectangle:
+            case DrawingToolType.Ellipse:
+                var minX = Math.Min(_currentElement.StartPoint.X, currentPoint.X);
+                var minY = Math.Min(_currentElement.StartPoint.Y, currentPoint.Y);
+                var width = Math.Abs(currentPoint.X - _currentElement.StartPoint.X);
+                var height = Math.Abs(currentPoint.Y - _currentElement.StartPoint.Y);
+                _currentElement.Rect = new Rect(minX, minY, width, height);
+                _currentElement.EndPoint = currentPoint;
+                break;
+
+            case DrawingToolType.Line:
+            case DrawingToolType.Arrow:
+                _currentElement.EndPoint = currentPoint;
+                break;
+        }
+
+        InvalidateVisual();
+    }
+
+    public void EndDrawing()
+    {
+        if (!_isDrawing || _currentElement == null) return;
+
+        _isDrawing = false;
+        UndoStack.Push(_currentElement);
+        _currentElement = null;
+        InvalidateVisual();
+    }
+
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonDown(e);
+
+        if (CurrentTool == DrawingToolType.None) return;
+
+        CaptureMouse();
+        StartDrawing(e.GetPosition(this));
         e.Handled = true;
     }
 
@@ -171,29 +222,7 @@ public class DrawingCanvas : Canvas
 
         if (!_isDrawing || _currentElement == null) return;
 
-        var currentPoint = e.GetPosition(this);
-
-        switch (_currentElement.ToolType)
-        {
-            case DrawingToolType.Pencil:
-                _currentElement.Points.Add(currentPoint);
-                break;
-
-            case DrawingToolType.Rectangle:
-                var minX = Math.Min(_currentElement.StartPoint.X, currentPoint.X);
-                var minY = Math.Min(_currentElement.StartPoint.Y, currentPoint.Y);
-                var width = Math.Abs(currentPoint.X - _currentElement.StartPoint.X);
-                var height = Math.Abs(currentPoint.Y - _currentElement.StartPoint.Y);
-                _currentElement.Rect = new Rect(minX, minY, width, height);
-                _currentElement.EndPoint = currentPoint;
-                break;
-
-            case DrawingToolType.Arrow:
-                _currentElement.EndPoint = currentPoint;
-                break;
-        }
-
-        InvalidateVisual();
+        MoveDrawing(e.GetPosition(this));
         e.Handled = true;
     }
 
@@ -203,13 +232,8 @@ public class DrawingCanvas : Canvas
 
         if (!_isDrawing || _currentElement == null) return;
 
-        _isDrawing = false;
         ReleaseMouseCapture();
-
-        UndoStack.Push(_currentElement);
-        _currentElement = null;
-
-        InvalidateVisual();
+        EndDrawing();
         e.Handled = true;
     }
 
