@@ -19,8 +19,11 @@ public class AppStartupTests
         services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
         services.AddSingleton<IHotkeyService, HotkeyService>();
         services.AddSingleton<IExportService, ExportService>();
+        services.AddSingleton<IOcrService, WindowsOcrService>();
         services.AddTransient<OverlayViewModel>();
+        services.AddTransient<PinViewModel>();
         services.AddTransient<OverlayWindow>();
+        services.AddTransient<PinWindow>();
 
         var provider = services.BuildServiceProvider();
 
@@ -28,7 +31,9 @@ public class AppStartupTests
         Assert.NotNull(provider.GetRequiredService<IScreenCaptureService>());
         Assert.NotNull(provider.GetRequiredService<IHotkeyService>());
         Assert.NotNull(provider.GetRequiredService<IExportService>());
+        Assert.NotNull(provider.GetRequiredService<IOcrService>());
         Assert.NotNull(provider.GetRequiredService<OverlayViewModel>());
+        Assert.NotNull(provider.GetRequiredService<PinViewModel>());
     }
 
     [Fact]

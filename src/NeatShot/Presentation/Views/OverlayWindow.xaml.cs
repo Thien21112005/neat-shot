@@ -15,17 +15,19 @@ namespace NeatShot.Presentation.Views;
 public partial class OverlayWindow : Window
 {
     private readonly IExportService _exportService;
+    private readonly IOcrService _ocrService;
     private DrawingToolType _previousTool = DrawingToolType.None;
     private bool _isToolbarManuallyPositioned;
     private Point _manualToolbarPosition;
     public OverlayViewModel ViewModel { get; }
 
-    public OverlayWindow(OverlayViewModel viewModel, IExportService exportService)
+    public OverlayWindow(OverlayViewModel viewModel, IExportService exportService, IOcrService? ocrService = null)
     {
         InitializeComponent();
 
         ViewModel = viewModel;
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
+        _ocrService = ocrService ?? new NeatShot.Core.Services.Implementations.WindowsOcrService();
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
@@ -85,6 +87,7 @@ public partial class OverlayWindow : Window
         Toolbar.CopyRequested += async (s, e) => await ExecuteCopyAsync();
         Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
         Toolbar.PinRequested += async (s, e) => await ExecutePinAsync();
+        Toolbar.OcrRequested += async (s, e) => await ExecuteOcrAsync();
     }
 
     private async Task ExecuteCopyAsync()
@@ -163,6 +166,73 @@ public partial class OverlayWindow : Window
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi ghim ảnh: {ex.Message}");
+        }
+    }
+
+    private async Task ExecuteOcrAsync()
+    {
+        if (ViewModel.BackgroundImage == null || !ViewModel.SelectedRegion.IsValid)
+            return;
+
+        try
+        {
+            var finalImage = _exportService.RenderFinalImage(
+                ViewModel.BackgroundImage,
+                ViewModel.SelectedRegion,
+                DrawingControl.UndoStack.Items);
+
+            var recognizedText = await _ocrService.RecognizeTextAsync(finalImage);
+
+            if (string.IsNullOrWhiteSpace(recognizedText))
+            {
+                MessageBox.Show(
+                    this,
+                    "Không phát hiện thấy ký tự văn bản nào trong vùng chọn.",
+                    "NeatShot - OCR",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
+
+            CopyTextToClipboardWithRetry(recognizedText.Trim());
+            Close();
+        }
+        catch (InvalidOperationException ex)
+        {
+            MessageBox.Show(
+                this,
+                ex.Message,
+                "NeatShot - OCR",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi OCR: {ex.Message}");
+            MessageBox.Show(
+                this,
+                $"Đã xảy ra lỗi trong quá trình nhận diện chữ: {ex.Message}",
+                "NeatShot - OCR",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private static void CopyTextToClipboardWithRetry(string text)
+    {
+        const int maxAttempts = 5;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                Clipboard.SetText(text);
+                return;
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                if (attempt == maxAttempts) throw;
+                Thread.Sleep(30);
+            }
         }
     }
 

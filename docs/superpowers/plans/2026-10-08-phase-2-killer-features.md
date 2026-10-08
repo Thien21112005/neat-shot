@@ -111,13 +111,13 @@ graph TD
   - `IOcrService.IsOcrSupported() -> bool`
   - `AnnotationToolbar.OcrRequested` event
 
-- [ ] **Step 1: Viết failing test cho `IOcrService` (quét chuỗi text, xử lý null/empty, fallback ngôn ngữ)**
-- [ ] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 3: Triển khai `IOcrService.cs` và `WindowsOcrService.cs` (chuyển đổi BitmapSource sang SoftwareBitmap và gọi OcrEngine)**
-- [ ] **Step 4: Đăng ký `IOcrService` trong `App.xaml.cs` (DI Singleton)**
-- [ ] **Step 5: Thêm nút `OcrButton` (`[OCR]`) vào `AnnotationToolbar.xaml`, liên kết logic quét chữ và copy vào Clipboard trong `OverlayWindow.xaml.cs`**
-- [ ] **Step 6: Chạy `dotnet test` xác nhận test vượt qua (GREEN)**
-- [ ] **Step 7: Commit `feat(ocr): implement offline Quick OCR service and toolbar action`**
+- [x] **Step 1: Viết failing test cho `IOcrService` (quét chuỗi text, xử lý null/empty, fallback ngôn ngữ)**
+- [x] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 3: Triển khai `IOcrService.cs` và `WindowsOcrService.cs` (chuyển đổi BitmapSource sang SoftwareBitmap và gọi OcrEngine)**
+- [x] **Step 4: Đăng ký `IOcrService` trong `App.xaml.cs` (DI Singleton)**
+- [x] **Step 5: Thêm nút `OcrButton` (`[OCR]`) vào `AnnotationToolbar.xaml`, liên kết logic quét chữ và copy vào Clipboard trong `OverlayWindow.xaml.cs`**
+- [x] **Step 6: Chạy `dotnet test` xác nhận test vượt qua (GREEN)**
+- [x] **Step 7: Commit `feat(ocr): implement offline Quick OCR service and toolbar action`**
 
 ---
 
