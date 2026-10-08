@@ -1,11 +1,12 @@
-using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using NeatShot.Common.Helpers;
 using NeatShot.Core.Interop;
 using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
+using NeatShot.Presentation.Tray;
 using NeatShot.Presentation.ViewModels;
 using NeatShot.Presentation.Views;
+using System.Drawing;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,9 @@ namespace NeatShot;
 public partial class App : Application
 {
     public static IServiceProvider Services { get; private set; } = null!;
-    private TaskbarIcon? _trayIcon;
+    private NativeTrayIcon? _trayIcon;
+    private Icon? _iconHolder;
+    private ContextMenu? _trayContextMenu;
     private static Mutex? _singleInstanceMutex;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -49,7 +52,8 @@ public partial class App : Application
         Console.WriteLine("  NeatShot - Chụp màn hình thông minh");
         Console.WriteLine("  Trạng thái: Đang chạy ngầm trong khay hệ thống (System Tray)");
         Console.WriteLine($"  Phím tắt chụp: {activeHotkey}");
-        Console.WriteLine("  Thao tác: Bấm phím tắt hoặc click vào icon NeatShot dưới khay hệ thống.");
+        Console.WriteLine("  * Mẹo: Nếu phím PrintScreen bị Windows Snipping Tool chặn,");
+        Console.WriteLine("    hãy nhấn Ctrl + Shift + A hoặc click icon NeatShot ở khay hệ thống.");
         Console.WriteLine("==================================================");
         Console.WriteLine();
     }
@@ -70,31 +74,33 @@ public partial class App : Application
 
     private void InitializeTrayIcon()
     {
-        var contextMenu = new ContextMenu();
+        _trayContextMenu = new ContextMenu();
 
-        var captureItem = new MenuItem { Header = "Chụp vùng chọn (PrtSc)" };
+        var captureItem = new MenuItem { Header = "Chụp vùng chọn (Ctrl+Shift+A / PrtSc)" };
         captureItem.Click += (s, e) => TriggerCapture();
-        contextMenu.Items.Add(captureItem);
+        _trayContextMenu.Items.Add(captureItem);
 
         var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
         fullscreenItem.Click += (s, e) => TriggerCapture();
-        contextMenu.Items.Add(fullscreenItem);
+        _trayContextMenu.Items.Add(fullscreenItem);
 
-        contextMenu.Items.Add(new Separator());
+        _trayContextMenu.Items.Add(new Separator());
 
         var exitItem = new MenuItem { Header = "Thoát" };
         exitItem.Click += (s, e) => Shutdown();
-        contextMenu.Items.Add(exitItem);
+        _trayContextMenu.Items.Add(exitItem);
 
-        _trayIcon = new TaskbarIcon
+        _iconHolder = TrayIconHelper.CreateTrayIcon();
+        _trayIcon = new NativeTrayIcon(_iconHolder.Handle, "NeatShot - Chụp màn hình thông minh (Click để chụp)");
+
+        _trayIcon.Click += (s, e) => TriggerCapture();
+        _trayIcon.ContextMenuRequested += (s, e) =>
         {
-            ToolTipText = "NeatShot - Chụp màn hình thông minh (Click để chụp)",
-            Icon = TrayIconHelper.CreateTrayIcon(),
-            ContextMenu = contextMenu
+            if (_trayContextMenu != null)
+            {
+                _trayContextMenu.IsOpen = true;
+            }
         };
-
-        // Click chuột trái vào tray icon để chụp
-        _trayIcon.TrayLeftMouseDown += (s, e) => TriggerCapture();
     }
 
     private string InitializeGlobalHotkeys()
@@ -102,16 +108,21 @@ public partial class App : Application
         var hotkeyService = Services.GetRequiredService<IHotkeyService>();
         hotkeyService.HotkeyPressed += (s, e) => TriggerCapture();
 
-        // Mặc định đăng ký phím PrintScreen
-        var registered = hotkeyService.Register(Key.PrintScreen, ModifierKeys.None);
-        if (registered)
+        var activeKeys = new List<string>();
+
+        // 1. Đăng ký phím tắt chính Ctrl + Shift + A (không bao giờ bị Windows 11 chặn)
+        if (hotkeyService.Register(Key.A, ModifierKeys.Control | ModifierKeys.Shift))
         {
-            return "PrintScreen";
+            activeKeys.Add("Ctrl + Shift + A");
         }
 
-        // Dự phòng đăng ký Ctrl+Shift+A nếu PrintScreen bị chiếm bởi ứng dụng khác
-        registered = hotkeyService.Register(Key.A, ModifierKeys.Control | ModifierKeys.Shift);
-        return registered ? "Ctrl + Shift + A" : "Chưa đăng ký (bị chiếm dụng)";
+        // 2. Đăng ký phím PrintScreen truyền thống
+        if (hotkeyService.Register(Key.PrintScreen, ModifierKeys.None))
+        {
+            activeKeys.Add("PrintScreen");
+        }
+
+        return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
     }
 
     private async void TriggerCapture()
@@ -135,6 +146,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _trayIcon?.Dispose();
+        _iconHolder?.Dispose();
 
         if (_singleInstanceMutex != null)
         {

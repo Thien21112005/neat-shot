@@ -10,19 +10,18 @@ namespace NeatShot.Core.Services.Implementations;
 /// </summary>
 public class HotkeyService : IHotkeyService
 {
-    private const int HotkeyId = 9001;
+    private int _nextHotkeyId = 9001;
+    private readonly Dictionary<int, (Key Key, ModifierKeys Modifiers)> _registeredHotkeys = new();
     private HwndSource? _hwndSource;
     private bool _disposed;
 
     public event EventHandler? HotkeyPressed;
-    public bool IsRegistered { get; private set; }
-    public Key RegisteredKey { get; private set; } = Key.None;
-    public ModifierKeys RegisteredModifiers { get; private set; } = ModifierKeys.None;
+    public bool IsRegistered => _registeredHotkeys.Count > 0;
+    public Key RegisteredKey => _registeredHotkeys.Values.FirstOrDefault().Key;
+    public ModifierKeys RegisteredModifiers => _registeredHotkeys.Values.FirstOrDefault().Modifiers;
 
     public bool Register(Key key, ModifierKeys modifiers)
     {
-        Unregister();
-
         if (key == Key.None) return false;
 
         EnsureHwndSource();
@@ -36,12 +35,11 @@ public class HotkeyService : IHotkeyService
         if (modifiers.HasFlag(ModifierKeys.Shift)) fsModifiers |= NativeConstants.MOD_SHIFT;
         if (modifiers.HasFlag(ModifierKeys.Windows)) fsModifiers |= NativeConstants.MOD_WIN;
 
-        var success = NativeMethods.RegisterHotKey(_hwndSource.Handle, HotkeyId, fsModifiers, vk);
+        var hotkeyId = _nextHotkeyId++;
+        var success = NativeMethods.RegisterHotKey(_hwndSource.Handle, hotkeyId, fsModifiers, vk);
         if (success)
         {
-            IsRegistered = true;
-            RegisteredKey = key;
-            RegisteredModifiers = modifiers;
+            _registeredHotkeys[hotkeyId] = (key, modifiers);
         }
 
         return success;
@@ -49,14 +47,15 @@ public class HotkeyService : IHotkeyService
 
     public void Unregister()
     {
-        if (IsRegistered && _hwndSource != null && _hwndSource.Handle != IntPtr.Zero)
+        if (_hwndSource != null && _hwndSource.Handle != IntPtr.Zero)
         {
-            NativeMethods.UnregisterHotKey(_hwndSource.Handle, HotkeyId);
+            foreach (var id in _registeredHotkeys.Keys)
+            {
+                NativeMethods.UnregisterHotKey(_hwndSource.Handle, id);
+            }
         }
 
-        IsRegistered = false;
-        RegisteredKey = Key.None;
-        RegisteredModifiers = ModifierKeys.None;
+        _registeredHotkeys.Clear();
     }
 
     private void EnsureHwndSource()
@@ -85,7 +84,7 @@ public class HotkeyService : IHotkeyService
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg == NativeConstants.WM_HOTKEY && wParam.ToInt32() == HotkeyId)
+        if (msg == NativeConstants.WM_HOTKEY && _registeredHotkeys.ContainsKey(wParam.ToInt32()))
         {
             HotkeyPressed?.Invoke(this, EventArgs.Empty);
             handled = true;

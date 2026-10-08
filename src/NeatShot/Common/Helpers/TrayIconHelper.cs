@@ -35,16 +35,7 @@ public static class TrayIconHelper
         }
 
         var hIcon = bmp.GetHicon();
-        try
-        {
-            // Tạo bản sao Icon được quản lý an toàn bởi .NET
-            using var tempIcon = Icon.FromHandle(hIcon);
-            return (Icon)tempIcon.Clone();
-        }
-        finally
-        {
-            NativeMethods.DestroyIcon(hIcon);
-        }
+        return Icon.FromHandle(hIcon);
     }
 
     private static GraphicsPath CreateRoundedRectanglePath(Rectangle rect, int radius)

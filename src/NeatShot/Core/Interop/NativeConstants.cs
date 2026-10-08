@@ -26,4 +26,18 @@ public static class NativeConstants
 
     // Console Attach Constants
     public const int ATTACH_PARENT_PROCESS = -1;
+
+    // Shell_NotifyIcon Constants
+    public const int NIM_ADD = 0x00000000;
+    public const int NIM_MODIFY = 0x00000001;
+    public const int NIM_DELETE = 0x00000002;
+    public const int NIF_MESSAGE = 0x00000001;
+    public const int NIF_ICON = 0x00000002;
+    public const int NIF_TIP = 0x00000004;
+
+    // Window Messages for Tray
+    public const int WM_USER = 0x0400;
+    public const int WM_TRAYICON = WM_USER + 101;
+    public const int WM_LBUTTONUP = 0x0202;
+    public const int WM_RBUTTONUP = 0x0205;
 }

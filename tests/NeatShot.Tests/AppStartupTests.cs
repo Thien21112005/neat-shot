@@ -62,7 +62,7 @@ public class AppStartupTests
     }
 
     [Fact]
-    public void TrayIconHelper_CreateTrayIcon_ShouldReturnValidIcon()
+    public void NativeTrayIcon_CreationAndDisposal_ShouldSucceedOnStaThread()
     {
         using var icon = NeatShot.Common.Helpers.TrayIconHelper.CreateTrayIcon();
         Assert.NotNull(icon);
@@ -74,9 +74,8 @@ public class AppStartupTests
         {
             try
             {
-                var trayIcon = new H.NotifyIcon.TaskbarIcon();
-                trayIcon.Icon = icon;
-                Assert.NotNull(trayIcon.Icon);
+                using var tray = new NeatShot.Presentation.Tray.NativeTrayIcon(icon.Handle, "Test Tooltip");
+                Assert.NotNull(tray);
             }
             catch (Exception ex)
             {
