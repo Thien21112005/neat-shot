@@ -17,7 +17,9 @@ public enum DrawingToolType
     Highlight,
     Text,
     Select,
-    Eyedropper
+    Eyedropper,
+    Pixelate,
+    Blur
 }
 
 /// <summary>
@@ -65,6 +67,21 @@ public class DrawingElement
     public string? Text { get; set; }
 
     /// <summary>
+    /// Kích thước ô vuông mosaic (dùng cho công cụ Pixelate).
+    /// </summary>
+    public int PixelateBlockSize { get; set; } = 10;
+
+    /// <summary>
+    /// Bán kính làm mờ (dùng cho công cụ Blur).
+    /// </summary>
+    public int BlurRadius { get; set; } = 8;
+
+    /// <summary>
+    /// Bitmap chứa hiệu ứng hình ảnh đã xử lý (Pixelate, Blur).
+    /// </summary>
+    public System.Windows.Media.Imaging.BitmapSource? EffectBitmap { get; set; }
+
+    /// <summary>
     /// Tính toán hộp bao quanh (bounding box) của phần tử vẽ.
     /// </summary>
     public Rect GetBoundingBox()
@@ -73,6 +90,8 @@ public class DrawingElement
         {
             case DrawingToolType.Rectangle:
             case DrawingToolType.Ellipse:
+            case DrawingToolType.Pixelate:
+            case DrawingToolType.Blur:
                 return Rect;
 
             case DrawingToolType.Line:

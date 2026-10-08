@@ -19,6 +19,11 @@ public class DrawingCanvas : Canvas
 
     public UndoStack<DrawingElement> UndoStack { get; } = new();
 
+    /// <summary>
+    /// Ảnh chụp màn hình nền dùng để cắt và áp dụng hiệu ứng Blur / Pixelate.
+    /// </summary>
+    public System.Windows.Media.Imaging.BitmapSource? BackgroundImage { get; set; }
+
     public static readonly DependencyProperty CurrentToolProperty =
         DependencyProperty.Register(
             nameof(CurrentTool),
@@ -158,6 +163,8 @@ public class DrawingCanvas : Canvas
                 DrawingToolType.Text => Cursors.IBeam,
                 DrawingToolType.Select => Cursors.Hand,
                 DrawingToolType.Eyedropper => Cursors.Cross,
+                DrawingToolType.Pixelate => Cursors.Cross,
+                DrawingToolType.Blur => Cursors.Cross,
                 _ => Cursors.Arrow
             };
         }
@@ -203,6 +210,24 @@ public class DrawingCanvas : Canvas
             {
                 element.Rect = new Rect(element.Rect.X + dx, element.Rect.Y + dy, element.Rect.Width, element.Rect.Height);
             }
+
+            if ((element.ToolType == DrawingToolType.Pixelate || element.ToolType == DrawingToolType.Blur) && BackgroundImage != null)
+            {
+                if (element.ToolType == DrawingToolType.Pixelate)
+                {
+                    element.EffectBitmap = ImageEffectHelper.ApplyPixelate(
+                        BackgroundImage,
+                        element.Rect,
+                        element.PixelateBlockSize);
+                }
+                else
+                {
+                    element.EffectBitmap = ImageEffectHelper.ApplyBoxBlur(
+                        BackgroundImage,
+                        element.Rect,
+                        element.BlurRadius);
+                }
+            }
         }
 
         InvalidateVisual();
@@ -240,6 +265,8 @@ public class DrawingCanvas : Canvas
 
             case DrawingToolType.Rectangle:
             case DrawingToolType.Ellipse:
+            case DrawingToolType.Pixelate:
+            case DrawingToolType.Blur:
                 var minX = Math.Min(_currentElement.StartPoint.X, currentPoint.X);
                 var minY = Math.Min(_currentElement.StartPoint.Y, currentPoint.Y);
                 var width = Math.Abs(currentPoint.X - _currentElement.StartPoint.X);
@@ -262,6 +289,35 @@ public class DrawingCanvas : Canvas
         if (!_isDrawing || _currentElement == null) return;
 
         _isDrawing = false;
+
+        if (_currentElement.ToolType == DrawingToolType.Pixelate || _currentElement.ToolType == DrawingToolType.Blur)
+        {
+            if (_currentElement.Rect.Width < 2 || _currentElement.Rect.Height < 2)
+            {
+                _currentElement = null;
+                InvalidateVisual();
+                return;
+            }
+
+            if (BackgroundImage != null)
+            {
+                if (_currentElement.ToolType == DrawingToolType.Pixelate)
+                {
+                    _currentElement.EffectBitmap = ImageEffectHelper.ApplyPixelate(
+                        BackgroundImage,
+                        _currentElement.Rect,
+                        _currentElement.PixelateBlockSize);
+                }
+                else
+                {
+                    _currentElement.EffectBitmap = ImageEffectHelper.ApplyBoxBlur(
+                        BackgroundImage,
+                        _currentElement.Rect,
+                        _currentElement.BlurRadius);
+                }
+            }
+        }
+
         UndoStack.Push(_currentElement);
         _currentElement = null;
         InvalidateVisual();
@@ -365,6 +421,24 @@ public class DrawingCanvas : Canvas
             for (int i = 0; i < SelectedElement.Points.Count; i++)
             {
                 SelectedElement.Points[i] = new Point(SelectedElement.Points[i].X + dx, SelectedElement.Points[i].Y + dy);
+            }
+        }
+
+        if ((SelectedElement.ToolType == DrawingToolType.Pixelate || SelectedElement.ToolType == DrawingToolType.Blur) && BackgroundImage != null)
+        {
+            if (SelectedElement.ToolType == DrawingToolType.Pixelate)
+            {
+                SelectedElement.EffectBitmap = ImageEffectHelper.ApplyPixelate(
+                    BackgroundImage,
+                    SelectedElement.Rect,
+                    SelectedElement.PixelateBlockSize);
+            }
+            else
+            {
+                SelectedElement.EffectBitmap = ImageEffectHelper.ApplyBoxBlur(
+                    BackgroundImage,
+                    SelectedElement.Rect,
+                    SelectedElement.BlurRadius);
             }
         }
 

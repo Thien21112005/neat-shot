@@ -46,6 +46,25 @@ public static class DrawingRenderer
                 dc.DrawRectangle(null, pen, element.Rect);
                 break;
 
+            case DrawingToolType.Pixelate:
+            case DrawingToolType.Blur:
+                if (element.EffectBitmap != null)
+                {
+                    dc.DrawImage(element.EffectBitmap, element.Rect);
+                }
+                else if (!element.Rect.IsEmpty && element.Rect.Width > 0 && element.Rect.Height > 0)
+                {
+                    var previewPen = new Pen(new SolidColorBrush(Color.FromArgb(180, 0, 120, 212)), 1.5)
+                    {
+                        DashStyle = DashStyles.Dash
+                    };
+                    previewPen.Freeze();
+                    var previewBrush = new SolidColorBrush(Color.FromArgb(40, 0, 120, 212));
+                    previewBrush.Freeze();
+                    dc.DrawRectangle(previewBrush, previewPen, element.Rect);
+                }
+                break;
+
             case DrawingToolType.Ellipse:
                 if (!element.Rect.IsEmpty && element.Rect.Width > 0 && element.Rect.Height > 0)
                 {

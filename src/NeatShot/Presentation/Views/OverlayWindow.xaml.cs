@@ -242,6 +242,10 @@ public partial class OverlayWindow : Window
         {
             UpdateToolbarPosition(ViewModel.SelectedRegion);
         }
+        else if (e.PropertyName == nameof(OverlayViewModel.BackgroundImage))
+        {
+            DrawingControl.BackgroundImage = ViewModel.BackgroundImage;
+        }
     }
 
     private void OnToolbarMoved(object? sender, Point delta)
@@ -329,6 +333,7 @@ public partial class OverlayWindow : Window
         Height = virtualBounds.Height;
 
         ViewModel.BackgroundImage = frozenScreen;
+        DrawingControl.BackgroundImage = frozenScreen;
 
         Show();
         Activate();
@@ -507,6 +512,10 @@ public partial class OverlayWindow : Window
                 case Key.T:
                     Toolbar.SetActiveTool(DrawingToolType.Text);
                     DrawingControl.CurrentTool = DrawingToolType.Text;
+                    return true;
+                case Key.B:
+                    Toolbar.SetActiveTool(DrawingToolType.Pixelate);
+                    DrawingControl.CurrentTool = DrawingToolType.Pixelate;
                     return true;
                 case Key.I:
                     Toolbar.SetActiveTool(DrawingToolType.Eyedropper);

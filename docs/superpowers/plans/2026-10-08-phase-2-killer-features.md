@@ -144,14 +144,14 @@ graph TD
   - `DrawingToolType.Pixelate`, `DrawingToolType.Blur`
   - Render sub-bitmap trên DrawingContext
 
-- [ ] **Step 1: Viết failing test cho `ImageEffectHelper` (thuật toán Pixelate và Box Blur trên WriteableBitmap/byte array)**
-- [ ] **Step 2: Viết failing test cho `DrawingRenderer` khi vẽ phần tử `Pixelate`**
-- [ ] **Step 3: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 4: Triển khai `ImageEffectHelper.cs` với thuật toán xử lý mảng byte pixel tối ưu hiệu năng O(N)**
-- [ ] **Step 5: Mở rộng `DrawingElement.cs`, `DrawingRenderer.cs` và `DrawingCanvas.cs` hỗ trợ kéo chọn vùng mờ/khảm**
-- [ ] **Step 6: Bổ sung nút `PixelateButton` (🔲/🧊) trên `AnnotationToolbar.xaml`**
-- [ ] **Step 7: Chạy `dotnet test` xác nhận test xanh (GREEN)**
-- [ ] **Step 8: Commit `feat(fx): implement smart pixelate and blur redaction tools`**
+- [x] **Step 1: Viết failing test cho `ImageEffectHelper` (thuật toán Pixelate và Box Blur trên WriteableBitmap/byte array)**
+- [x] **Step 2: Viết failing test cho `DrawingRenderer` khi vẽ phần tử `Pixelate`**
+- [x] **Step 3: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 4: Triển khai `ImageEffectHelper.cs` với thuật toán xử lý mảng byte pixel tối ưu hiệu năng O(N)**
+- [x] **Step 5: Mở rộng `DrawingElement.cs`, `DrawingRenderer.cs` và `DrawingCanvas.cs` hỗ trợ kéo chọn vùng mờ/khảm**
+- [x] **Step 6: Bổ sung nút `PixelateButton` (🔲/🧊) trên `AnnotationToolbar.xaml`**
+- [x] **Step 7: Chạy `dotnet test` xác nhận test xanh (GREEN)**
+- [x] **Step 8: Commit `feat(fx): implement smart pixelate and blur redaction tools`**
 
 ---
 

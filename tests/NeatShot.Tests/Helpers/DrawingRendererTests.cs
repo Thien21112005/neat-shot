@@ -201,4 +201,78 @@ public class DrawingRendererTests
 
         Assert.Null(threadEx);
     }
+
+    [Fact]
+    public void RenderElement_RendersPixelate_DrawsImage_OnStaThread()
+    {
+        Exception? threadEx = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var visual = new DrawingVisual();
+                var dummyBitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(50, 50, 96, 96, PixelFormats.Pbgra32);
+                var element = new DrawingElement
+                {
+                    ToolType = DrawingToolType.Pixelate,
+                    Rect = new Rect(10, 10, 50, 50),
+                    EffectBitmap = dummyBitmap
+                };
+
+                using (var dc = visual.RenderOpen())
+                {
+                    DrawingRenderer.RenderElement(dc, element);
+                }
+
+                Assert.NotNull(visual.Drawing);
+                Assert.True(visual.Drawing.Children.Count > 0, "Pixelate element with EffectBitmap must render an image");
+            }
+            catch (Exception ex)
+            {
+                threadEx = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadEx);
+    }
+
+    [Fact]
+    public void RenderElement_RendersBlur_DrawsImage_OnStaThread()
+    {
+        Exception? threadEx = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var visual = new DrawingVisual();
+                var dummyBitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(50, 50, 96, 96, PixelFormats.Pbgra32);
+                var element = new DrawingElement
+                {
+                    ToolType = DrawingToolType.Blur,
+                    Rect = new Rect(10, 10, 50, 50),
+                    EffectBitmap = dummyBitmap
+                };
+
+                using (var dc = visual.RenderOpen())
+                {
+                    DrawingRenderer.RenderElement(dc, element);
+                }
+
+                Assert.NotNull(visual.Drawing);
+                Assert.True(visual.Drawing.Children.Count > 0, "Blur element with EffectBitmap must render an image");
+            }
+            catch (Exception ex)
+            {
+                threadEx = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadEx);
+    }
 }

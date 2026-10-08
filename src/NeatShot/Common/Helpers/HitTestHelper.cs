@@ -26,6 +26,8 @@ public static class HitTestHelper
         switch (element.ToolType)
         {
             case DrawingToolType.Rectangle:
+            case DrawingToolType.Pixelate:
+            case DrawingToolType.Blur:
                 return HitTestRectangle(element.Rect, testPoint, effTol);
 
             case DrawingToolType.Ellipse:
