@@ -5,6 +5,7 @@
 
 # dotenv files
 .env
+.superpowers/
 
 # User-specific files
 *.rsuser
