@@ -89,7 +89,7 @@ public partial class App : Application
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = "NeatShot - Chụp màn hình thông minh (Click để chụp)",
-            IconSource = TrayIconHelper.CreateTrayIcon(),
+            Icon = TrayIconHelper.CreateTrayIcon(),
             ContextMenu = contextMenu
         };
 
