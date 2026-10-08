@@ -80,4 +80,57 @@ public class ToolbarPositionHelperTests
 
         Assert.Equal(8, pos.X);
     }
+
+    [Fact]
+    public void CalculateDrawingBarPosition_PlacesOnRightEdge_WhenSpaceAvailable()
+    {
+        var region = new Rect(200, 200, 400, 300);
+        var barSize = new Size(42, 360);
+
+        var pos = ToolbarPositionHelper.CalculateDrawingBarPosition(region, barSize, _screenSize);
+
+        // Right of region: 200 + 400 + 8 = 608
+        Assert.Equal(608, pos.X);
+        Assert.Equal(200, pos.Y);
+    }
+
+    [Fact]
+    public void CalculateDrawingBarPosition_FlipsToLeft_WhenNearRightEdge()
+    {
+        // Near right edge: Right = 1900
+        var region = new Rect(1500, 200, 400, 300);
+        var barSize = new Size(42, 360);
+
+        var pos = ToolbarPositionHelper.CalculateDrawingBarPosition(region, barSize, _screenSize);
+
+        // Should flip to left of region: 1500 - 8 - 42 = 1450
+        Assert.Equal(1450, pos.X);
+    }
+
+    [Fact]
+    public void CalculateActionBarPosition_PlacesBelowAlignedRight_WhenSpaceAvailable()
+    {
+        var region = new Rect(200, 200, 400, 300);
+        var barSize = new Size(280, 40);
+
+        var pos = ToolbarPositionHelper.CalculateActionBarPosition(region, barSize, _screenSize);
+
+        // Right aligned: 600 - 280 = 320
+        Assert.Equal(320, pos.X);
+        // Below region: 200 + 300 + 8 = 508
+        Assert.Equal(508, pos.Y);
+    }
+
+    [Fact]
+    public void CalculateActionBarPosition_FlipsToTop_WhenNearBottom()
+    {
+        // Near bottom: Bottom = 1060
+        var region = new Rect(200, 760, 400, 300);
+        var barSize = new Size(280, 40);
+
+        var pos = ToolbarPositionHelper.CalculateActionBarPosition(region, barSize, _screenSize);
+
+        // Flips above region: 760 - 8 - 40 = 712
+        Assert.Equal(712, pos.Y);
+    }
 }

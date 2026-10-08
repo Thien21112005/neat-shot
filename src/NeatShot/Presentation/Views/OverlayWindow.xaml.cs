@@ -420,23 +420,14 @@ public partial class OverlayWindow : Window
             var rect = region.ToRect();
             Toolbar.Visibility = Visibility.Visible;
 
-            if (_isToolbarManuallyPositioned)
-            {
-                var tbWidth = Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640;
-                var tbHeight = Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44;
-                var clampedX = Math.Clamp(_manualToolbarPosition.X, 8, Math.Max(8, ActualWidth - tbWidth - 8));
-                var clampedY = Math.Clamp(_manualToolbarPosition.Y, 4, Math.Max(4, ActualHeight - tbHeight - 4));
-                Canvas.SetLeft(Toolbar, clampedX);
-                Canvas.SetTop(Toolbar, clampedY);
-                return;
-            }
-
-            var tbSize = new Size(
-                Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640,
-                Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44);
             var screenSize = new Size(
                 ActualWidth > 0 ? ActualWidth : 1920,
                 ActualHeight > 0 ? ActualHeight : 1080);
+
+            Canvas.SetLeft(Toolbar, 0);
+            Canvas.SetTop(Toolbar, 0);
+            Toolbar.Width = screenSize.Width;
+            Toolbar.Height = screenSize.Height;
 
             var options = Toolbar.SelectedBeautifyOptions;
             var isBeautifyActive = options != null && options.IsEnabled && options.Preset != NeatShot.Core.Models.BeautifyPreset.None;
@@ -445,10 +436,10 @@ public partial class OverlayWindow : Window
                 ? new Rect(rect.X - padding, rect.Y - padding, rect.Width + padding * 2, rect.Height + padding * 2)
                 : rect;
 
-            var pos = ToolbarPositionHelper.CalculatePosition(effectiveRect, tbSize, screenSize);
-
-            Canvas.SetLeft(Toolbar, pos.X);
-            Canvas.SetTop(Toolbar, pos.Y);
+            if (!_isToolbarManuallyPositioned)
+            {
+                Toolbar.UpdatePositions(effectiveRect, screenSize);
+            }
         }
         else
         {

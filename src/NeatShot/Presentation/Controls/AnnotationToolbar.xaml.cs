@@ -354,14 +354,22 @@ public partial class AnnotationToolbar : UserControl
         SetControlActive(ShapeComboBox, _activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse);
         SetControlActive(LineComboBox, _activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line);
 
+        var isFontActive = _activeTool == DrawingToolType.Text;
+        var isStepActive = _activeTool == DrawingToolType.StepCounter;
+
         if (FontControlsPanel != null)
         {
-            FontControlsPanel.Visibility = _activeTool == DrawingToolType.Text ? Visibility.Visible : Visibility.Collapsed;
+            FontControlsPanel.Visibility = isFontActive ? Visibility.Visible : Visibility.Collapsed;
         }
 
         if (StepSizeControlsPanel != null)
         {
-            StepSizeControlsPanel.Visibility = _activeTool == DrawingToolType.StepCounter ? Visibility.Visible : Visibility.Collapsed;
+            StepSizeControlsPanel.Visibility = isStepActive ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        if (FlyoutOptionsPanel != null)
+        {
+            FlyoutOptionsPanel.Visibility = (isFontActive || isStepActive) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         if (ColorPalettePanel != null)
@@ -600,6 +608,50 @@ public partial class AnnotationToolbar : UserControl
                 BeautifyComboBox.SelectedIndex = i;
                 return;
             }
+        }
+    }
+
+    /// <summary>
+    /// Định vị 2 thanh công cụ (Thanh dọc vẽ ở cạnh phải, Thanh ngang tác vụ ở cạnh dưới)
+    /// chuẩn phong cách Lightshot thích ứng theo toạ độ vùng chọn và kích thước màn hình.
+    /// </summary>
+    public void UpdatePositions(Rect regionRect, Size screenSize)
+    {
+        if (VerticalBar == null || HorizontalBar == null) return;
+
+        VerticalBar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        HorizontalBar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+        var drawingSize = new Size(
+            VerticalBar.ActualWidth > 0 ? VerticalBar.ActualWidth : VerticalBar.DesiredSize.Width,
+            VerticalBar.ActualHeight > 0 ? VerticalBar.ActualHeight : VerticalBar.DesiredSize.Height);
+
+        var actionSize = new Size(
+            HorizontalBar.ActualWidth > 0 ? HorizontalBar.ActualWidth : HorizontalBar.DesiredSize.Width,
+            HorizontalBar.ActualHeight > 0 ? HorizontalBar.ActualHeight : HorizontalBar.DesiredSize.Height);
+
+        var posDrawing = ToolbarPositionHelper.CalculateDrawingBarPosition(regionRect, drawingSize, screenSize);
+        var posAction = ToolbarPositionHelper.CalculateActionBarPosition(regionRect, actionSize, screenSize);
+
+        Canvas.SetLeft(VerticalBar, posDrawing.X);
+        Canvas.SetTop(VerticalBar, posDrawing.Y);
+
+        Canvas.SetLeft(HorizontalBar, posAction.X);
+        Canvas.SetTop(HorizontalBar, posAction.Y);
+
+        // Canh chỉnh thanh phụ Options (Font hoặc Step Size) bám sát cạnh thanh dọc
+        if (FlyoutOptionsPanel != null && FlyoutOptionsPanel.Visibility == Visibility.Visible)
+        {
+            FlyoutOptionsPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            var flyoutWidth = FlyoutOptionsPanel.ActualWidth > 0 ? FlyoutOptionsPanel.ActualWidth : FlyoutOptionsPanel.DesiredSize.Width;
+
+            var flyoutX = (posDrawing.X + drawingSize.Width + flyoutWidth > screenSize.Width - 4)
+                ? posDrawing.X - flyoutWidth - 6
+                : posDrawing.X + drawingSize.Width + 6;
+            var flyoutY = posDrawing.Y;
+
+            Canvas.SetLeft(FlyoutOptionsPanel, Math.Clamp(flyoutX, 4, screenSize.Width - flyoutWidth - 4));
+            Canvas.SetTop(FlyoutOptionsPanel, Math.Clamp(flyoutY, 4, screenSize.Height - 40));
         }
     }
 }

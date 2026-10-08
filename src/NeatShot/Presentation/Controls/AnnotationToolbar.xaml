@@ -4,309 +4,343 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Background="{x:Null}">
 
-    <Border Background="#E6242424"
-            BorderBrush="#33FFFFFF"
-            BorderThickness="1"
-            CornerRadius="8"
-            Padding="6,4"
-            Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+    <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
+    <Canvas x:Name="ToolbarCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-        <StackPanel Orientation="Horizontal">
-            <!-- Tay cầm kéo di chuyển thanh công cụ tự do (Drag Grip) -->
-            <Border x:Name="DragGrip"
-                    Cursor="SizeAll"
-                    Background="Transparent"
-                    Padding="3,0,5,0"
-                    VerticalAlignment="Center"
-                    ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
-                    MouseLeftButtonDown="OnDragGripMouseDown"
-                    MouseMove="OnDragGripMouseMove"
-                    MouseLeftButtonUp="OnDragGripMouseUp">
-                <TextBlock Text="⋮⋮"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Foreground="#80FFFFFF" />
-            </Border>
+        <!-- 1. THANH DỌC CÔNG CỤ VẼ & CHÚ THÍCH (Vertical Drawing Toolbar - Cạnh phải vùng chọn) -->
+        <Border x:Name="VerticalBar"
+                Background="#F01E1E1E"
+                BorderBrush="#40FFFFFF"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="4,6"
+                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <!-- Tay cầm kéo di chuyển thanh công cụ tự do (Drag Grip) -->
+                <Border x:Name="DragGrip"
+                        Cursor="SizeAll"
+                        Background="Transparent"
+                        Padding="0,2,0,4"
+                        HorizontalAlignment="Center"
+                        ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
+                        MouseLeftButtonDown="OnDragGripMouseDown"
+                        MouseMove="OnDragGripMouseMove"
+                        MouseLeftButtonUp="OnDragGripMouseUp">
+                    <TextBlock Text="⋮⋮"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Foreground="#80FFFFFF"
+                               HorizontalAlignment="Center" />
+                </Border>
 
-            <!-- Nút Chọn & Di chuyển (Select) -->
-            <Button x:Name="SelectButton"
-                    ToolTip="Chọn &amp; di chuyển hình vẽ (Click chuột phải để di chuyển khung chụp)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnSelectClick">
-                <TextBlock Text="👆" FontSize="13" />
-            </Button>
+                <!-- Nút Chọn & Di chuyển (Select) -->
+                <Button x:Name="SelectButton"
+                        ToolTip="Chọn &amp; di chuyển hình vẽ (Click chuột phải để di chuyển khung chụp)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnSelectClick">
+                    <TextBlock Text="👆" FontSize="13" />
+                </Button>
 
-            <!-- Nút Bút chì (Pencil) -->
-            <Button x:Name="PencilButton"
-                    ToolTip="Bút vẽ tự do (P)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnPencilClick">
-                <TextBlock Text="✏️" FontSize="13" />
-            </Button>
+                <!-- Nút Bút chì (Pencil) -->
+                <Button x:Name="PencilButton"
+                        ToolTip="Bút vẽ tự do (P)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnPencilClick">
+                    <TextBlock Text="✏️" FontSize="13" />
+                </Button>
 
-            <!-- Ô thả xuống Hình khối: Hình chữ nhật & Oval (R / O) -->
-            <ComboBox x:Name="ShapeComboBox"
-                      ToolTip="Chọn hình khối: Chữ nhật (R) hoặc Oval (O)"
-                      Margin="2,0"
-                      Height="28"
-                      MaxDropDownHeight="180"
-                      Padding="6,2"
-                      VerticalContentAlignment="Center"
-                      SelectionChanged="OnShapeComboBoxSelectionChanged">
-                <ComboBoxItem Content="🔲 Chữ nhật" Tag="Rectangle" IsSelected="True" />
-                <ComboBoxItem Content="⬭ Oval" Tag="Ellipse" />
-            </ComboBox>
-
-            <!-- Ô thả xuống Đường kẻ: Mũi tên & Đường thẳng (A / L) -->
-            <ComboBox x:Name="LineComboBox"
-                      ToolTip="Chọn đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
-                      Margin="2,0"
-                      Height="28"
-                      MaxDropDownHeight="180"
-                      Padding="6,2"
-                      VerticalContentAlignment="Center"
-                      SelectionChanged="OnLineComboBoxSelectionChanged">
-                <ComboBoxItem Content="↗ Mũi tên" Tag="Arrow" IsSelected="True" />
-                <ComboBoxItem Content="― Đường thẳng" Tag="Line" />
-            </ComboBox>
-
-            <!-- Các nút ẩn giữ tương thích API và kiểm thử tự động -->
-            <Button x:Name="RectButton" Visibility="Collapsed" Click="OnRectClick" />
-            <Button x:Name="EllipseButton" Visibility="Collapsed" Click="OnEllipseClick" />
-            <Button x:Name="LineButton" Visibility="Collapsed" Click="OnLineClick" />
-            <Button x:Name="ArrowButton" Visibility="Collapsed" Click="OnArrowClick" />
-
-            <!-- Nút Bút dạ quang (Highlight) -->
-            <Button x:Name="HighlightButton"
-                    ToolTip="Bút dạ quang highlight (H)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnHighlightClick">
-                <TextBlock Text="🖍️" FontSize="13" />
-            </Button>
-
-            <!-- Nút Chèn văn bản (Text) -->
-            <Button x:Name="TextButton"
-                    ToolTip="Chèn chữ văn bản (T)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnTextClick">
-                <TextBlock Text="T" FontSize="13" FontWeight="Bold" />
-            </Button>
-
-            <!-- Nút Khảm ô vuông (Pixelate / Mosaic) -->
-            <Button x:Name="PixelateButton"
-                    ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnPixelateClick">
-                <TextBlock Text="🧊" FontSize="13" />
-            </Button>
-
-            <!-- Nút Làm mờ (Blur) -->
-            <Button x:Name="BlurButton"
-                    ToolTip="Làm mờ che thông tin nhạy cảm (Blur)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnBlurClick">
-                <TextBlock Text="🌫️" FontSize="13" />
-            </Button>
-
-            <!-- Nút Đánh số bước tự động (Step Counter) -->
-            <Button x:Name="StepCounterButton"
-                    ToolTip="Đánh số bước tự động (N)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnStepCounterClick">
-                <TextBlock Text="①" FontSize="14" FontWeight="Bold" />
-            </Button>
-
-            <!-- Bảng tùy chọn kích thước đánh số bước (Step Counter Size) -->
-            <StackPanel x:Name="StepSizeControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
-                <TextBlock Text="Cỡ số:" FontSize="12" VerticalAlignment="Center" Margin="3,0,2,0" Foreground="#A0A0A0" ToolTip="Kích thước ô đánh số bước" />
-                <ComboBox x:Name="StepSizeComboBox"
-                          Width="80"
+                <!-- Ô thả xuống Hình khối: Hình chữ nhật & Oval (R / O) -->
+                <ComboBox x:Name="ShapeComboBox"
+                          ToolTip="Chọn hình khối: Chữ nhật (R) hoặc Oval (O)"
+                          Margin="0,2"
+                          Width="36"
                           Height="28"
                           MaxDropDownHeight="180"
-                          Margin="2,0"
                           Padding="4,2"
                           VerticalContentAlignment="Center"
-                          ToolTip="Chọn kích thước ô số bước"
-                          SelectionChanged="OnStepSizeSelectionChanged">
-                    <ComboBoxItem Content="Nhỏ (11)" Tag="11" />
-                    <ComboBoxItem Content="Vừa (14)" Tag="14" IsSelected="True" />
-                    <ComboBoxItem Content="Lớn (18)" Tag="18" />
-                    <ComboBoxItem Content="Rất lớn (24)" Tag="24" />
+                          SelectionChanged="OnShapeComboBoxSelectionChanged">
+                    <ComboBoxItem Content="🔲 Chữ nhật" Tag="Rectangle" IsSelected="True" />
+                    <ComboBoxItem Content="⬭ Oval" Tag="Ellipse" />
                 </ComboBox>
+
+                <!-- Ô thả xuống Đường kẻ: Mũi tên & Đường thẳng (A / L) -->
+                <ComboBox x:Name="LineComboBox"
+                          ToolTip="Chọn đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
+                          Margin="0,2"
+                          Width="36"
+                          Height="28"
+                          MaxDropDownHeight="180"
+                          Padding="4,2"
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="OnLineComboBoxSelectionChanged">
+                    <ComboBoxItem Content="↗ Mũi tên" Tag="Arrow" IsSelected="True" />
+                    <ComboBoxItem Content="― Đường thẳng" Tag="Line" />
+                </ComboBox>
+
+                <!-- Các nút ẩn giữ tương thích API và kiểm thử tự động -->
+                <Button x:Name="RectButton" Visibility="Collapsed" Click="OnRectClick" />
+                <Button x:Name="EllipseButton" Visibility="Collapsed" Click="OnEllipseClick" />
+                <Button x:Name="LineButton" Visibility="Collapsed" Click="OnLineClick" />
+                <Button x:Name="ArrowButton" Visibility="Collapsed" Click="OnArrowClick" />
+
+                <!-- Nút Bút dạ quang (Highlight) -->
+                <Button x:Name="HighlightButton"
+                        ToolTip="Bút dạ quang highlight (H)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnHighlightClick">
+                    <TextBlock Text="🖍️" FontSize="13" />
+                </Button>
+
+                <!-- Nút Chèn văn bản (Text) -->
+                <Button x:Name="TextButton"
+                        ToolTip="Chèn chữ văn bản (T)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnTextClick">
+                    <TextBlock Text="T" FontSize="13" FontWeight="Bold" />
+                </Button>
+
+                <!-- Nút Khảm ô vuông (Pixelate / Mosaic) -->
+                <Button x:Name="PixelateButton"
+                        ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnPixelateClick">
+                    <TextBlock Text="🧊" FontSize="13" />
+                </Button>
+
+                <!-- Nút Làm mờ (Blur) -->
+                <Button x:Name="BlurButton"
+                        ToolTip="Làm mờ che thông tin nhạy cảm (Blur)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnBlurClick">
+                    <TextBlock Text="🌫️" FontSize="13" />
+                </Button>
+
+                <!-- Nút Đánh số bước tự động (Step Counter) -->
+                <Button x:Name="StepCounterButton"
+                        ToolTip="Đánh số bước tự động (N)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnStepCounterClick">
+                    <TextBlock Text="①" FontSize="14" FontWeight="Bold" />
+                </Button>
+
+                <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                <!-- Nhóm công cụ chọn màu & lịch sử màu (Ẩn khi dùng Mosaic / Blur vì không sử dụng màu) -->
+                <StackPanel x:Name="ColorPalettePanel" Orientation="Vertical" HorizontalAlignment="Center">
+                    <!-- Nút Cây bút hút màu (Eyedropper) -->
+                    <Button x:Name="EyedropperButton"
+                            ToolTip="Cây bút hút màu màn hình (I)"
+                            Margin="0,2"
+                            Padding="5,4"
+                            Click="OnEyedropperClick">
+                        <TextBlock Text="💉" FontSize="12" />
+                    </Button>
+
+                    <Separator Margin="2,3" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                    <!-- Bảng màu mặc định (xếp dọc 1 cột gọn gàng) -->
+                    <Button x:Name="ColorRedButton" ToolTip="Màu đỏ" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFE81123">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFE81123" />
+                    </Button>
+                    <Button x:Name="ColorYellowButton" ToolTip="Màu vàng" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFFFB900">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFB900" />
+                    </Button>
+                    <Button x:Name="ColorGreenButton" ToolTip="Màu xanh lá" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FF107C41">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#FF107C41" />
+                    </Button>
+                    <Button x:Name="ColorBlueButton" ToolTip="Màu xanh dương" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FF0078D4">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#FF0078D4" />
+                    </Button>
+                    <Button x:Name="ColorWhiteButton" ToolTip="Màu trắng" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFFFFFFF">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFFFFF" />
+                    </Button>
+
+                    <!-- Lịch sử các màu đã chọn/hút gần đây (Color History) -->
+                    <StackPanel x:Name="HistoryColorsPanel" Orientation="Vertical" Margin="0,2" />
+                </StackPanel>
+
+                <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                <!-- Nút Hoàn tác (Undo) -->
+                <Button x:Name="UndoButton"
+                        ToolTip="Hoàn tác nét vẽ (Ctrl + Z)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnUndoClick">
+                    <TextBlock Text="↩" FontSize="13" FontWeight="Bold" />
+                </Button>
+
+                <!-- Nút Làm lại (Redo) -->
+                <Button x:Name="RedoButton"
+                        ToolTip="Làm lại nét vẽ (Ctrl + Y)"
+                        Margin="0,2"
+                        Padding="5,4"
+                        Click="OnRedoClick">
+                    <TextBlock Text="↪" FontSize="13" FontWeight="Bold" />
+                </Button>
             </StackPanel>
+        </Border>
 
-            <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
-            <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
-                <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="3,0,2,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />
-                <ComboBox x:Name="FontFamilyComboBox"
-                          Width="110"
-                          Height="28"
-                          MaxDropDownHeight="180"
-                          Margin="2,0"
-                          Padding="4,2"
-                          VerticalContentAlignment="Center"
-                          ToolTip="Chọn phông chữ"
-                          SelectionChanged="OnFontFamilySelectionChanged">
-                    <ComboBoxItem Content="Segoe UI" IsSelected="True" />
-                    <ComboBoxItem Content="Arial" />
-                    <ComboBoxItem Content="Calibri" />
-                    <ComboBoxItem Content="Consolas" />
-                    <ComboBoxItem Content="Times New Roman" />
-                    <ComboBoxItem Content="Verdana" />
-                    <ComboBoxItem Content="Tahoma" />
-                    <ComboBoxItem Content="Courier New" />
-                </ComboBox>
-                <ComboBox x:Name="FontSizeComboBox"
-                          Width="60"
-                          Height="28"
-                          MaxDropDownHeight="180"
-                          Margin="2,0"
-                          Padding="4,2"
-                          VerticalContentAlignment="Center"
-                          ToolTip="Chọn cỡ chữ"
-                          SelectionChanged="OnFontSizeSelectionChanged">
-                    <ComboBoxItem Content="12" />
-                    <ComboBoxItem Content="14" />
-                    <ComboBoxItem Content="16" IsSelected="True" />
-                    <ComboBoxItem Content="18" />
-                    <ComboBoxItem Content="20" />
-                    <ComboBoxItem Content="24" />
-                    <ComboBoxItem Content="28" />
-                    <ComboBoxItem Content="32" />
-                    <ComboBoxItem Content="40" />
-                </ComboBox>
+        <!-- 2. THANH PHỤ TUỲ CHỌN NỔI (Secondary Flyout: Kích thước số bước & Cỡ chữ khi kích hoạt) -->
+        <Border x:Name="FlyoutOptionsPanel"
+                Visibility="Collapsed"
+                Background="#F01E1E1E"
+                BorderBrush="#40FFFFFF"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="6,4"
+                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Bảng tùy chọn kích thước đánh số bước (Step Counter Size) -->
+                <StackPanel x:Name="StepSizeControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
+                    <TextBlock Text="Cỡ số:" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0" Foreground="#CCCCCC" ToolTip="Kích thước ô đánh số bước" />
+                    <ComboBox x:Name="StepSizeComboBox"
+                              Width="80"
+                              Height="28"
+                              MaxDropDownHeight="180"
+                              Margin="2,0"
+                              Padding="4,2"
+                              VerticalContentAlignment="Center"
+                              ToolTip="Chọn kích thước ô số bước"
+                              SelectionChanged="OnStepSizeSelectionChanged">
+                        <ComboBoxItem Content="Nhỏ (11)" Tag="11" />
+                        <ComboBoxItem Content="Vừa (14)" Tag="14" IsSelected="True" />
+                        <ComboBoxItem Content="Lớn (18)" Tag="18" />
+                        <ComboBoxItem Content="Rất lớn (24)" Tag="24" />
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
+                <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
+                    <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />
+                    <ComboBox x:Name="FontFamilyComboBox"
+                              Width="105"
+                              Height="28"
+                              MaxDropDownHeight="180"
+                              Margin="2,0"
+                              Padding="4,2"
+                              VerticalContentAlignment="Center"
+                              ToolTip="Chọn phông chữ"
+                              SelectionChanged="OnFontFamilySelectionChanged">
+                        <ComboBoxItem Content="Segoe UI" IsSelected="True" />
+                        <ComboBoxItem Content="Arial" />
+                        <ComboBoxItem Content="Calibri" />
+                        <ComboBoxItem Content="Consolas" />
+                        <ComboBoxItem Content="Times New Roman" />
+                        <ComboBoxItem Content="Verdana" />
+                        <ComboBoxItem Content="Tahoma" />
+                        <ComboBoxItem Content="Courier New" />
+                    </ComboBox>
+                    <ComboBox x:Name="FontSizeComboBox"
+                              Width="55"
+                              Height="28"
+                              MaxDropDownHeight="180"
+                              Margin="2,0"
+                              Padding="4,2"
+                              VerticalContentAlignment="Center"
+                              ToolTip="Chọn cỡ chữ"
+                              SelectionChanged="OnFontSizeSelectionChanged">
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="14" />
+                        <ComboBoxItem Content="16" IsSelected="True" />
+                        <ComboBoxItem Content="18" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="24" />
+                        <ComboBoxItem Content="28" />
+                        <ComboBoxItem Content="32" />
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
+        </Border>
 
-            <!-- Nhóm công cụ chọn màu & lịch sử màu (Ẩn khi dùng Mosaic / Blur vì không sử dụng màu) -->
-            <StackPanel x:Name="ColorPalettePanel" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Nút Cây bút hút màu (Eyedropper) -->
-                <Button x:Name="EyedropperButton"
-                        ToolTip="Cây bút hút màu màn hình (I)"
+        <!-- 3. THANH NGANG TÁC VỤ KẾT QUẢ (Horizontal Action Toolbar - Cạnh dưới bên phải vùng chọn) -->
+        <Border x:Name="HorizontalBar"
+                Background="#F01E1E1E"
+                BorderBrush="#40FFFFFF"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="6,4"
+                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Nút Ghim lên màn hình (Pin to Screen) -->
+                <Button x:Name="PinButton"
+                        ToolTip="Ghim ảnh nổi trên màn hình (Pin)"
                         Margin="2,0"
                         Padding="6,4"
-                        Click="OnEyedropperClick">
-                    <TextBlock Text="💉" FontSize="13" />
+                        Click="OnPinClick">
+                    <TextBlock Text="📌" FontSize="13" />
                 </Button>
+
+                <!-- Nút Nhận diện chữ tức thì (Quick OCR) -->
+                <Button x:Name="OcrButton"
+                        ToolTip="Trích xuất chữ vào Clipboard (OCR)"
+                        Margin="2,0"
+                        Padding="6,4"
+                        Click="OnOcrClick">
+                    <TextBlock Text="OCR" FontWeight="SemiBold" FontSize="11" />
+                </Button>
+
+                <!-- Tùy chọn Làm đẹp ảnh (Beautify: Padding, Shadow & Gradient) -->
+                <ComboBox x:Name="BeautifyComboBox"
+                          ToolTip="Làm đẹp ảnh: Đổ bóng, bo góc &amp; nền Gradient"
+                          Margin="2,0"
+                          Height="28"
+                          MaxDropDownHeight="240"
+                          Padding="6,2"
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="OnBeautifySelectionChanged">
+                    <ComboBoxItem Content="✨ Gốc" Tag="None" IsSelected="True" />
+                    <ComboBoxItem Content="🌅 Sunset" Tag="Sunset" />
+                    <ComboBoxItem Content="🌊 Ocean" Tag="Ocean" />
+                    <ComboBoxItem Content="🔮 Purple" Tag="Purple" />
+                    <ComboBoxItem Content="🌑 Dark Slate" Tag="DarkSlate" />
+                </ComboBox>
+
+                <!-- Nút ẩn BeautifyButton phục vụ API và kiểm thử -->
+                <Button x:Name="BeautifyButton" Visibility="Collapsed" Click="OnBeautifyButtonClick" />
 
                 <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                <!-- Bảng màu mặc định -->
-                <Button x:Name="ColorRedButton" ToolTip="Màu đỏ" Margin="2,0" Padding="2" Click="OnColorSelect" Tag="#FFE81123">
-                    <Border Width="14" Height="14" CornerRadius="7" Background="#FFE81123" />
-                </Button>
-                <Button x:Name="ColorYellowButton" ToolTip="Màu vàng" Margin="2,0" Padding="2" Click="OnColorSelect" Tag="#FFFFB900">
-                    <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFB900" />
-                </Button>
-                <Button x:Name="ColorGreenButton" ToolTip="Màu xanh lá" Margin="2,0" Padding="2" Click="OnColorSelect" Tag="#FF107C41">
-                    <Border Width="14" Height="14" CornerRadius="7" Background="#FF107C41" />
-                </Button>
-                <Button x:Name="ColorBlueButton" ToolTip="Màu xanh dương" Margin="2,0" Padding="2" Click="OnColorSelect" Tag="#FF0078D4">
-                    <Border Width="14" Height="14" CornerRadius="7" Background="#FF0078D4" />
-                </Button>
-                <Button x:Name="ColorWhiteButton" ToolTip="Màu trắng" Margin="2,0" Padding="2" Click="OnColorSelect" Tag="#FFFFFFFF">
-                    <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFFFFF" />
+                <!-- Nút Copy vào Clipboard -->
+                <Button x:Name="CopyButton"
+                        ToolTip="Sao chép vào Clipboard (Enter)"
+                        Background="#FF0078D4"
+                        Foreground="White"
+                        Margin="2,0"
+                        Padding="8,4"
+                        Click="OnCopyClick">
+                    <TextBlock Text="Sao chép" FontWeight="SemiBold" FontSize="12" />
                 </Button>
 
-                <!-- Lịch sử các màu đã chọn/hút gần đây (Color History) -->
-                <StackPanel x:Name="HistoryColorsPanel" Orientation="Horizontal" />
+                <!-- Nút Lưu file ảnh -->
+                <Button x:Name="SaveButton"
+                        ToolTip="Lưu file ảnh PNG (Ctrl + S)"
+                        Margin="2,0"
+                        Padding="8,4"
+                        Click="OnSaveClick">
+                    <TextBlock Text="Lưu" FontSize="12" />
+                </Button>
+
+                <!-- Nút Hủy / Đóng -->
+                <Button x:Name="CloseButton"
+                        ToolTip="Đóng (Esc)"
+                        Margin="2,0"
+                        Padding="6,4"
+                        Click="OnCloseClick">
+                    <TextBlock Text="✕" FontSize="12" />
+                </Button>
             </StackPanel>
+        </Border>
 
-            <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-            <!-- Nút Hoàn tác (Undo) -->
-            <Button x:Name="UndoButton"
-                    ToolTip="Hoàn tác nét vẽ (Ctrl + Z)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnUndoClick">
-                <TextBlock Text="↩" FontSize="14" FontWeight="Bold" />
-            </Button>
-
-            <!-- Nút Làm lại (Redo) -->
-            <Button x:Name="RedoButton"
-                    ToolTip="Làm lại nét vẽ (Ctrl + Y)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnRedoClick">
-                <TextBlock Text="↪" FontSize="14" FontWeight="Bold" />
-            </Button>
-
-            <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-            <!-- Nút Ghim lên màn hình (Pin to Screen) -->
-            <Button x:Name="PinButton"
-                    ToolTip="Ghim ảnh nổi trên màn hình (Pin)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnPinClick">
-                <TextBlock Text="📌" FontSize="13" />
-            </Button>
-
-            <!-- Nút Nhận diện chữ tức thì (Quick OCR) -->
-            <Button x:Name="OcrButton"
-                    ToolTip="Trích xuất chữ vào Clipboard (OCR)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnOcrClick">
-                <TextBlock Text="OCR" FontWeight="SemiBold" FontSize="11" />
-            </Button>
-
-            <!-- Tùy chọn Làm đẹp ảnh (Beautify: Padding, Shadow & Gradient) -->
-            <ComboBox x:Name="BeautifyComboBox"
-                      ToolTip="Làm đẹp ảnh: Đổ bóng, bo góc &amp; nền Gradient"
-                      Margin="2,0"
-                      Height="28"
-                      MaxDropDownHeight="240"
-                      Padding="6,2"
-                      VerticalContentAlignment="Center"
-                      SelectionChanged="OnBeautifySelectionChanged">
-                <ComboBoxItem Content="✨ Gốc" Tag="None" IsSelected="True" />
-                <ComboBoxItem Content="🌅 Sunset" Tag="Sunset" />
-                <ComboBoxItem Content="🌊 Ocean" Tag="Ocean" />
-                <ComboBoxItem Content="🔮 Purple" Tag="Purple" />
-                <ComboBoxItem Content="🌑 Dark Slate" Tag="DarkSlate" />
-            </ComboBox>
-
-            <!-- Nút ẩn BeautifyButton phục vụ API và kiểm thử -->
-            <Button x:Name="BeautifyButton" Visibility="Collapsed" Click="OnBeautifyButtonClick" />
-
-            <!-- Nút Copy vào Clipboard -->
-            <Button x:Name="CopyButton"
-                    ToolTip="Sao chép vào Clipboard (Enter)"
-                    Background="#FF0078D4"
-                    Foreground="White"
-                    Margin="2,0"
-                    Padding="8,4"
-                    Click="OnCopyClick">
-                <TextBlock Text="Sao chép" FontWeight="SemiBold" FontSize="12" />
-            </Button>
-
-            <!-- Nút Lưu file ảnh -->
-            <Button x:Name="SaveButton"
-                    ToolTip="Lưu file ảnh PNG (Ctrl + S)"
-                    Margin="2,0"
-                    Padding="8,4"
-                    Click="OnSaveClick">
-                <TextBlock Text="Lưu" FontSize="12" />
-            </Button>
-
-            <!-- Nút Hủy / Đóng -->
-            <Button x:Name="CloseButton"
-                    ToolTip="Đóng (Esc)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnCloseClick">
-                <TextBlock Text="✕" FontSize="12" />
-            </Button>
-        </StackPanel>
-    </Border>
+    </Canvas>
 </UserControl>
