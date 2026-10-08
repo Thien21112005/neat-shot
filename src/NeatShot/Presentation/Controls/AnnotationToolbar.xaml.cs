@@ -29,6 +29,7 @@ public partial class AnnotationToolbar : UserControl
     {
         _activeTool = DrawingToolType.None;
         UpdateToolButtonVisuals();
+        UpdateColorButtonVisuals();
         ToolSelected?.Invoke(this, DrawingToolType.None);
     }
 
@@ -36,6 +37,7 @@ public partial class AnnotationToolbar : UserControl
     {
         _activeTool = _activeTool == tool ? DrawingToolType.None : tool;
         UpdateToolButtonVisuals();
+        UpdateColorButtonVisuals();
         ToolSelected?.Invoke(this, _activeTool);
     }
 
@@ -82,6 +84,15 @@ public partial class AnnotationToolbar : UserControl
         if (sender is Button { Tag: string hex })
         {
             _selectedColorHex = hex;
+
+            // Nếu người dùng chọn màu khi chưa chọn công cụ, tự động bật công cụ Bút (Pencil)
+            if (_activeTool == DrawingToolType.None)
+            {
+                _activeTool = DrawingToolType.Pencil;
+                UpdateToolButtonVisuals();
+                ToolSelected?.Invoke(this, _activeTool);
+            }
+
             UpdateColorButtonVisuals();
             var color = ColorHelper.FromHex(hex);
             ColorSelected?.Invoke(this, color);
@@ -99,7 +110,11 @@ public partial class AnnotationToolbar : UserControl
 
     private void UpdateColorBorder(Button btn)
     {
-        var isSelected = btn.Tag is string hex && string.Equals(hex, _selectedColorHex, StringComparison.OrdinalIgnoreCase);
+        // CHỈ hiển thị viền chọn màu khi đang có công cụ vẽ được kích hoạt (_activeTool != None)
+        var isSelected = _activeTool != DrawingToolType.None &&
+                         btn.Tag is string hex &&
+                         string.Equals(hex, _selectedColorHex, StringComparison.OrdinalIgnoreCase);
+
         btn.BorderBrush = isSelected ? Brushes.White : Brushes.Transparent;
         btn.BorderThickness = isSelected ? new Thickness(2) : new Thickness(1);
     }

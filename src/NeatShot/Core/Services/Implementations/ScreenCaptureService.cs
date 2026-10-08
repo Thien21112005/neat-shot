@@ -31,15 +31,25 @@ public class ScreenCaptureService : IScreenCaptureService
 
     public async Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default)
     {
-        // 1. Gửi tín hiệu để Windows chủ động ẩn popup khay hệ thống / context menu đang mở
-        var desktopHwnd = NativeMethods.GetDesktopWindow();
-        if (desktopHwnd != IntPtr.Zero)
+        // 1. Gửi phím Escape để Windows Shell chủ động đóng popup khay hệ thống, context menu, Start menu
+        NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, 0, UIntPtr.Zero);
+        NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, NativeConstants.KEYEVENTF_KEYUP, UIntPtr.Zero);
+
+        // 2. Ẩn chủ động cửa sổ khay hệ thống (NotifyIconOverflowWindow trên Windows 10 & 11)
+        var overflowWnd = NativeMethods.FindWindow("NotifyIconOverflowWindow", null);
+        if (overflowWnd != IntPtr.Zero)
         {
-            NativeMethods.SetForegroundWindow(desktopHwnd);
+            NativeMethods.ShowWindow(overflowWnd, NativeConstants.SW_HIDE);
         }
 
-        // 2. Chờ 120ms để hiệu ứng animation đóng popup của Windows hoàn tất
-        await Task.Delay(120, cancellationToken);
+        var topLevelOverflow = NativeMethods.FindWindow("TopLevelWindowForOverflowList", null);
+        if (topLevelOverflow != IntPtr.Zero)
+        {
+            NativeMethods.ShowWindow(topLevelOverflow, NativeConstants.SW_HIDE);
+        }
+
+        // 3. Chờ 200ms để hiệu ứng animation đóng popup của Windows hoàn tất sạch sẽ
+        await Task.Delay(200, cancellationToken);
 
         // 3. Thực hiện chụp ảnh toàn bộ toạ độ Virtual Screen qua Win32 GDI BitBlt
         var bounds = GetVirtualScreenBounds();

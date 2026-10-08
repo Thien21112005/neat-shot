@@ -48,4 +48,9 @@ public static class NativeConstants
     public const int SM_CYVIRTUALSCREEN = 79;
     public const int DESKTOPHORZRES = 118;
     public const int DESKTOPVERTRES = 117;
+
+    // Keyboard & Window Messages for Dismissing Popups
+    public const byte VK_ESCAPE = 0x1B;
+    public const uint KEYEVENTF_KEYUP = 0x0002;
+    public const int WM_CLOSE = 0x0010;
 }
