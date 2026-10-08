@@ -565,7 +565,7 @@ git commit -m "feat: add eyedropper screen color picker with loupe preview"
   - Nut Eyedropper (`💉`) va nut chon mau tuy chinh (Custom Color)
   - Chon mau tu lich su phat ra su kien `ColorSelected` nhu mau mac dinh
 
-- [ ] **Step 1: Viet test that bai cho ColorHistory**
+- [x] **Step 1: Viet test that bai cho ColorHistory**
 
 ```csharp
 [Fact]
@@ -593,12 +593,12 @@ public void ColorHistory_AddsAndDeduplicatesColors_UpToCapacity()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "FullyQualifiedName~ColorHistoryTests"`
 Expected: FAIL vi `ColorHistory` chua duoc tao.
 
-- [ ] **Step 3: Trien khai `ColorHistory.cs`**
+- [x] **Step 3: Trien khai `ColorHistory.cs`**
 
 1. Tao `src/NeatShot/Core/Models/ColorHistory.cs`:
    - `public class ColorHistory`
@@ -609,12 +609,12 @@ Expected: FAIL vi `ColorHistory` chua duoc tao.
      - Chen vao vi tri index 0 (`Colors.Insert(0, color)`).
      - Neu `Colors.Count > Capacity`, loai bo phan tu cuoi cung.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~ColorHistoryTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Cap nhat giao dien `AnnotationToolbar.xaml` va code-behind**
+- [x] **Step 5: Cap nhat giao dien `AnnotationToolbar.xaml` va code-behind**
 
 1. Trong `AnnotationToolbar.xaml`:
    - Them nut Oval (`EllipseButton` voi ky hieu `⬭`).
@@ -629,12 +629,12 @@ Expected: PASS.
    - Phuong thuc `public void AddColorToHistory(Color color)`: goi `History.AddColor(color)` va cap nhat lai cac o swatch.
    - Click vao bat ky o mau lich su nao cung phat ra su kien `ColorSelected` va highlight vien trang.
 
-- [ ] **Step 6: Viet test va xac nhan test tren STA thread**
+- [x] **Step 6: Viet test va xac nhan test tren STA thread**
 
 Run: `dotnet test --filter "FullyQualifiedName~AnnotationToolbarTests"`
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/NeatShot/Core/Models/ColorHistory.cs tests/NeatShot.Tests/Models/ColorHistoryTests.cs src/NeatShot/Presentation/Controls/AnnotationToolbar.xaml src/NeatShot/Presentation/Controls/AnnotationToolbar.xaml.cs tests/NeatShot.Tests/Controls/AnnotationToolbarTests.cs
