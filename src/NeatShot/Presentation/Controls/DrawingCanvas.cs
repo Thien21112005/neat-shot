@@ -172,15 +172,15 @@ public class DrawingCanvas : Canvas
             {
                 DrawingToolType.Pencil => Cursors.Pen,
                 DrawingToolType.Highlight => Cursors.Pen,
-                DrawingToolType.Rectangle => Cursors.Cross,
-                DrawingToolType.Ellipse => Cursors.Cross,
-                DrawingToolType.Line => Cursors.Cross,
-                DrawingToolType.Arrow => Cursors.Cross,
+                DrawingToolType.Rectangle => CursorHelper.WhiteCrosshair,
+                DrawingToolType.Ellipse => CursorHelper.WhiteCrosshair,
+                DrawingToolType.Line => CursorHelper.WhiteCrosshair,
+                DrawingToolType.Arrow => CursorHelper.WhiteCrosshair,
                 DrawingToolType.Text => Cursors.IBeam,
                 DrawingToolType.Select => Cursors.Hand,
-                DrawingToolType.Eyedropper => Cursors.Cross,
-                DrawingToolType.Pixelate => Cursors.Cross,
-                DrawingToolType.Blur => Cursors.Cross,
+                DrawingToolType.Eyedropper => CursorHelper.WhiteCrosshair,
+                DrawingToolType.Pixelate => CursorHelper.WhiteCrosshair,
+                DrawingToolType.Blur => CursorHelper.WhiteCrosshair,
                 DrawingToolType.StepCounter => Cursors.Hand,
                 _ => Cursors.Arrow
             };

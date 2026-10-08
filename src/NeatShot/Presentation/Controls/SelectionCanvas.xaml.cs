@@ -1,3 +1,4 @@
+using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,7 +97,7 @@ public partial class SelectionCanvas : UserControl
         DragMode.ResizeW => Cursors.SizeWE,
         DragMode.ResizeE => Cursors.SizeWE,
         DragMode.Move => Cursors.SizeAll,
-        _ => Cursors.Cross
+        _ => CursorHelper.WhiteCrosshair
     };
 
     private void UpdateHoverCursor(Point pos)
@@ -118,7 +119,7 @@ public partial class SelectionCanvas : UserControl
             }
         }
 
-        Cursor = Cursors.Cross;
+        Cursor = CursorHelper.WhiteCrosshair;
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -160,7 +161,7 @@ public partial class SelectionCanvas : UserControl
         CaptureMouse();
         SelectedRegion = new CaptureRegion(pos.X, pos.Y, 0, 0);
         UpdateVisuals(SelectedRegion);
-        Cursor = Cursors.Cross;
+        Cursor = CursorHelper.WhiteCrosshair;
         e.Handled = true;
     }
 

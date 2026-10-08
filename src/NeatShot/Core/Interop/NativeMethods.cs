@@ -107,4 +107,21 @@ public static class NativeMethods
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ICONINFO
+    {
+        public bool fIcon;
+        public int xHotspot;
+        public int yHotspot;
+        public IntPtr hbmMask;
+        public IntPtr hbmColor;
+    }
+
+    [DllImport(User32, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetIconInfo(IntPtr hIcon, out ICONINFO piconinfo);
+
+    [DllImport(User32, SetLastError = true)]
+    public static extern IntPtr CreateIconIndirect(ref ICONINFO icon);
 }

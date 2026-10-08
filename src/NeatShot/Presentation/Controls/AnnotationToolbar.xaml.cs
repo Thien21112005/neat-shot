@@ -534,4 +534,19 @@ public partial class AnnotationToolbar : UserControl
             if (BeautifyComboBox != null) BeautifyComboBox.SelectedIndex = 0;
         }
     }
+
+    public void SelectBeautifyPreset(BeautifyPreset preset)
+    {
+        if (BeautifyComboBox == null) return;
+        var tag = preset.ToString();
+        for (int i = 0; i < BeautifyComboBox.Items.Count; i++)
+        {
+            if (BeautifyComboBox.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, tag, StringComparison.OrdinalIgnoreCase))
+            {
+                BeautifyComboBox.SelectedIndex = i;
+                return;
+            }
+        }
+    }
 }

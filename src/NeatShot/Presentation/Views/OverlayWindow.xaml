@@ -34,10 +34,134 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
 
-        <!-- Thanh công cụ nổi cạnh vùng chọn -->
+        <!-- Thanh công cụ nổi cạnh vùng chọn và các lớp overlay tương tác -->
         <Canvas x:Name="OverlayCanvas">
+            <!-- Khung xem trước hiệu ứng Làm đẹp ảnh trực tiếp (Live Beautify Preview Frame) -->
+            <Border x:Name="BeautifyPreviewFrame"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False"
+                    CornerRadius="16">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black"
+                                      Direction="270"
+                                      ShadowDepth="8"
+                                      BlurRadius="28"
+                                      Opacity="0.55" />
+                </Border.Effect>
+                <Border x:Name="BeautifyInnerPhotoFrame"
+                        Margin="32"
+                        CornerRadius="12"
+                        BorderBrush="#4DFFFFFF"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black"
+                                          Direction="270"
+                                          ShadowDepth="5"
+                                          BlurRadius="18"
+                                          Opacity="0.4" />
+                    </Border.Effect>
+                </Border>
+            </Border>
+
             <controls:AnnotationToolbar x:Name="Toolbar"
                                         Visibility="Collapsed" />
+
+            <!-- Bảng kết quả Nhận diện chữ trực quan (OCR Result Card) -->
+            <Border x:Name="OcrResultCard"
+                    Visibility="Collapsed"
+                    Width="480"
+                    Background="#F51E1E1E"
+                    BorderBrush="#0078D4"
+                    BorderThickness="1.5"
+                    CornerRadius="12"
+                    Padding="16"
+                    Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                <StackPanel>
+                    <!-- Header -->
+                    <Grid Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🔍" FontSize="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Kết quả Nhận diện chữ (OCR)"
+                                       FontWeight="Bold"
+                                       FontSize="14"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                        <!-- Nút đóng nhanh [X] -->
+                        <Button x:Name="OcrCloseIconButton"
+                                HorizontalAlignment="Right"
+                                Width="26"
+                                Height="26"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="#A0FFFFFF"
+                                ToolTip="Đóng kết quả OCR (Esc)"
+                                Click="OnOcrCloseClick">
+                            <TextBlock Text="✕" FontSize="12" FontWeight="Bold" />
+                        </Button>
+                    </Grid>
+
+                    <!-- Thông báo đã copy vào Clipboard -->
+                    <Border Background="#26107C41"
+                            BorderBrush="#40107C41"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="8,5"
+                            Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✅ " FontSize="12" />
+                            <TextBlock Text="Đã tự động sao chép toàn bộ văn bản vào Clipboard!"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="#4ADE80" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Khung văn bản TextBox cuộn được -->
+                    <TextBox x:Name="OcrResultTextBox"
+                             Height="160"
+                             Background="#FF2A2A2A"
+                             Foreground="White"
+                             BorderBrush="#33FFFFFF"
+                             BorderThickness="1"
+                             Padding="8"
+                             FontFamily="Segoe UI"
+                             FontSize="12"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled"
+                             IsReadOnly="False" />
+
+                    <!-- Footer Buttons -->
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,12,0,0">
+                        <!-- Nút Sao chép lại -->
+                        <Button x:Name="OcrCopyAgainButton"
+                                Content="📋 Sao chép lại"
+                                Margin="0,0,8,0"
+                                Padding="12,5"
+                                Click="OnOcrCopyAgainClick" />
+
+                        <!-- Nút Đóng để tiếp tục vẽ/chỉnh sửa -->
+                        <Button x:Name="OcrContinueButton"
+                                Content="Tiếp tục chỉnh sửa"
+                                Margin="0,0,8,0"
+                                Padding="12,5"
+                                Click="OnOcrCloseClick" />
+
+                        <!-- Nút Hoàn tất (Đóng overlay) -->
+                        <Button x:Name="OcrDoneButton"
+                                Content="Xong &amp; Thoát"
+                                Background="#0078D4"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                Padding="14,5"
+                                Click="OnOcrDoneClick" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- Kính lúp hiển thị màu và mã HEX khi dùng công cụ hút màu (Eyedropper) -->
             <Border x:Name="EyedropperLoupe"

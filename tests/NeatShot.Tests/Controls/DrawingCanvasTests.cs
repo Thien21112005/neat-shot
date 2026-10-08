@@ -1,3 +1,4 @@
+using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Presentation.Controls;
 using System.Windows;
@@ -28,10 +29,10 @@ public class DrawingCanvasTests
                 Assert.True(canvas.IsHitTestVisible);
                 Assert.Equal(Cursors.Pen, canvas.Cursor);
 
-                // Switch to Rectangle -> hit test visible, Cross cursor
+                // Switch to Rectangle -> hit test visible, WhiteCrosshair cursor
                 canvas.CurrentTool = DrawingToolType.Rectangle;
                 Assert.True(canvas.IsHitTestVisible);
-                Assert.Equal(Cursors.Cross, canvas.Cursor);
+                Assert.Equal(CursorHelper.WhiteCrosshair, canvas.Cursor);
 
                 // Switch back to None -> not hit test visible, Arrow cursor
                 canvas.CurrentTool = DrawingToolType.None;
@@ -104,11 +105,11 @@ public class DrawingCanvasTests
 
                 canvas.CurrentTool = DrawingToolType.Ellipse;
                 Assert.True(canvas.IsHitTestVisible);
-                Assert.Equal(Cursors.Cross, canvas.Cursor);
+                Assert.Equal(CursorHelper.WhiteCrosshair, canvas.Cursor);
 
                 canvas.CurrentTool = DrawingToolType.Line;
                 Assert.True(canvas.IsHitTestVisible);
-                Assert.Equal(Cursors.Cross, canvas.Cursor);
+                Assert.Equal(CursorHelper.WhiteCrosshair, canvas.Cursor);
 
                 canvas.CurrentTool = DrawingToolType.Highlight;
                 Assert.True(canvas.IsHitTestVisible);
@@ -194,7 +195,7 @@ public class DrawingCanvasTests
                 var canvas = new DrawingCanvas();
                 canvas.CurrentTool = DrawingToolType.Eyedropper;
                 Assert.True(canvas.IsHitTestVisible);
-                Assert.Equal(Cursors.Cross, canvas.Cursor);
+                Assert.Equal(CursorHelper.WhiteCrosshair, canvas.Cursor);
 
                 Point? hoveredPoint = null;
                 Point? clickedPoint = null;

@@ -39,7 +39,11 @@ public partial class OverlayWindow : Window
         ViewModel.RequestClose += (s, e) => Close();
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
-        SelectionControl.RegionMoved += (s, delta) => DrawingControl.OffsetElements(delta.X, delta.Y);
+        SelectionControl.RegionMoved += (s, delta) =>
+        {
+            DrawingControl.OffsetElements(delta.X, delta.Y);
+            UpdateBeautifyPreview(ViewModel.SelectedRegion);
+        };
 
         DrawingControl.EyedropperHovered += OnDrawingEyedropperHovered;
         DrawingControl.EyedropperClicked += OnDrawingEyedropperClicked;
@@ -110,6 +114,11 @@ public partial class OverlayWindow : Window
         Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
         Toolbar.PinRequested += async (s, e) => await ExecutePinAsync();
         Toolbar.OcrRequested += async (s, e) => await ExecuteOcrAsync();
+        Toolbar.BeautifyChanged += (s, options) =>
+        {
+            UpdateBeautifyPreview(ViewModel.SelectedRegion);
+            UpdateToolbarPosition(ViewModel.SelectedRegion);
+        };
     }
 
     private async Task ExecuteCopyAsync()
@@ -235,8 +244,9 @@ public partial class OverlayWindow : Window
                 return;
             }
 
-            CopyTextToClipboardWithRetry(recognizedText.Trim());
-            Close();
+            var cleanText = recognizedText.Trim();
+            CopyTextToClipboardWithRetry(cleanText);
+            ShowOcrResult(cleanText);
         }
         catch (InvalidOperationException ex)
         {
@@ -277,10 +287,68 @@ public partial class OverlayWindow : Window
         }
     }
 
+    private void ShowOcrResult(string text)
+    {
+        OcrResultTextBox.Text = text;
+        OcrResultCard.Visibility = Visibility.Visible;
+
+        var cardWidth = OcrResultCard.Width > 0 ? OcrResultCard.Width : 480;
+        var cardHeight = 290;
+        var screenW = ActualWidth > 0 ? ActualWidth : 1920;
+        var screenH = ActualHeight > 0 ? ActualHeight : 1080;
+
+        Canvas.SetLeft(OcrResultCard, Math.Max(20, (screenW - cardWidth) / 2));
+        Canvas.SetTop(OcrResultCard, Math.Max(20, (screenH - cardHeight) / 2));
+    }
+
+    private void OnOcrCloseClick(object sender, RoutedEventArgs e)
+    {
+        OcrResultCard.Visibility = Visibility.Collapsed;
+    }
+
+    private void OnOcrCopyAgainClick(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(OcrResultTextBox.Text))
+        {
+            CopyTextToClipboardWithRetry(OcrResultTextBox.Text);
+        }
+    }
+
+    private void OnOcrDoneClick(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void UpdateBeautifyPreview(CaptureRegion region)
+    {
+        var options = Toolbar.SelectedBeautifyOptions;
+        if (region.IsValid && options != null && options.IsEnabled && options.Preset != NeatShot.Core.Models.BeautifyPreset.None)
+        {
+            var rect = region.ToRect();
+            var padding = options.Padding > 0 ? options.Padding : 32;
+
+            BeautifyPreviewFrame.Visibility = Visibility.Visible;
+            BeautifyPreviewFrame.Width = rect.Width + padding * 2;
+            BeautifyPreviewFrame.Height = rect.Height + padding * 2;
+            BeautifyPreviewFrame.Background = options.CreateBackgroundBrush();
+
+            Canvas.SetLeft(BeautifyPreviewFrame, rect.X - padding);
+            Canvas.SetTop(BeautifyPreviewFrame, rect.Y - padding);
+
+            BeautifyInnerPhotoFrame.Margin = new Thickness(padding);
+            BeautifyInnerPhotoFrame.CornerRadius = new CornerRadius(options.CornerRadius);
+        }
+        else
+        {
+            BeautifyPreviewFrame.Visibility = Visibility.Collapsed;
+        }
+    }
+
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(OverlayViewModel.SelectedRegion))
         {
+            UpdateBeautifyPreview(ViewModel.SelectedRegion);
             UpdateToolbarPosition(ViewModel.SelectedRegion);
         }
         else if (e.PropertyName == nameof(OverlayViewModel.BackgroundImage))
@@ -352,7 +420,14 @@ public partial class OverlayWindow : Window
                 ActualWidth > 0 ? ActualWidth : 1920,
                 ActualHeight > 0 ? ActualHeight : 1080);
 
-            var pos = ToolbarPositionHelper.CalculatePosition(rect, tbSize, screenSize);
+            var options = Toolbar.SelectedBeautifyOptions;
+            var isBeautifyActive = options != null && options.IsEnabled && options.Preset != NeatShot.Core.Models.BeautifyPreset.None;
+            var padding = isBeautifyActive ? (options!.Padding > 0 ? options.Padding : 32) : 0;
+            var effectiveRect = isBeautifyActive
+                ? new Rect(rect.X - padding, rect.Y - padding, rect.Width + padding * 2, rect.Height + padding * 2)
+                : rect;
+
+            var pos = ToolbarPositionHelper.CalculatePosition(effectiveRect, tbSize, screenSize);
 
             Canvas.SetLeft(Toolbar, pos.X);
             Canvas.SetTop(Toolbar, pos.Y);
@@ -455,6 +530,12 @@ public partial class OverlayWindow : Window
     /// </summary>
     public bool ProcessShortcut(Key key, ModifierKeys modifiers, object? source = null)
     {
+        if (key == Key.Escape && OcrResultCard.Visibility == Visibility.Visible)
+        {
+            OcrResultCard.Visibility = Visibility.Collapsed;
+            return true;
+        }
+
         if (source is TextBox)
         {
             return false;
