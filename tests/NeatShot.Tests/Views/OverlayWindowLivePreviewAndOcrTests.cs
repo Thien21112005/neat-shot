@@ -36,10 +36,10 @@ public class OverlayWindowLivePreviewAndOcrTests
                 // Chọn preset Ocean
                 window.Toolbar.SelectBeautifyPreset(BeautifyPreset.Ocean);
 
-                // BeautifyPreviewFrame phải hiển thị và mở rộng thêm Padding 32px ở cả 2 phía
+                // BeautifyPreviewFrame phải hiển thị và mở rộng thêm Padding 20px ở cả 2 phía (viền mỏng tinh tế)
                 Assert.Equal(Visibility.Visible, window.BeautifyPreviewFrame.Visibility);
-                Assert.Equal(200 + 64, window.BeautifyPreviewFrame.Width);
-                Assert.Equal(150 + 64, window.BeautifyPreviewFrame.Height);
+                Assert.Equal(200 + 40, window.BeautifyPreviewFrame.Width);
+                Assert.Equal(150 + 40, window.BeautifyPreviewFrame.Height);
 
                 // Chọn lại preset None (Gốc)
                 window.Toolbar.SelectBeautifyPreset(BeautifyPreset.None);

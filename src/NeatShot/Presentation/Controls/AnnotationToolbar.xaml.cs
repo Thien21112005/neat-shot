@@ -515,7 +515,7 @@ public partial class AnnotationToolbar : UserControl
                 {
                     IsEnabled = true,
                     Preset = preset,
-                    Padding = 32.0,
+                    Padding = 20.0,
                     CornerRadius = 12.0
                 };
             }

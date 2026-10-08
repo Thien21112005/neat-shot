@@ -21,7 +21,7 @@ public enum BeautifyPreset
 public class BeautifyOptions
 {
     public bool IsEnabled { get; set; } = true;
-    public double Padding { get; set; } = 32.0;
+    public double Padding { get; set; } = 20.0;
     public double CornerRadius { get; set; } = 12.0;
     public double ShadowBlurRadius { get; set; } = 20.0;
     public double ShadowOpacity { get; set; } = 0.35;

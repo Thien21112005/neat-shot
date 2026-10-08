@@ -325,7 +325,7 @@ public partial class OverlayWindow : Window
         if (region.IsValid && options != null && options.IsEnabled && options.Preset != NeatShot.Core.Models.BeautifyPreset.None)
         {
             var rect = region.ToRect();
-            var padding = options.Padding > 0 ? options.Padding : 32;
+            var padding = options.Padding > 0 ? options.Padding : 20;
 
             BeautifyPreviewFrame.Visibility = Visibility.Visible;
             BeautifyPreviewFrame.Width = rect.Width + padding * 2;
@@ -422,7 +422,7 @@ public partial class OverlayWindow : Window
 
             var options = Toolbar.SelectedBeautifyOptions;
             var isBeautifyActive = options != null && options.IsEnabled && options.Preset != NeatShot.Core.Models.BeautifyPreset.None;
-            var padding = isBeautifyActive ? (options!.Padding > 0 ? options.Padding : 32) : 0;
+            var padding = isBeautifyActive ? (options!.Padding > 0 ? options.Padding : 20) : 0;
             var effectiveRect = isBeautifyActive
                 ? new Rect(rect.X - padding, rect.Y - padding, rect.Width + padding * 2, rect.Height + padding * 2)
                 : rect;

@@ -1,3 +1,4 @@
+using NeatShot.Common.Helpers;
 using NeatShot.Core.Services.Interfaces;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -51,7 +52,16 @@ public class WindowsOcrService : IOcrService
         var softwareBitmap = ConvertToSoftwareBitmap(effectiveImage);
         var ocrResult = await engine.RecognizeAsync(softwareBitmap).AsTask(cancellationToken);
 
-        return ocrResult?.Text ?? string.Empty;
+        if (ocrResult == null)
+        {
+            return string.Empty;
+        }
+
+        var rawText = ocrResult.Lines != null && ocrResult.Lines.Count > 0
+            ? OcrTextPostProcessor.FormatLines(ocrResult.Lines.Select(l => l.Text))
+            : (ocrResult.Text ?? string.Empty);
+
+        return OcrTextPostProcessor.Normalize(rawText);
     }
 
     private static OcrEngine? GetOcrEngine()
