@@ -36,6 +36,7 @@ public partial class OverlayWindow : Window
         Toolbar.ToolSelected += (s, tool) => DrawingControl.CurrentTool = tool;
         Toolbar.ColorSelected += (s, color) => DrawingControl.CurrentColor = color;
         Toolbar.UndoRequested += (s, e) => DrawingControl.Undo();
+        Toolbar.RedoRequested += (s, e) => DrawingControl.Redo();
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);
         Toolbar.CopyRequested += async (s, e) => await ExecuteCopyAsync();
         Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
@@ -152,6 +153,16 @@ public partial class OverlayWindow : Window
         if (e.Key == Key.Escape)
         {
             ViewModel.CancelCommand.Execute(null);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Z && (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            DrawingControl.Redo();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Y && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            DrawingControl.Redo();
             e.Handled = true;
         }
         else if (e.Key == Key.Z && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)

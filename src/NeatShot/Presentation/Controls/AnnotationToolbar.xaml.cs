@@ -14,6 +14,7 @@ public partial class AnnotationToolbar : UserControl
     public event EventHandler<DrawingToolType>? ToolSelected;
     public event EventHandler<Color>? ColorSelected;
     public event EventHandler? UndoRequested;
+    public event EventHandler? RedoRequested;
     public event EventHandler? CopyRequested;
     public event EventHandler? SaveRequested;
     public event EventHandler? CloseRequested;
@@ -122,6 +123,11 @@ public partial class AnnotationToolbar : UserControl
     private void OnUndoClick(object sender, RoutedEventArgs e)
     {
         UndoRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnRedoClick(object sender, RoutedEventArgs e)
+    {
+        RedoRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnCopyClick(object sender, RoutedEventArgs e)

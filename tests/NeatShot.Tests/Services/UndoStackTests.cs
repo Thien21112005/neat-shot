@@ -89,4 +89,34 @@ public class UndoStackTests
 
         Assert.Equal(4, eventCount);
     }
+
+    [Fact]
+    public void Redo_ShouldRestorePoppedItem_AndResetOnNewPush()
+    {
+        var stack = new UndoStack<string>();
+        stack.Push("A");
+        stack.Push("B");
+
+        Assert.False(stack.CanRedo);
+
+        // Undo B
+        var undone = stack.Pop();
+        Assert.Equal("B", undone);
+        Assert.True(stack.CanRedo);
+        Assert.Single(stack.Items);
+
+        // Redo B
+        var redone = stack.Redo();
+        Assert.Equal("B", redone);
+        Assert.False(stack.CanRedo);
+        Assert.Equal(2, stack.Count);
+        Assert.Equal(new[] { "A", "B" }, stack.Items);
+
+        // Undo again, then push new item -> Redo history should be wiped
+        stack.Pop();
+        Assert.True(stack.CanRedo);
+        stack.Push("C");
+        Assert.False(stack.CanRedo);
+        Assert.Equal(new[] { "A", "C" }, stack.Items);
+    }
 }

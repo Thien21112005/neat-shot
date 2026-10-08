@@ -71,6 +71,15 @@
                 <TextBlock Text="↩" FontSize="14" FontWeight="Bold" />
             </Button>
 
+            <!-- Nút Làm lại (Redo) -->
+            <Button x:Name="RedoButton"
+                    ToolTip="Làm lại nét vẽ (Ctrl + Y)"
+                    Margin="2,0"
+                    Padding="6,4"
+                    Click="OnRedoClick">
+                <TextBlock Text="↪" FontSize="14" FontWeight="Bold" />
+            </Button>
+
             <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
             <!-- Nút Copy vào Clipboard -->

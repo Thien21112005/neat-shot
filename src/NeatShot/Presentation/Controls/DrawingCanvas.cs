@@ -102,6 +102,12 @@ public class DrawingCanvas : Canvas
         InvalidateVisual();
     }
 
+    public void Redo()
+    {
+        UndoStack.Redo();
+        InvalidateVisual();
+    }
+
     public void Clear()
     {
         UndoStack.Clear();
