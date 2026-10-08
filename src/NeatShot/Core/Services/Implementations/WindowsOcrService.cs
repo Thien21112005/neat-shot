@@ -57,8 +57,9 @@ public class WindowsOcrService : IOcrService
             return string.Empty;
         }
 
-        var rawText = ocrResult.Lines != null && ocrResult.Lines.Count > 0
-            ? OcrTextPostProcessor.FormatLines(ocrResult.Lines.Select(l => l.Text))
+        var reconstructedLines = OcrTextPostProcessor.ReconstructHorizontalLines(ocrResult);
+        var rawText = reconstructedLines.Count > 0
+            ? OcrTextPostProcessor.FormatLines(reconstructedLines)
             : (ocrResult.Text ?? string.Empty);
 
         return OcrTextPostProcessor.Normalize(rawText);

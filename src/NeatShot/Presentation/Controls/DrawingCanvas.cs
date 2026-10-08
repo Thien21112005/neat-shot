@@ -92,6 +92,19 @@ public class DrawingCanvas : Canvas
         set => SetValue(CurrentFontSizeProperty, value);
     }
 
+    public static readonly DependencyProperty CurrentStepRadiusProperty =
+        DependencyProperty.Register(
+            nameof(CurrentStepRadius),
+            typeof(double),
+            typeof(DrawingCanvas),
+            new PropertyMetadata(14.0));
+
+    public double CurrentStepRadius
+    {
+        get => (double)GetValue(CurrentStepRadiusProperty);
+        set => SetValue(CurrentStepRadiusProperty, value);
+    }
+
     public static readonly DependencyProperty CurrentFontFamilyProperty =
         DependencyProperty.Register(
             nameof(CurrentFontFamily),
@@ -255,17 +268,18 @@ public class DrawingCanvas : Canvas
         if (CurrentTool == DrawingToolType.None || CurrentTool == DrawingToolType.Eyedropper) return;
 
         _isDrawing = true;
+        var stepRadius = CurrentStepRadius > 0 ? CurrentStepRadius : 14.0;
         _currentElement = new DrawingElement
         {
             ToolType = CurrentTool,
             Color = CurrentColor,
-            Thickness = CurrentThickness,
+            Thickness = CurrentTool == DrawingToolType.StepCounter ? stepRadius : CurrentThickness,
             StartPoint = startPoint,
             EndPoint = startPoint,
             StepNumber = CurrentTool == DrawingToolType.StepCounter ? NextStepNumber : 1,
             Points = new List<Point> { startPoint },
             Rect = CurrentTool == DrawingToolType.StepCounter
-                ? new Rect(startPoint.X - 14, startPoint.Y - 14, 28, 28)
+                ? new Rect(startPoint.X - stepRadius, startPoint.Y - stepRadius, stepRadius * 2, stepRadius * 2)
                 : new Rect(startPoint, startPoint)
         };
 

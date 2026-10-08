@@ -127,7 +127,8 @@ public static class DrawingRenderer
                 break;
 
             case DrawingToolType.StepCounter:
-                DrawStepBadge(dc, element.StartPoint, element.StepNumber, element.Color);
+                var radius = element.Thickness > 0 ? element.Thickness : 14.0;
+                DrawStepBadge(dc, element.StartPoint, element.StepNumber, element.Color, radius);
                 break;
         }
     }
@@ -143,12 +144,13 @@ public static class DrawingRenderer
         dc.DrawEllipse(bgBrush, borderPen, center, radius, radius);
 
         var typeface = new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
+        var fontSize = Math.Max(9.0, radius * 0.95);
         var formattedText = new FormattedText(
             number.ToString(),
             System.Globalization.CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             typeface,
-            13.0,
+            fontSize,
             Brushes.White,
             1.0)
         {

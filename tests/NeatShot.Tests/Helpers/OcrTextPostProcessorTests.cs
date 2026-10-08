@@ -90,4 +90,15 @@ public class OcrTextPostProcessorTests
         var result = OcrTextPostProcessor.Normalize(input);
         Assert.Equal(input, result);
     }
+
+    [Fact]
+    public void Normalize_FixesSlashedZeroAndHexCodeArtifacts()
+    {
+        var input = "NIM_ADD = øxøøeøøeøø; NIM_MODIFY = øxøøeøøøøl; NIF_MESSAGE = exøeøøøøel; Shell Notifylcon";
+        var normalized = OcrTextPostProcessor.Normalize(input);
+
+        Assert.Contains("0x00000000;", normalized);
+        Assert.Contains("0x00000001;", normalized);
+        Assert.Contains("NotifyIcon", normalized);
+    }
 }

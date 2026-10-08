@@ -107,6 +107,24 @@ public partial class OverlayWindow : Window
                 DrawingControl.InvalidateVisual();
             }
         };
+        Toolbar.ColorSelected += (s, color) =>
+        {
+            DrawingControl.CurrentColor = color;
+            if (DrawingControl.SelectedElement != null)
+            {
+                DrawingControl.SelectedElement.Color = color;
+                DrawingControl.InvalidateVisual();
+            }
+        };
+        Toolbar.StepSizeChanged += (s, radius) =>
+        {
+            DrawingControl.CurrentStepRadius = radius;
+            if (DrawingControl.SelectedElement != null && DrawingControl.SelectedElement.ToolType == DrawingToolType.StepCounter)
+            {
+                DrawingControl.SelectedElement.Thickness = radius;
+                DrawingControl.InvalidateVisual();
+            }
+        };
         Toolbar.UndoRequested += (s, e) => DrawingControl.Undo();
         Toolbar.RedoRequested += (s, e) => DrawingControl.Redo();
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);

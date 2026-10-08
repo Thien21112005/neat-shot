@@ -44,7 +44,7 @@ public static class HitTestHelper
                 return HitTestPolyline(element.Points, testPoint, effTol);
 
             case DrawingToolType.StepCounter:
-                var badgeRadius = 14.0 + tolerance;
+                var badgeRadius = (element.Thickness > 0 ? element.Thickness : 14.0) + tolerance;
                 return (testPoint - element.StartPoint).Length <= badgeRadius;
 
             case DrawingToolType.Text:

@@ -30,11 +30,13 @@ public partial class AnnotationToolbar : UserControl
 
     public string SelectedFontFamily { get; private set; } = "Segoe UI";
     public double SelectedFontSize { get; private set; } = 16.0;
+    public double SelectedStepRadius { get; private set; } = 14.0;
 
     public event EventHandler<DrawingToolType>? ToolSelected;
     public event EventHandler<Color>? ColorSelected;
     public event EventHandler<string>? FontFamilyChanged;
     public event EventHandler<double>? FontSizeChanged;
+    public event EventHandler<double>? StepSizeChanged;
     public event EventHandler? UndoRequested;
     public event EventHandler? RedoRequested;
     public event EventHandler? CopyRequested;
@@ -232,6 +234,38 @@ public partial class AnnotationToolbar : UserControl
     }
 
     /// <summary>
+    /// Chọn kích thước cho công cụ đánh số bước StepCounter.
+    /// </summary>
+    public void SelectStepSize(double radius)
+    {
+        if (radius <= 0) return;
+        SelectedStepRadius = radius;
+        if (StepSizeComboBox != null)
+        {
+            foreach (ComboBoxItem item in StepSizeComboBox.Items)
+            {
+                if (double.TryParse(item.Tag?.ToString(), out var r) && Math.Abs(r - radius) < 0.1)
+                {
+                    StepSizeComboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+        StepSizeChanged?.Invoke(this, radius);
+    }
+
+    private void OnStepSizeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_isUpdatingSelection) return;
+        if (StepSizeComboBox?.SelectedItem is ComboBoxItem item &&
+            double.TryParse(item.Tag?.ToString(), out var radius))
+        {
+            SelectedStepRadius = radius;
+            StepSizeChanged?.Invoke(this, radius);
+        }
+    }
+
+    /// <summary>
     /// Chọn màu hiện tại và kích hoạt sự kiện ColorSelected.
     /// </summary>
     public void SelectColor(Color color)
@@ -323,6 +357,18 @@ public partial class AnnotationToolbar : UserControl
         if (FontControlsPanel != null)
         {
             FontControlsPanel.Visibility = _activeTool == DrawingToolType.Text ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        if (StepSizeControlsPanel != null)
+        {
+            StepSizeControlsPanel.Visibility = _activeTool == DrawingToolType.StepCounter ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        if (ColorPalettePanel != null)
+        {
+            ColorPalettePanel.Visibility = (_activeTool == DrawingToolType.Pixelate || _activeTool == DrawingToolType.Blur)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
     }
 
@@ -434,6 +480,13 @@ public partial class AnnotationToolbar : UserControl
     private void UpdateColorButtonVisuals()
     {
         if (!_isInitialized || ColorRedButton == null) return;
+
+        if (ColorPalettePanel != null)
+        {
+            ColorPalettePanel.Visibility = (_activeTool == DrawingToolType.Pixelate || _activeTool == DrawingToolType.Blur)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
 
         UpdateColorBorder(ColorRedButton);
         UpdateColorBorder(ColorYellowButton);

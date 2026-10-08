@@ -141,7 +141,85 @@ public static class OcrTextPostProcessor
         // Các chữ 'ä' còn sót lại chuyển về 'ă' hoặc 'a'
         text = text.Replace('ä', 'ă').Replace('Ä', 'Ă');
 
+        // 4. Chuẩn hoá các lỗi nhận diện đặc trưng trong mã nguồn (Code, Hexadecimal, Slashed-zero '0̸' -> 'ø')
+        text = text.Replace("Notifylcon", "NotifyIcon");
+        text = Regex.Replace(text, @"(?i)\b(øx|ex|0x)([0-9a-fA-FøØel]+)", m =>
+        {
+            var rawDigits = m.Groups[2].Value
+                .Replace('ø', '0').Replace('Ø', '0')
+                .Replace('l', '1');
+            // Thay thế 'e' nếu nằm giữa các chữ số 0/số khác (do OCR nhầm 0 thành e trong phông monospace)
+            rawDigits = Regex.Replace(rawDigits, @"(?<=\d)e(?=\d)", "0");
+            rawDigits = Regex.Replace(rawDigits, @"(?<=0)e|e(?=0)", "0");
+            return "0x" + rawDigits;
+        });
+
         return text;
+    }
+
+    /// <summary>
+    /// Tái tạo các dòng văn bản theo chiều ngang dựa trên toạ độ BoundingRect của từng từ (OcrWord).
+    /// Khắc phục hiện tượng Windows OCR đọc theo từng cột dọc (Column-by-column) khi gặp code hoặc bảng biểu.
+    /// </summary>
+    public static List<string> ReconstructHorizontalLines(Windows.Media.Ocr.OcrResult? ocrResult)
+    {
+        if (ocrResult == null || ocrResult.Lines == null || ocrResult.Lines.Count == 0)
+        {
+            return new List<string>();
+        }
+
+        var allWords = ocrResult.Lines
+            .SelectMany(l => l.Words)
+            .Where(w => !string.IsNullOrWhiteSpace(w.Text))
+            .ToList();
+
+        if (allWords.Count == 0)
+        {
+            return ocrResult.Lines
+                .Select(l => l.Text?.Trim() ?? string.Empty)
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToList();
+        }
+
+        // Tính chiều cao trung bình của từ để làm ngưỡng gom cụm theo hàng
+        var avgHeight = allWords.Average(w => w.BoundingRect.Height);
+        var lineThreshold = Math.Max(6.0, avgHeight * 0.55);
+
+        var linesList = new List<(double CenterY, List<Windows.Media.Ocr.OcrWord> Words)>();
+        var sortedByY = allWords.OrderBy(w => w.BoundingRect.Y + w.BoundingRect.Height / 2.0).ToList();
+
+        foreach (var word in sortedByY)
+        {
+            var wordCenterY = word.BoundingRect.Y + word.BoundingRect.Height / 2.0;
+            var existingLineIndex = linesList
+                .FindIndex(l => Math.Abs(l.CenterY - wordCenterY) <= lineThreshold);
+
+            if (existingLineIndex >= 0)
+            {
+                linesList[existingLineIndex].Words.Add(word);
+            }
+            else
+            {
+                linesList.Add((wordCenterY, new List<Windows.Media.Ocr.OcrWord> { word }));
+            }
+        }
+
+        var resultLines = new List<string>();
+        foreach (var line in linesList.OrderBy(l => l.CenterY))
+        {
+            var orderedWords = line.Words
+                .OrderBy(w => w.BoundingRect.X)
+                .Select(w => w.Text.Trim())
+                .Where(t => !string.IsNullOrEmpty(t));
+
+            var lineText = string.Join(" ", orderedWords);
+            if (!string.IsNullOrWhiteSpace(lineText))
+            {
+                resultLines.Add(lineText);
+            }
+        }
+
+        return resultLines;
     }
 
     /// <summary>

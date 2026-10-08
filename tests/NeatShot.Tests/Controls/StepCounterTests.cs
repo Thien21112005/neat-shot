@@ -119,7 +119,43 @@ public class StepCounterTests
     }
 
     [Fact]
-    public void AnnotationToolbar_StepCounterButton_TogglesTool_OnStaThread()
+    public void DrawingCanvas_StepCounter_UsesCurrentColor_And_CustomRadius_OnStaThread()
+    {
+        Exception? threadEx = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var canvas = new DrawingCanvas
+                {
+                    CurrentTool = DrawingToolType.StepCounter,
+                    CurrentColor = Colors.Green,
+                    CurrentStepRadius = 24.0
+                };
+
+                canvas.StartDrawing(new Point(100, 100));
+                canvas.EndDrawing();
+
+                var item = Assert.Single(canvas.UndoStack.Items);
+                Assert.Equal(DrawingToolType.StepCounter, item.ToolType);
+                Assert.Equal(Colors.Green, item.Color);
+                Assert.Equal(24.0, item.Thickness);
+                Assert.Equal(new Rect(76, 76, 48, 48), item.Rect);
+            }
+            catch (Exception ex)
+            {
+                threadEx = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadEx);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_MosaicAndBlur_HidesColorPalette_OnStaThread()
     {
         Exception? threadEx = null;
         var thread = new Thread(() =>
@@ -127,9 +163,50 @@ public class StepCounterTests
             try
             {
                 var toolbar = new AnnotationToolbar();
-                Assert.NotNull(toolbar.StepCounterButton);
-                toolbar.StepCounterButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
-                Assert.Equal(DrawingToolType.StepCounter, toolbar.ActiveTool);
+                Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+
+                // Khi chọn Pixelate, ColorPalettePanel phải ẩn
+                toolbar.SetActiveTool(DrawingToolType.Pixelate);
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
+
+                // Khi chọn Blur, ColorPalettePanel vẫn ẩn
+                toolbar.SetActiveTool(DrawingToolType.Blur);
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
+
+                // Khi chọn lại Pencil hoặc StepCounter, ColorPalettePanel hiển thị lại
+                toolbar.SetActiveTool(DrawingToolType.Pencil);
+                Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+
+                toolbar.SetActiveTool(DrawingToolType.StepCounter);
+                Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadEx = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadEx);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_StepSizeSelection_FiresEvent_OnStaThread()
+    {
+        Exception? threadEx = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                double receivedRadius = 0;
+                toolbar.StepSizeChanged += (s, r) => receivedRadius = r;
+
+                toolbar.SelectStepSize(18.0);
+                Assert.Equal(18.0, toolbar.SelectedStepRadius);
+                Assert.Equal(18.0, receivedRadius);
             }
             catch (Exception ex)
             {
