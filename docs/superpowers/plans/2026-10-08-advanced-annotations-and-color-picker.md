@@ -291,7 +291,7 @@ git commit -m "feat: add ellipse, line, and highlight drawing interaction to Dra
   - Commit text vao `DrawingElement` (ToolType = Text) va day vao `UndoStack` khi Enter / LostFocus
   - Huy bo khi nhan Escape hoac de trong
 
-- [ ] **Step 1: Viet test that bai cho logic Text Annotation**
+- [x] **Step 1: Viet test that bai cho logic Text Annotation**
 
 ```csharp
 [Fact]
@@ -328,12 +328,12 @@ public void CommitTextAnnotation_AddsTextElementToUndoStack_OnStaThread()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "CommitTextAnnotation_AddsTextElementToUndoStack"`
 Expected: FAIL vi phuong thuc `CommitText` chua ton tai.
 
-- [ ] **Step 3: Trien khai inline TextBox va phuong thuc `CommitText` trong `DrawingCanvas.cs`**
+- [x] **Step 3: Trien khai inline TextBox va phuong thuc `CommitText` trong `DrawingCanvas.cs`**
 
 1. Khai bao `private TextBox? _inlineEditor;` va `private Point _textPosition;`.
 2. Bo sung phuong thuc public de testable: `public void CommitText(string text, Point position)`:
@@ -353,12 +353,12 @@ Expected: FAIL vi phuong thuc `CommitText` chua ton tai.
      - `_inlineEditor.Focus()`.
      - `e.Handled = true;`.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~DrawingCanvasTextTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Presentation/Controls/DrawingCanvas.cs tests/NeatShot.Tests/Controls/DrawingCanvasTextTests.cs
