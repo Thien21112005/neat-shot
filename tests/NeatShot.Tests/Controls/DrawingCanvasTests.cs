@@ -182,4 +182,44 @@ public class DrawingCanvasTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void DrawingCanvas_EyedropperTool_RaisesHoverAndClickEventsWithoutDrawing_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var canvas = new DrawingCanvas();
+                canvas.CurrentTool = DrawingToolType.Eyedropper;
+                Assert.True(canvas.IsHitTestVisible);
+                Assert.Equal(Cursors.Cross, canvas.Cursor);
+
+                Point? hoveredPoint = null;
+                Point? clickedPoint = null;
+
+                canvas.EyedropperHovered += (s, pt) => hoveredPoint = pt;
+                canvas.EyedropperClicked += (s, pt) => clickedPoint = pt;
+
+                canvas.HoverEyedropperAt(new Point(45, 67));
+                Assert.Equal(new Point(45, 67), hoveredPoint);
+
+                canvas.SampleEyedropperAt(new Point(100, 200));
+                Assert.Equal(new Point(100, 200), clickedPoint);
+
+                // Eyedropper does not create drawings on UndoStack
+                Assert.Empty(canvas.UndoStack.Items);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

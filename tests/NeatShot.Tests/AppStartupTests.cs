@@ -88,4 +88,43 @@ public class AppStartupTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void OverlayWindow_EyedropperMode_TogglesLoupeVisibility_OnStaThread()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
+        services.AddSingleton<IHotkeyService, HotkeyService>();
+        services.AddSingleton<IExportService, ExportService>();
+        services.AddTransient<OverlayViewModel>();
+        services.AddTransient<OverlayWindow>();
+
+        var provider = services.BuildServiceProvider();
+
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var window = provider.GetRequiredService<OverlayWindow>();
+                Assert.Equal(System.Windows.Visibility.Collapsed, window.EyedropperLoupe.Visibility);
+
+                window.EnterEyedropperMode();
+                Assert.Equal(System.Windows.Visibility.Visible, window.EyedropperLoupe.Visibility);
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.Eyedropper, window.DrawingControl.CurrentTool);
+
+                window.ExitEyedropperMode();
+                Assert.Equal(System.Windows.Visibility.Collapsed, window.EyedropperLoupe.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

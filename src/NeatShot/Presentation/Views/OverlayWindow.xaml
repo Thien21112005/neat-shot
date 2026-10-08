@@ -37,6 +37,39 @@
         <Canvas x:Name="OverlayCanvas">
             <controls:AnnotationToolbar x:Name="Toolbar"
                                         Visibility="Collapsed" />
+
+            <!-- Kính lúp hiển thị màu và mã HEX khi dùng công cụ hút màu (Eyedropper) -->
+            <Border x:Name="EyedropperLoupe"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False"
+                    Background="#E61E1E1E"
+                    BorderBrush="#4DFFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="6,5"
+                    Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border x:Name="LoupeColorSwatch"
+                            Width="24"
+                            Height="24"
+                            CornerRadius="12"
+                            BorderBrush="#80FFFFFF"
+                            BorderThickness="1.5"
+                            Margin="0,0,8,0"
+                            Background="#FFE81123" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="LoupeHexText"
+                                   Text="#E81123"
+                                   FontFamily="Consolas"
+                                   FontWeight="SemiBold"
+                                   FontSize="13"
+                                   Foreground="White" />
+                        <TextBlock Text="Click để chọn màu"
+                                   FontSize="9"
+                                   Foreground="#A0FFFFFF" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </Canvas>
     </Grid>
 </Window>

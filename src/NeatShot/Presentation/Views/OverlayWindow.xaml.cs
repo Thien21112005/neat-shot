@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.ViewModels;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NeatShot.Presentation.Views;
@@ -13,6 +15,7 @@ namespace NeatShot.Presentation.Views;
 public partial class OverlayWindow : Window
 {
     private readonly IExportService _exportService;
+    private DrawingToolType _previousTool = DrawingToolType.None;
     public OverlayViewModel ViewModel { get; }
 
     public OverlayWindow(OverlayViewModel viewModel, IExportService exportService)
@@ -28,12 +31,26 @@ public partial class OverlayWindow : Window
 
         SelectionControl.RegionMoved += (s, delta) => DrawingControl.OffsetElements(delta.X, delta.Y);
 
+        DrawingControl.EyedropperHovered += OnDrawingEyedropperHovered;
+        DrawingControl.EyedropperClicked += OnDrawingEyedropperClicked;
+
         InitializeToolbar();
     }
 
     private void InitializeToolbar()
     {
-        Toolbar.ToolSelected += (s, tool) => DrawingControl.CurrentTool = tool;
+        Toolbar.ToolSelected += (s, tool) =>
+        {
+            if (tool == DrawingToolType.Eyedropper)
+            {
+                EnterEyedropperMode();
+            }
+            else
+            {
+                ExitEyedropperMode();
+                DrawingControl.CurrentTool = tool;
+            }
+        };
         Toolbar.ColorSelected += (s, color) => DrawingControl.CurrentColor = color;
         Toolbar.UndoRequested += (s, e) => DrawingControl.Undo();
         Toolbar.RedoRequested += (s, e) => DrawingControl.Redo();
@@ -148,10 +165,84 @@ public partial class OverlayWindow : Window
         Focus();
     }
 
+    public void EnterEyedropperMode()
+    {
+        if (DrawingControl.CurrentTool != DrawingToolType.Eyedropper)
+        {
+            _previousTool = DrawingControl.CurrentTool;
+        }
+        DrawingControl.CurrentTool = DrawingToolType.Eyedropper;
+        EyedropperLoupe.Visibility = Visibility.Visible;
+    }
+
+    public void ExitEyedropperMode()
+    {
+        EyedropperLoupe.Visibility = Visibility.Collapsed;
+        if (DrawingControl.CurrentTool == DrawingToolType.Eyedropper)
+        {
+            DrawingControl.CurrentTool = _previousTool == DrawingToolType.Eyedropper
+                ? DrawingToolType.None
+                : _previousTool;
+        }
+    }
+
+    private void OnDrawingEyedropperHovered(object? sender, Point pos)
+    {
+        if (ViewModel.BackgroundImage == null) return;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var color = ColorPickerHelper.GetPixelColor(
+            ViewModel.BackgroundImage,
+            pos,
+            dpi.PixelsPerInchX,
+            dpi.PixelsPerInchY);
+
+        LoupeColorSwatch.Background = new SolidColorBrush(color);
+        LoupeHexText.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+
+        var loupeLeft = pos.X + 16;
+        var loupeTop = pos.Y + 16;
+
+        if (loupeLeft + 140 > ActualWidth)
+        {
+            loupeLeft = pos.X - 150;
+        }
+        if (loupeTop + 60 > ActualHeight)
+        {
+            loupeTop = pos.Y - 60;
+        }
+
+        Canvas.SetLeft(EyedropperLoupe, Math.Max(0, loupeLeft));
+        Canvas.SetTop(EyedropperLoupe, Math.Max(0, loupeTop));
+        EyedropperLoupe.Visibility = Visibility.Visible;
+    }
+
+    private void OnDrawingEyedropperClicked(object? sender, Point pos)
+    {
+        if (ViewModel.BackgroundImage == null) return;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var color = ColorPickerHelper.GetPixelColor(
+            ViewModel.BackgroundImage,
+            pos,
+            dpi.PixelsPerInchX,
+            dpi.PixelsPerInchY);
+
+        DrawingControl.CurrentColor = color;
+        ExitEyedropperMode();
+    }
+
     private void OnWindowKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
         {
+            if (DrawingControl.CurrentTool == DrawingToolType.Eyedropper)
+            {
+                ExitEyedropperMode();
+                e.Handled = true;
+                return;
+            }
+
             ViewModel.CancelCommand.Execute(null);
             e.Handled = true;
         }

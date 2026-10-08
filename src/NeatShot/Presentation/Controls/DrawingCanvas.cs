@@ -89,6 +89,32 @@ public class DrawingCanvas : Canvas
     /// </summary>
     public DrawingElement? SelectedElement { get; private set; }
 
+    /// <summary>
+    /// Phát ra khi con trỏ chuột di chuyển trong chế độ hút màu (Eyedropper).
+    /// </summary>
+    public event EventHandler<Point>? EyedropperHovered;
+
+    /// <summary>
+    /// Phát ra khi người dùng click chuột để chọn màu trong chế độ hút màu (Eyedropper).
+    /// </summary>
+    public event EventHandler<Point>? EyedropperClicked;
+
+    /// <summary>
+    /// Kích hoạt sự kiện di chuột trong chế độ hút màu tại toạ độ chỉ định (phục vụ test).
+    /// </summary>
+    public void HoverEyedropperAt(Point pos)
+    {
+        EyedropperHovered?.Invoke(this, pos);
+    }
+
+    /// <summary>
+    /// Kích hoạt sự kiện click chọn màu trong chế độ hút màu tại toạ độ chỉ định (phục vụ test).
+    /// </summary>
+    public void SampleEyedropperAt(Point pos)
+    {
+        EyedropperClicked?.Invoke(this, pos);
+    }
+
     private bool _isDraggingSelected;
     private Point _lastDragPoint;
     private TextBox? _inlineEditor;
@@ -184,7 +210,7 @@ public class DrawingCanvas : Canvas
 
     public void StartDrawing(Point startPoint)
     {
-        if (CurrentTool == DrawingToolType.None) return;
+        if (CurrentTool == DrawingToolType.None || CurrentTool == DrawingToolType.Eyedropper) return;
 
         _isDrawing = true;
         _currentElement = new DrawingElement
@@ -379,6 +405,13 @@ public class DrawingCanvas : Canvas
 
         var pos = e.GetPosition(this);
 
+        if (CurrentTool == DrawingToolType.Eyedropper)
+        {
+            EyedropperClicked?.Invoke(this, pos);
+            e.Handled = true;
+            return;
+        }
+
         if (CurrentTool == DrawingToolType.Select)
         {
             if (SelectElementAt(pos))
@@ -446,6 +479,12 @@ public class DrawingCanvas : Canvas
         base.OnMouseMove(e);
 
         var currentPoint = e.GetPosition(this);
+
+        if (CurrentTool == DrawingToolType.Eyedropper)
+        {
+            EyedropperHovered?.Invoke(this, currentPoint);
+            return;
+        }
 
         if (CurrentTool == DrawingToolType.Select)
         {
