@@ -479,7 +479,7 @@ git commit -m "feat: implement select and move individual annotations on Drawing
   - Che do Eyedropper tren Overlay: kinh lup (Loupe badge) hien thi pixel mau phong to va ma HEX `#RRGGBB` tai con tro chuot.
   - Khi click: lay mau, kich hoat su kien `ColorPicked(Color)`, them vao lich su mau va tro lai cong cu ve truoc do.
 
-- [ ] **Step 1: Viet test that bai cho ColorPickerHelper**
+- [x] **Step 1: Viet test that bai cho ColorPickerHelper**
 
 ```csharp
 [Fact]
@@ -506,12 +506,12 @@ public void ColorPickerHelper_ExtractsAccuratePixelColor_FromBitmapSource()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "FullyQualifiedName~ColorPickerHelperTests"`
 Expected: FAIL vi `ColorPickerHelper` chua ton tai.
 
-- [ ] **Step 3: Trien khai `ColorPickerHelper.cs`**
+- [x] **Step 3: Trien khai `ColorPickerHelper.cs`**
 
 1. Tao `src/NeatShot/Common/Helpers/ColorPickerHelper.cs`:
    - `public static Color GetPixelColor(BitmapSource bitmap, Point dipPoint, double dpiX = 96.0, double dpiY = 96.0)`:
@@ -522,12 +522,12 @@ Expected: FAIL vi `ColorPickerHelper` chua ton tai.
      - Chuyen doi format ve `Bgra32` hoac doc truc tiep qua `CopyPixels(new Int32Rect(px, py, 1, 1), buffer, 4, 0)`.
      - Tra ve `Color.FromRgb(buffer[2], buffer[1], buffer[0])`.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~ColorPickerHelperTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Tich hop Eyedropper UI vao `OverlayWindow`**
+- [x] **Step 5: Tich hop Eyedropper UI vao `OverlayWindow`**
 
 1. Trong `OverlayWindow.xaml`:
    - Them `Border x:Name="EyedropperLoupe"` (kinh lup badge mien phi di dong theo chuot):
@@ -539,7 +539,7 @@ Expected: PASS.
      - Khi chuot di chuyen tren window: cap nhat toa do kinh lup cach con tro 15px, doc ma mau tai toa do chuot bang `ColorPickerHelper`, hien thi mau va chuoi HEX.
      - Khi chuot click: lay mau do, cap nhat vao `Toolbar.SetCustomColor(pickedColor)`, an `EyedropperLoupe`, va kich hoat lai cong cu ve truoc do.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/NeatShot/Common/Helpers/ColorPickerHelper.cs tests/NeatShot.Tests/Helpers/ColorPickerHelperTests.cs src/NeatShot/Presentation/Views/OverlayWindow.xaml src/NeatShot/Presentation/Views/OverlayWindow.xaml.cs
