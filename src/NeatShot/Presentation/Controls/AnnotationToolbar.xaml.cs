@@ -8,6 +8,9 @@ namespace NeatShot.Presentation.Controls;
 
 public partial class AnnotationToolbar : UserControl
 {
+    private DrawingToolType _activeTool = DrawingToolType.None;
+    private string _selectedColorHex = "#FFE81123";
+
     public event EventHandler<DrawingToolType>? ToolSelected;
     public event EventHandler<Color>? ColorSelected;
     public event EventHandler? UndoRequested;
@@ -18,30 +21,87 @@ public partial class AnnotationToolbar : UserControl
     public AnnotationToolbar()
     {
         InitializeComponent();
+        UpdateToolButtonVisuals();
+        UpdateColorButtonVisuals();
+    }
+
+    public void ResetTools()
+    {
+        _activeTool = DrawingToolType.None;
+        UpdateToolButtonVisuals();
+        ToolSelected?.Invoke(this, DrawingToolType.None);
+    }
+
+    private void ToggleTool(DrawingToolType tool)
+    {
+        _activeTool = _activeTool == tool ? DrawingToolType.None : tool;
+        UpdateToolButtonVisuals();
+        ToolSelected?.Invoke(this, _activeTool);
+    }
+
+    private void UpdateToolButtonVisuals()
+    {
+        SetButtonActive(PencilButton, _activeTool == DrawingToolType.Pencil);
+        SetButtonActive(RectButton, _activeTool == DrawingToolType.Rectangle);
+        SetButtonActive(ArrowButton, _activeTool == DrawingToolType.Arrow);
+    }
+
+    private static void SetButtonActive(Button btn, bool isActive)
+    {
+        if (isActive)
+        {
+            btn.Background = new SolidColorBrush(Color.FromRgb(0, 120, 212));
+            btn.BorderBrush = new SolidColorBrush(Colors.White);
+            btn.BorderThickness = new Thickness(1.5);
+        }
+        else
+        {
+            btn.ClearValue(Button.BackgroundProperty);
+            btn.ClearValue(Button.BorderBrushProperty);
+            btn.ClearValue(Button.BorderThicknessProperty);
+        }
     }
 
     private void OnPencilClick(object sender, RoutedEventArgs e)
     {
-        ToolSelected?.Invoke(this, DrawingToolType.Pencil);
+        ToggleTool(DrawingToolType.Pencil);
     }
 
     private void OnRectClick(object sender, RoutedEventArgs e)
     {
-        ToolSelected?.Invoke(this, DrawingToolType.Rectangle);
+        ToggleTool(DrawingToolType.Rectangle);
     }
 
     private void OnArrowClick(object sender, RoutedEventArgs e)
     {
-        ToolSelected?.Invoke(this, DrawingToolType.Arrow);
+        ToggleTool(DrawingToolType.Arrow);
     }
 
     private void OnColorSelect(object sender, RoutedEventArgs e)
     {
         if (sender is Button { Tag: string hex })
         {
+            _selectedColorHex = hex;
+            UpdateColorButtonVisuals();
             var color = ColorHelper.FromHex(hex);
             ColorSelected?.Invoke(this, color);
         }
+    }
+
+    private void UpdateColorButtonVisuals()
+    {
+        UpdateColorBorder(ColorRedButton);
+        UpdateColorBorder(ColorYellowButton);
+        UpdateColorBorder(ColorGreenButton);
+        UpdateColorBorder(ColorBlueButton);
+        UpdateColorBorder(ColorWhiteButton);
+    }
+
+    private void UpdateColorBorder(Button btn)
+    {
+        var isSelected = btn.Tag is string hex && string.Equals(hex, _selectedColorHex, StringComparison.OrdinalIgnoreCase);
+        btn.BorderBrush = isSelected ? Brushes.White : Brushes.Transparent;
+        btn.BorderThickness = isSelected ? new Thickness(2) : new Thickness(1);
     }
 
     private void OnUndoClick(object sender, RoutedEventArgs e)

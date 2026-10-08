@@ -7,6 +7,8 @@ namespace NeatShot.Core.Models;
 /// </summary>
 public readonly record struct CaptureRegion(double X, double Y, double Width, double Height)
 {
+    public static readonly CaptureRegion Empty = default;
+
     /// <summary>
     /// Vùng chọn hợp lệ khi cả chiều rộng và chiều cao đều lớn hơn 0.
     /// </summary>

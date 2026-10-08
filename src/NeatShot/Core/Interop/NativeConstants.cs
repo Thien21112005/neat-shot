@@ -40,4 +40,12 @@ public static class NativeConstants
     public const int WM_TRAYICON = WM_USER + 101;
     public const int WM_LBUTTONUP = 0x0202;
     public const int WM_RBUTTONUP = 0x0205;
+
+    // System Metrics & Device Caps
+    public const int SM_XVIRTUALSCREEN = 76;
+    public const int SM_YVIRTUALSCREEN = 77;
+    public const int SM_CXVIRTUALSCREEN = 78;
+    public const int SM_CYVIRTUALSCREEN = 79;
+    public const int DESKTOPHORZRES = 118;
+    public const int DESKTOPVERTRES = 117;
 }

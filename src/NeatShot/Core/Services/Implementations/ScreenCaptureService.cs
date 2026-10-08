@@ -43,36 +43,73 @@ public class ScreenCaptureService : IScreenCaptureService
 
         // 3. Thực hiện chụp ảnh toàn bộ toạ độ Virtual Screen qua Win32 GDI BitBlt
         var bounds = GetVirtualScreenBounds();
-        var left = (int)bounds.Left;
-        var top = (int)bounds.Top;
-        var width = (int)bounds.Width;
-        var height = (int)bounds.Height;
+        var physicalLeft = NativeMethods.GetSystemMetrics(NativeConstants.SM_XVIRTUALSCREEN);
+        var physicalTop = NativeMethods.GetSystemMetrics(NativeConstants.SM_YVIRTUALSCREEN);
+        var physicalWidth = NativeMethods.GetSystemMetrics(NativeConstants.SM_CXVIRTUALSCREEN);
+        var physicalHeight = NativeMethods.GetSystemMetrics(NativeConstants.SM_CYVIRTUALSCREEN);
 
         var hDesktopDC = NativeMethods.GetDC(IntPtr.Zero);
+
+        if (physicalWidth <= 0 || physicalHeight <= 0)
+        {
+            physicalWidth = NativeMethods.GetDeviceCaps(hDesktopDC, NativeConstants.DESKTOPHORZRES);
+            physicalHeight = NativeMethods.GetDeviceCaps(hDesktopDC, NativeConstants.DESKTOPVERTRES);
+        }
+
+        if (physicalWidth <= 0) physicalWidth = (int)bounds.Width;
+        if (physicalHeight <= 0) physicalHeight = (int)bounds.Height;
+
         var hMemDC = NativeMethods.CreateCompatibleDC(hDesktopDC);
-        var hBitmap = NativeMethods.CreateCompatibleBitmap(hDesktopDC, width, height);
+        var hBitmap = NativeMethods.CreateCompatibleBitmap(hDesktopDC, physicalWidth, physicalHeight);
         var hOld = NativeMethods.SelectObject(hMemDC, hBitmap);
 
         try
         {
             // Chụp kèm cờ CAPTUREBLT để chụp đúng các cửa sổ layered/trong suốt
             NativeMethods.BitBlt(
-                hMemDC, 0, 0, width, height,
-                hDesktopDC, left, top,
+                hMemDC, 0, 0, physicalWidth, physicalHeight,
+                hDesktopDC, physicalLeft, physicalTop,
                 NativeConstants.SRCCOPY | NativeConstants.CAPTUREBLT);
 
             NativeMethods.SelectObject(hMemDC, hOld);
 
             // Chuyển đổi sang WPF BitmapSource
-            var bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+            var rawBitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
                 hBitmap,
                 IntPtr.Zero,
                 Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
 
+            // Tính toán DPI thực tế dựa trên tỉ lệ physical pixels / WPF DIPs
+            var dpiScaleX = bounds.Width > 0 ? (double)physicalWidth / bounds.Width : 1.0;
+            var dpiScaleY = bounds.Height > 0 ? (double)physicalHeight / bounds.Height : 1.0;
+            var dpiX = 96.0 * dpiScaleX;
+            var dpiY = 96.0 * dpiScaleY;
+
+            BitmapSource finalBitmap;
+            if (Math.Abs(dpiX - 96.0) > 0.01 || Math.Abs(dpiY - 96.0) > 0.01)
+            {
+                var stride = physicalWidth * 4;
+                var pixels = new byte[stride * physicalHeight];
+                rawBitmapSource.CopyPixels(pixels, stride, 0);
+                finalBitmap = BitmapSource.Create(
+                    physicalWidth,
+                    physicalHeight,
+                    dpiX,
+                    dpiY,
+                    rawBitmapSource.Format,
+                    null,
+                    pixels,
+                    stride);
+            }
+            else
+            {
+                finalBitmap = rawBitmapSource;
+            }
+
             // Đóng băng (Freeze) để có thể truy cập an toàn từ mọi thread
-            bitmapSource.Freeze();
-            return bitmapSource;
+            finalBitmap.Freeze();
+            return finalBitmap;
         }
         finally
         {
@@ -93,8 +130,11 @@ public class ScreenCaptureService : IScreenCaptureService
             return source;
         }
 
-        var x = (int)Math.Max(0, norm.X);
-        var y = (int)Math.Max(0, norm.Y);
+        var scaleX = source.DpiX > 0 ? source.DpiX / 96.0 : 1.0;
+        var scaleY = source.DpiY > 0 ? source.DpiY / 96.0 : 1.0;
+
+        var x = (int)Math.Max(0, Math.Round(norm.X * scaleX));
+        var y = (int)Math.Max(0, Math.Round(norm.Y * scaleY));
 
         var maxAvailableWidth = source.PixelWidth - x;
         var maxAvailableHeight = source.PixelHeight - y;
@@ -104,8 +144,8 @@ public class ScreenCaptureService : IScreenCaptureService
             return source;
         }
 
-        var width = (int)Math.Min(norm.Width, maxAvailableWidth);
-        var height = (int)Math.Min(norm.Height, maxAvailableHeight);
+        var width = (int)Math.Min(Math.Round(norm.Width * scaleX), maxAvailableWidth);
+        var height = (int)Math.Min(Math.Round(norm.Height * scaleY), maxAvailableHeight);
 
         if (width <= 0 || height <= 0)
         {

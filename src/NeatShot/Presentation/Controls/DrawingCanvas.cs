@@ -2,6 +2,7 @@ using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -11,7 +12,7 @@ namespace NeatShot.Presentation.Controls;
 /// Canvas vẽ chú thích vector hiệu năng cao (Pencil, Rectangle, Arrow)
 /// lưu trữ các nét vẽ dưới dạng DrawingElement và hỗ trợ hoàn tác UndoStack.
 /// </summary>
-public class DrawingCanvas : FrameworkElement
+public class DrawingCanvas : Canvas
 {
     private bool _isDrawing;
     private DrawingElement? _currentElement;
@@ -23,7 +24,7 @@ public class DrawingCanvas : FrameworkElement
             nameof(CurrentTool),
             typeof(DrawingToolType),
             typeof(DrawingCanvas),
-            new PropertyMetadata(DrawingToolType.None));
+            new PropertyMetadata(DrawingToolType.None, OnCurrentToolChangedCallback));
 
     public DrawingToolType CurrentTool
     {
@@ -59,7 +60,40 @@ public class DrawingCanvas : FrameworkElement
 
     public DrawingCanvas()
     {
+        Background = null;
+        IsHitTestVisible = false;
         UndoStack.StateChanged += (s, e) => InvalidateVisual();
+    }
+
+    private static void OnCurrentToolChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is DrawingCanvas canvas && e.NewValue is DrawingToolType tool)
+        {
+            canvas.UpdateToolState(tool);
+        }
+    }
+
+    private void UpdateToolState(DrawingToolType tool)
+    {
+        if (tool == DrawingToolType.None)
+        {
+            IsHitTestVisible = false;
+            Background = null;
+            Cursor = Cursors.Arrow;
+        }
+        else
+        {
+            IsHitTestVisible = true;
+            Background = Brushes.Transparent;
+            Cursor = tool switch
+            {
+                DrawingToolType.Pencil => Cursors.Pen,
+                DrawingToolType.Rectangle => Cursors.Cross,
+                DrawingToolType.Arrow => Cursors.Cross,
+                _ => Cursors.Arrow
+            };
+        }
+        InvalidateVisual();
     }
 
     public void Undo()
@@ -71,6 +105,32 @@ public class DrawingCanvas : FrameworkElement
     public void Clear()
     {
         UndoStack.Clear();
+        InvalidateVisual();
+    }
+
+    public void OffsetElements(double dx, double dy)
+    {
+        if (Math.Abs(dx) < 0.001 && Math.Abs(dy) < 0.001) return;
+
+        foreach (var element in UndoStack.Items)
+        {
+            element.StartPoint = new Point(element.StartPoint.X + dx, element.StartPoint.Y + dy);
+            element.EndPoint = new Point(element.EndPoint.X + dx, element.EndPoint.Y + dy);
+
+            if (element.Points != null)
+            {
+                for (int i = 0; i < element.Points.Count; i++)
+                {
+                    element.Points[i] = new Point(element.Points[i].X + dx, element.Points[i].Y + dy);
+                }
+            }
+
+            if (!element.Rect.IsEmpty)
+            {
+                element.Rect = new Rect(element.Rect.X + dx, element.Rect.Y + dy, element.Rect.Width, element.Rect.Height);
+            }
+        }
+
         InvalidateVisual();
     }
 
@@ -96,6 +156,7 @@ public class DrawingCanvas : FrameworkElement
         };
 
         InvalidateVisual();
+        e.Handled = true;
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
@@ -127,6 +188,7 @@ public class DrawingCanvas : FrameworkElement
         }
 
         InvalidateVisual();
+        e.Handled = true;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -142,6 +204,7 @@ public class DrawingCanvas : FrameworkElement
         _currentElement = null;
 
         InvalidateVisual();
+        e.Handled = true;
     }
 
     protected override void OnRender(DrawingContext dc)

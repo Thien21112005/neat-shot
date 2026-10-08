@@ -66,6 +66,12 @@ public static class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool DestroyIcon(IntPtr hIcon);
 
+    [DllImport(User32, SetLastError = true)]
+    public static extern int GetSystemMetrics(int nIndex);
+
+    [DllImport(Gdi32, SetLastError = true)]
+    public static extern int GetDeviceCaps(IntPtr hDC, int nIndex);
+
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);

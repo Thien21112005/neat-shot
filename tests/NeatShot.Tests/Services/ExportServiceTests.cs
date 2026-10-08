@@ -122,4 +122,19 @@ public class ExportServiceTests
         await Assert.ThrowsAsync<ArgumentException>(() =>
             _service.SaveToFileAsync(image, "   "));
     }
+
+    [Fact]
+    public void RenderFinalImage_WithHighDpiBackground_ShouldRenderAtPhysicalResolution()
+    {
+        var background = new RenderTargetBitmap(500, 375, 120, 120, PixelFormats.Pbgra32);
+        var region = new CaptureRegion(100, 100, 200, 100);
+
+        var result = _service.RenderFinalImage(background, region, []);
+
+        Assert.NotNull(result);
+        Assert.Equal(250, result.PixelWidth);
+        Assert.Equal(125, result.PixelHeight);
+        Assert.Equal(120, result.DpiX);
+        Assert.Equal(120, result.DpiY);
+    }
 }

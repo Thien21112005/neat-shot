@@ -26,6 +26,8 @@ public partial class OverlayWindow : Window
         ViewModel.RequestClose += (s, e) => Close();
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
+        SelectionControl.RegionMoved += (s, delta) => DrawingControl.OffsetElements(delta.X, delta.Y);
+
         InitializeToolbar();
     }
 
@@ -126,6 +128,8 @@ public partial class OverlayWindow : Window
         else
         {
             Toolbar.Visibility = Visibility.Collapsed;
+            Toolbar.ResetTools();
+            DrawingControl.CurrentTool = DrawingToolType.None;
         }
     }
 

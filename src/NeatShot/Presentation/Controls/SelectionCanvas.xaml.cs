@@ -7,8 +7,26 @@ namespace NeatShot.Presentation.Controls;
 
 public partial class SelectionCanvas : UserControl
 {
+    private enum DragMode
+    {
+        None,
+        Select,
+        Move,
+        ResizeNW,
+        ResizeN,
+        ResizeNE,
+        ResizeW,
+        ResizeE,
+        ResizeSW,
+        ResizeS,
+        ResizeSE
+    }
+
+    private DragMode _dragMode = DragMode.None;
     private Point _startPoint;
-    private bool _isDragging;
+    private CaptureRegion _originalRegion;
+
+    public event EventHandler<Point>? RegionMoved;
 
     public static readonly DependencyProperty SelectedRegionProperty =
         DependencyProperty.Register(
@@ -42,39 +60,211 @@ public partial class SelectionCanvas : UserControl
         }
     }
 
+    private static bool IsNear(Point p, double targetX, double targetY, double distance = 10.0)
+    {
+        return Math.Abs(p.X - targetX) <= distance && Math.Abs(p.Y - targetY) <= distance;
+    }
+
+    private DragMode GetHitHandle(Point pos, Rect rect)
+    {
+        if (rect.IsEmpty || rect.Width <= 0 || rect.Height <= 0) return DragMode.None;
+
+        var midX = rect.Left + rect.Width / 2;
+        var midY = rect.Top + rect.Height / 2;
+
+        if (IsNear(pos, rect.Left, rect.Top)) return DragMode.ResizeNW;
+        if (IsNear(pos, rect.Right, rect.Top)) return DragMode.ResizeNE;
+        if (IsNear(pos, rect.Left, rect.Bottom)) return DragMode.ResizeSW;
+        if (IsNear(pos, rect.Right, rect.Bottom)) return DragMode.ResizeSE;
+
+        if (IsNear(pos, midX, rect.Top)) return DragMode.ResizeN;
+        if (IsNear(pos, midX, rect.Bottom)) return DragMode.ResizeS;
+        if (IsNear(pos, rect.Left, midY)) return DragMode.ResizeW;
+        if (IsNear(pos, rect.Right, midY)) return DragMode.ResizeE;
+
+        return DragMode.None;
+    }
+
+    private static Cursor GetCursorForMode(DragMode mode) => mode switch
+    {
+        DragMode.ResizeNW => Cursors.SizeNWSE,
+        DragMode.ResizeSE => Cursors.SizeNWSE,
+        DragMode.ResizeNE => Cursors.SizeNESW,
+        DragMode.ResizeSW => Cursors.SizeNESW,
+        DragMode.ResizeN => Cursors.SizeNS,
+        DragMode.ResizeS => Cursors.SizeNS,
+        DragMode.ResizeW => Cursors.SizeWE,
+        DragMode.ResizeE => Cursors.SizeWE,
+        DragMode.Move => Cursors.SizeAll,
+        _ => Cursors.Cross
+    };
+
+    private void UpdateHoverCursor(Point pos)
+    {
+        if (SelectedRegion.IsValid)
+        {
+            var rect = SelectedRegion.ToRect();
+            var handle = GetHitHandle(pos, rect);
+            if (handle != DragMode.None)
+            {
+                Cursor = GetCursorForMode(handle);
+                return;
+            }
+
+            if (rect.Contains(pos))
+            {
+                Cursor = Cursors.SizeAll;
+                return;
+            }
+        }
+
+        Cursor = Cursors.Cross;
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
 
-        _startPoint = e.GetPosition(this);
-        _isDragging = true;
-        CaptureMouse();
+        var pos = e.GetPosition(this);
 
-        SelectedRegion = new CaptureRegion(_startPoint.X, _startPoint.Y, 0, 0);
+        if (SelectedRegion.IsValid)
+        {
+            var rect = SelectedRegion.ToRect();
+            var handle = GetHitHandle(pos, rect);
+            if (handle != DragMode.None)
+            {
+                _dragMode = handle;
+                _startPoint = pos;
+                _originalRegion = SelectedRegion;
+                CaptureMouse();
+                Cursor = GetCursorForMode(handle);
+                e.Handled = true;
+                return;
+            }
+
+            if (rect.Contains(pos))
+            {
+                _dragMode = DragMode.Move;
+                _startPoint = pos;
+                _originalRegion = SelectedRegion;
+                CaptureMouse();
+                Cursor = Cursors.SizeAll;
+                e.Handled = true;
+                return;
+            }
+        }
+
+        // Bấm ngoài vùng chọn hoặc chưa có vùng chọn -> Bắt đầu vẽ vùng chọn mới
+        _dragMode = DragMode.Select;
+        _startPoint = pos;
+        CaptureMouse();
+        SelectedRegion = new CaptureRegion(pos.X, pos.Y, 0, 0);
         UpdateVisuals(SelectedRegion);
+        Cursor = Cursors.Cross;
+        e.Handled = true;
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
 
-        if (!_isDragging) return;
+        var pos = e.GetPosition(this);
 
-        var currentPoint = e.GetPosition(this);
-        var region = CaptureRegion.FromPoints(_startPoint, currentPoint);
+        if (_dragMode == DragMode.Move)
+        {
+            var dx = pos.X - _startPoint.X;
+            var dy = pos.Y - _startPoint.Y;
 
-        SelectedRegion = region;
-        UpdateVisuals(region);
+            var newX = _originalRegion.X + dx;
+            var newY = _originalRegion.Y + dy;
+
+            // Giữ vùng chọn bên trong màn hình
+            newX = Math.Max(0, Math.Min(ActualWidth - _originalRegion.Width, newX));
+            newY = Math.Max(0, Math.Min(ActualHeight - _originalRegion.Height, newY));
+
+            var prevX = SelectedRegion.X;
+            var prevY = SelectedRegion.Y;
+
+            SelectedRegion = new CaptureRegion(newX, newY, _originalRegion.Width, _originalRegion.Height);
+            UpdateVisuals(SelectedRegion);
+
+            var actualDx = newX - prevX;
+            var actualDy = newY - prevY;
+            if (Math.Abs(actualDx) > 0.001 || Math.Abs(actualDy) > 0.001)
+            {
+                RegionMoved?.Invoke(this, new Point(actualDx, actualDy));
+            }
+
+            e.Handled = true;
+            return;
+        }
+
+        if (_dragMode >= DragMode.ResizeNW && _dragMode <= DragMode.ResizeSE)
+        {
+            var dx = pos.X - _startPoint.X;
+            var dy = pos.Y - _startPoint.Y;
+
+            var left = _originalRegion.X;
+            var top = _originalRegion.Y;
+            var right = _originalRegion.X + _originalRegion.Width;
+            var bottom = _originalRegion.Y + _originalRegion.Height;
+
+            switch (_dragMode)
+            {
+                case DragMode.ResizeNW: left += dx; top += dy; break;
+                case DragMode.ResizeN: top += dy; break;
+                case DragMode.ResizeNE: right += dx; top += dy; break;
+                case DragMode.ResizeW: left += dx; break;
+                case DragMode.ResizeE: right += dx; break;
+                case DragMode.ResizeSW: left += dx; bottom += dy; break;
+                case DragMode.ResizeS: bottom += dy; break;
+                case DragMode.ResizeSE: right += dx; bottom += dy; break;
+            }
+
+            left = Math.Max(0, Math.Min(ActualWidth, left));
+            top = Math.Max(0, Math.Min(ActualHeight, top));
+            right = Math.Max(0, Math.Min(ActualWidth, right));
+            bottom = Math.Max(0, Math.Min(ActualHeight, bottom));
+
+            var region = CaptureRegion.FromPoints(new Point(left, top), new Point(right, bottom));
+            SelectedRegion = region;
+            UpdateVisuals(region);
+            e.Handled = true;
+            return;
+        }
+
+        if (_dragMode == DragMode.Select)
+        {
+            var region = CaptureRegion.FromPoints(_startPoint, pos);
+            SelectedRegion = region;
+            UpdateVisuals(region);
+            e.Handled = true;
+            return;
+        }
+
+        UpdateHoverCursor(pos);
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
 
-        if (_isDragging)
+        if (_dragMode != DragMode.None)
         {
-            _isDragging = false;
+            if (_dragMode == DragMode.Select)
+            {
+                // Nếu kích thước vùng chọn quá nhỏ (< 5px), coi như click nhầm và xóa vùng chọn
+                if (SelectedRegion.Width < 5 || SelectedRegion.Height < 5)
+                {
+                    SelectedRegion = CaptureRegion.Empty;
+                    UpdateVisuals(SelectedRegion);
+                }
+            }
+
+            _dragMode = DragMode.None;
             ReleaseMouseCapture();
+            UpdateHoverCursor(e.GetPosition(this));
+            e.Handled = true;
         }
     }
 
@@ -102,12 +292,27 @@ public partial class SelectionCanvas : UserControl
 
             Canvas.SetLeft(DimensionBadge, Math.Max(0, badgeLeft));
             Canvas.SetTop(DimensionBadge, Math.Max(0, badgeTop));
+
+            // Cập nhật 8 nút điều chỉnh kích thước (Handles)
+            HandlesLayer.Visibility = Visibility.Visible;
+            var halfW = rect.Width / 2;
+            var halfH = rect.Height / 2;
+
+            Canvas.SetLeft(HandleNW, rect.Left - 4); Canvas.SetTop(HandleNW, rect.Top - 4);
+            Canvas.SetLeft(HandleN, rect.Left + halfW - 4); Canvas.SetTop(HandleN, rect.Top - 4);
+            Canvas.SetLeft(HandleNE, rect.Right - 4); Canvas.SetTop(HandleNE, rect.Top - 4);
+            Canvas.SetLeft(HandleW, rect.Left - 4); Canvas.SetTop(HandleW, rect.Top + halfH - 4);
+            Canvas.SetLeft(HandleE, rect.Right - 4); Canvas.SetTop(HandleE, rect.Top + halfH - 4);
+            Canvas.SetLeft(HandleSW, rect.Left - 4); Canvas.SetTop(HandleSW, rect.Bottom - 4);
+            Canvas.SetLeft(HandleS, rect.Left + halfW - 4); Canvas.SetTop(HandleS, rect.Bottom - 4);
+            Canvas.SetLeft(HandleSE, rect.Right - 4); Canvas.SetTop(HandleSE, rect.Bottom - 4);
         }
         else
         {
             SelectionGeometry.Rect = Rect.Empty;
             SelectionBorder.Visibility = Visibility.Collapsed;
             DimensionBadge.Visibility = Visibility.Collapsed;
+            HandlesLayer.Visibility = Visibility.Collapsed;
         }
     }
 }

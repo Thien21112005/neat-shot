@@ -31,18 +31,23 @@ public class ExportService : IExportService
         ArgumentNullException.ThrowIfNull(background);
 
         var norm = region.Normalize();
-        var width = (int)Math.Max(1, Math.Round(norm.Width));
-        var height = (int)Math.Max(1, Math.Round(norm.Height));
+        var dpiX = background.DpiX > 0 ? background.DpiX : 96.0;
+        var dpiY = background.DpiY > 0 ? background.DpiY : 96.0;
+        var scaleX = dpiX / 96.0;
+        var scaleY = dpiY / 96.0;
+
+        var pixelWidth = (int)Math.Max(1, Math.Round(norm.Width * scaleX));
+        var pixelHeight = (int)Math.Max(1, Math.Round(norm.Height * scaleY));
 
         var croppedBackground = _screenCaptureService.Crop(background, norm);
 
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
         {
-            // 1. Vẽ nền ảnh đã crop
-            dc.DrawImage(croppedBackground, new Rect(0, 0, width, height));
+            // 1. Vẽ nền ảnh đã crop (theo toạ độ DIP)
+            dc.DrawImage(croppedBackground, new Rect(0, 0, norm.Width, norm.Height));
 
-            // 2. Dịch chuyển toạ độ để các nét vẽ khớp với vùng chọn
+            // 2. Dịch chuyển toạ độ để các nét vẽ khớp với vùng chọn (theo toạ độ DIP)
             dc.PushTransform(new TranslateTransform(-norm.X, -norm.Y));
 
             // 3. Vẽ tất cả các nét chú thích
@@ -57,10 +62,7 @@ public class ExportService : IExportService
             dc.Pop();
         }
 
-        var dpiX = background.DpiX > 0 ? background.DpiX : 96.0;
-        var dpiY = background.DpiY > 0 ? background.DpiY : 96.0;
-
-        var rtb = new RenderTargetBitmap(width, height, dpiX, dpiY, PixelFormats.Pbgra32);
+        var rtb = new RenderTargetBitmap(pixelWidth, pixelHeight, dpiX, dpiY, PixelFormats.Pbgra32);
         rtb.Render(visual);
         return rtb;
     }

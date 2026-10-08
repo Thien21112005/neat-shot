@@ -125,16 +125,25 @@ public partial class App : Application
         return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
     }
 
+    private OverlayWindow? _activeOverlayWindow;
+
     private async void TriggerCapture()
     {
         try
         {
+            if (_activeOverlayWindow != null && _activeOverlayWindow.IsLoaded)
+            {
+                _activeOverlayWindow.Activate();
+                return;
+            }
+
             var captureService = Services.GetRequiredService<IScreenCaptureService>();
             var capturedScreen = await captureService.CaptureCleanScreenAsync();
             var virtualBounds = captureService.GetVirtualScreenBounds();
 
-            var overlayWindow = Services.GetRequiredService<OverlayWindow>();
-            overlayWindow.Display(virtualBounds, capturedScreen);
+            _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
+            _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
+            _activeOverlayWindow.Display(virtualBounds, capturedScreen);
         }
         catch (Exception ex)
         {

@@ -41,5 +41,17 @@
                        FontWeight="SemiBold"
                        Text="0 x 0" />
         </Border>
+
+        <!-- 8 nút điều chỉnh kích thước (Resize Handles) -->
+        <Canvas x:Name="HandlesLayer" Visibility="Collapsed">
+            <Rectangle x:Name="HandleNW" Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleN"  Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleNE" Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleW"  Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleE"  Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleSW" Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleS"  Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            <Rectangle x:Name="HandleSE" Width="8" Height="8" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+        </Canvas>
     </Canvas>
 </UserControl>
