@@ -120,4 +120,95 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_NewTools_ToggleCorrectly_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var selectedTools = new List<DrawingToolType>();
+                toolbar.ToolSelected += (s, tool) => selectedTools.Add(tool);
+
+                // Ellipse
+                toolbar.EllipseButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Ellipse, selectedTools.Last());
+
+                // Line
+                toolbar.LineButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Line, selectedTools.Last());
+
+                // Highlight
+                toolbar.HighlightButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Highlight, selectedTools.Last());
+
+                // Text
+                toolbar.TextButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Text, selectedTools.Last());
+
+                // Select
+                toolbar.SelectButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Select, selectedTools.Last());
+
+                // Eyedropper
+                toolbar.EyedropperButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(DrawingToolType.Eyedropper, selectedTools.Last());
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_ColorHistory_AddsSwatchesAndSelects_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                Color? selectedColor = null;
+                toolbar.ColorSelected += (s, c) => selectedColor = c;
+
+                var customColor = Color.FromRgb(123, 45, 67);
+                toolbar.AddColorToHistory(customColor);
+
+                Assert.Single(toolbar.History.Colors);
+                Assert.Equal(customColor, toolbar.History.Colors[0]);
+                Assert.Single(toolbar.HistoryColorsPanel.Children);
+                Assert.Equal(customColor, selectedColor);
+
+                // Add another color
+                var customColor2 = Color.FromRgb(200, 100, 50);
+                toolbar.AddColorToHistory(customColor2);
+                Assert.Equal(2, toolbar.History.Colors.Count);
+                Assert.Equal(2, toolbar.HistoryColorsPanel.Children.Count);
+
+                // Click first swatch (which corresponds to customColor)
+                var swatchButton = (System.Windows.Controls.Button)toolbar.HistoryColorsPanel.Children[1];
+                swatchButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.Equal(customColor, selectedColor);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

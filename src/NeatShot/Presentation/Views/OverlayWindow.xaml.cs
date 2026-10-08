@@ -229,7 +229,9 @@ public partial class OverlayWindow : Window
             dpi.PixelsPerInchY);
 
         DrawingControl.CurrentColor = color;
+        Toolbar.AddColorToHistory(color);
         ExitEyedropperMode();
+        Toolbar.SetActiveTool(_previousTool == DrawingToolType.None || _previousTool == DrawingToolType.Eyedropper ? DrawingToolType.Pencil : _previousTool);
     }
 
     private void OnWindowKeyDown(object sender, KeyEventArgs e)
