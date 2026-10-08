@@ -16,6 +16,8 @@ public partial class OverlayWindow : Window
 {
     private readonly IExportService _exportService;
     private DrawingToolType _previousTool = DrawingToolType.None;
+    private bool _isToolbarManuallyPositioned;
+    private Point _manualToolbarPosition;
     public OverlayViewModel ViewModel { get; }
 
     public OverlayWindow(OverlayViewModel viewModel, IExportService exportService)
@@ -33,6 +35,9 @@ public partial class OverlayWindow : Window
 
         DrawingControl.EyedropperHovered += OnDrawingEyedropperHovered;
         DrawingControl.EyedropperClicked += OnDrawingEyedropperClicked;
+
+        Toolbar.ToolbarMoved += OnToolbarMoved;
+        Toolbar.ToolbarResetPosition += OnToolbarResetPosition;
 
         InitializeToolbar();
     }
@@ -120,6 +125,44 @@ public partial class OverlayWindow : Window
         }
     }
 
+    private void OnToolbarMoved(object? sender, Point delta)
+    {
+        var curX = Canvas.GetLeft(Toolbar);
+        var curY = Canvas.GetTop(Toolbar);
+        if (double.IsNaN(curX)) curX = 0;
+        if (double.IsNaN(curY)) curY = 0;
+
+        var newX = curX + delta.X;
+        var newY = curY + delta.Y;
+
+        var tbWidth = Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640;
+        var tbHeight = Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44;
+
+        _manualToolbarPosition = new Point(
+            Math.Clamp(newX, 8, Math.Max(8, ActualWidth - tbWidth - 8)),
+            Math.Clamp(newY, 4, Math.Max(4, ActualHeight - tbHeight - 4)));
+
+        _isToolbarManuallyPositioned = true;
+        Canvas.SetLeft(Toolbar, _manualToolbarPosition.X);
+        Canvas.SetTop(Toolbar, _manualToolbarPosition.Y);
+    }
+
+    private void OnToolbarResetPosition(object? sender, EventArgs e)
+    {
+        _isToolbarManuallyPositioned = false;
+        UpdateToolbarPosition(ViewModel.SelectedRegion);
+    }
+
+    private void OnWindowMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (DrawingControl.CurrentTool != DrawingToolType.None)
+        {
+            Toolbar.ResetTools();
+            DrawingControl.CurrentTool = DrawingToolType.None;
+            e.Handled = true;
+        }
+    }
+
     private void UpdateToolbarPosition(CaptureRegion region)
     {
         if (region.IsValid)
@@ -127,27 +170,35 @@ public partial class OverlayWindow : Window
             var rect = region.ToRect();
             Toolbar.Visibility = Visibility.Visible;
 
-            // Đặt Toolbar nằm ngay phía dưới vùng chọn
-            var toolbarLeft = rect.Right - 420; // căn phải theo vùng chọn
-            if (toolbarLeft < rect.Left) toolbarLeft = rect.Left;
-            if (toolbarLeft < 10) toolbarLeft = 10;
-
-            var toolbarTop = rect.Bottom + 10;
-            // Nếu sát đáy màn hình thì đưa Toolbar lên phía trên vùng chọn
-            if (toolbarTop + 50 > ActualHeight)
+            if (_isToolbarManuallyPositioned)
             {
-                toolbarTop = rect.Top - 45;
-                if (toolbarTop < 10) toolbarTop = 10;
+                var tbWidth = Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640;
+                var tbHeight = Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44;
+                var clampedX = Math.Clamp(_manualToolbarPosition.X, 8, Math.Max(8, ActualWidth - tbWidth - 8));
+                var clampedY = Math.Clamp(_manualToolbarPosition.Y, 4, Math.Max(4, ActualHeight - tbHeight - 4));
+                Canvas.SetLeft(Toolbar, clampedX);
+                Canvas.SetTop(Toolbar, clampedY);
+                return;
             }
 
-            Canvas.SetLeft(Toolbar, toolbarLeft);
-            Canvas.SetTop(Toolbar, toolbarTop);
+            var tbSize = new Size(
+                Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640,
+                Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44);
+            var screenSize = new Size(
+                ActualWidth > 0 ? ActualWidth : 1920,
+                ActualHeight > 0 ? ActualHeight : 1080);
+
+            var pos = ToolbarPositionHelper.CalculatePosition(rect, tbSize, screenSize);
+
+            Canvas.SetLeft(Toolbar, pos.X);
+            Canvas.SetTop(Toolbar, pos.Y);
         }
         else
         {
             Toolbar.Visibility = Visibility.Collapsed;
             Toolbar.ResetTools();
             DrawingControl.CurrentTool = DrawingToolType.None;
+            _isToolbarManuallyPositioned = false;
         }
     }
 
@@ -249,6 +300,13 @@ public partial class OverlayWindow : Window
             if (DrawingControl.CurrentTool == DrawingToolType.Eyedropper)
             {
                 ExitEyedropperMode();
+                return true;
+            }
+
+            if (DrawingControl.CurrentTool != DrawingToolType.None)
+            {
+                Toolbar.ResetTools();
+                DrawingControl.CurrentTool = DrawingToolType.None;
                 return true;
             }
 

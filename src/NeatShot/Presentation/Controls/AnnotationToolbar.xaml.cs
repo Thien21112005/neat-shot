@@ -2,6 +2,7 @@ using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace NeatShot.Presentation.Controls;
@@ -34,12 +35,56 @@ public partial class AnnotationToolbar : UserControl
     public event EventHandler? CopyRequested;
     public event EventHandler? SaveRequested;
     public event EventHandler? CloseRequested;
+    public event EventHandler<Point>? ToolbarMoved;
+    public event EventHandler? ToolbarResetPosition;
+
+    private bool _isDraggingToolbar;
+    private Point _dragStartPoint;
 
     public AnnotationToolbar()
     {
         InitializeComponent();
         UpdateToolButtonVisuals();
         UpdateColorButtonVisuals();
+    }
+
+    private void OnDragGripMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            ToolbarResetPosition?.Invoke(this, EventArgs.Empty);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.LeftButton == MouseButtonState.Pressed)
+        {
+            _isDraggingToolbar = true;
+            _dragStartPoint = e.GetPosition(this);
+            DragGrip.CaptureMouse();
+            e.Handled = true;
+        }
+    }
+
+    private void OnDragGripMouseMove(object sender, MouseEventArgs e)
+    {
+        if (_isDraggingToolbar)
+        {
+            var cur = e.GetPosition(this);
+            var delta = new Point(cur.X - _dragStartPoint.X, cur.Y - _dragStartPoint.Y);
+            ToolbarMoved?.Invoke(this, delta);
+            e.Handled = true;
+        }
+    }
+
+    private void OnDragGripMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_isDraggingToolbar)
+        {
+            _isDraggingToolbar = false;
+            DragGrip.ReleaseMouseCapture();
+            e.Handled = true;
+        }
     }
 
     /// <summary>

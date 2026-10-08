@@ -179,6 +179,11 @@ public class AppStartupTests
                 Assert.True(window.ProcessShortcut(Key.Delete, ModifierKeys.None));
                 Assert.Null(window.DrawingControl.SelectedElement);
                 Assert.Empty(window.DrawingControl.UndoStack.Items);
+
+                // 7. Esc with active tool (Pencil) resets tool to None instead of closing window
+                window.DrawingControl.CurrentTool = NeatShot.Core.Models.DrawingToolType.Pencil;
+                Assert.True(window.ProcessShortcut(Key.Escape, ModifierKeys.None));
+                Assert.Equal(NeatShot.Core.Models.DrawingToolType.None, window.DrawingControl.CurrentTool);
             }
             catch (Exception ex)
             {

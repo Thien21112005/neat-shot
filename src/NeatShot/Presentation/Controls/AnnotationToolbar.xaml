@@ -14,9 +14,25 @@
             Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
 
         <StackPanel Orientation="Horizontal">
+            <!-- Tay cầm kéo di chuyển thanh công cụ tự do (Drag Grip) -->
+            <Border x:Name="DragGrip"
+                    Cursor="SizeAll"
+                    Background="Transparent"
+                    Padding="3,0,5,0"
+                    VerticalAlignment="Center"
+                    ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
+                    MouseLeftButtonDown="OnDragGripMouseDown"
+                    MouseMove="OnDragGripMouseMove"
+                    MouseLeftButtonUp="OnDragGripMouseUp">
+                <TextBlock Text="⋮⋮"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Foreground="#80FFFFFF" />
+            </Border>
+
             <!-- Nút Chọn & Di chuyển (Select) -->
             <Button x:Name="SelectButton"
-                    ToolTip="Chọn và di chuyển hình (V)"
+                    ToolTip="Chọn &amp; di chuyển hình vẽ (Click chuột phải để di chuyển khung chụp)"
                     Margin="2,0"
                     Padding="6,4"
                     Click="OnSelectClick">
