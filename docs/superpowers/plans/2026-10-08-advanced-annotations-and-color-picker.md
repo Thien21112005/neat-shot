@@ -134,7 +134,7 @@ git commit -m "feat: add extended tool types, font size, and HitTestHelper"
 - Consumes: `DrawingRenderer.RenderElement(DrawingContext dc, DrawingElement element)`
 - Produces: Rendering cho `DrawingToolType.Ellipse`, `DrawingToolType.Line`, `DrawingToolType.Highlight`, va `DrawingToolType.Text` tren `DrawingContext`
 
-- [ ] **Step 1: Viet test that bai cho DrawingRenderer voi cac kieu hinh moi**
+- [x] **Step 1: Viet test that bai cho DrawingRenderer voi cac kieu hinh moi**
 
 ```csharp
 [Fact]
@@ -157,12 +157,12 @@ public void DrawingRenderer_RenderElement_DoesNotThrow_ForNewToolTypes()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "FullyQualifiedName~DrawingRendererTests"`
 Expected: FAIL vi switch-case trong `DrawingRenderer` chua ho tro cac loai cong cu moi.
 
-- [ ] **Step 3: Trien khai rendering cho cac loai cong cu moi trong `DrawingRenderer.cs`**
+- [x] **Step 3: Trien khai rendering cho cac loai cong cu moi trong `DrawingRenderer.cs`**
 
 1. Case `DrawingToolType.Ellipse`:
    - Tinh `center = new Point(element.Rect.X + element.Rect.Width / 2, element.Rect.Y + element.Rect.Height / 2)`.
@@ -178,12 +178,12 @@ Expected: FAIL vi switch-case trong `DrawingRenderer` chua ho tro cac loai cong 
    - Khoi tao `FormattedText(element.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Segoe UI"), element.FontSize > 0 ? element.FontSize : 16.0, brush, 1.0)`.
    - `dc.DrawText(formattedText, element.StartPoint)`.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~DrawingRendererTests"`
 Expected: PASS (tat ca tool types deu duoc render thanh cong).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Common/Helpers/DrawingRenderer.cs tests/NeatShot.Tests/Helpers/DrawingRendererTests.cs
