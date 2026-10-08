@@ -40,6 +40,7 @@ public partial class AnnotationToolbar : UserControl
     public event EventHandler? CopyRequested;
     public event EventHandler? SaveRequested;
     public event EventHandler? CloseRequested;
+    public event EventHandler? PinRequested;
     public event EventHandler<Point>? ToolbarMoved;
     public event EventHandler? ToolbarResetPosition;
 
@@ -445,5 +446,6 @@ public partial class AnnotationToolbar : UserControl
     private void OnRedoClick(object sender, RoutedEventArgs e) => RedoRequested?.Invoke(this, EventArgs.Empty);
     private void OnCopyClick(object sender, RoutedEventArgs e) => CopyRequested?.Invoke(this, EventArgs.Empty);
     private void OnSaveClick(object sender, RoutedEventArgs e) => SaveRequested?.Invoke(this, EventArgs.Empty);
+    private void OnPinClick(object sender, RoutedEventArgs e) => PinRequested?.Invoke(this, EventArgs.Empty);
     private void OnCloseClick(object sender, RoutedEventArgs e) => CloseRequested?.Invoke(this, EventArgs.Empty);
 }

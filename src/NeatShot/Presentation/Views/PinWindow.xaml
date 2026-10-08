@@ -1,0 +1,49 @@
+<Window x:Class="NeatShot.Presentation.Views.PinWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:NeatShot.Presentation.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:PinViewModel}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        SizeToContent="WidthAndHeight"
+        MouseLeftButtonDown="OnMouseLeftButtonDown"
+        MouseDoubleClick="OnMouseDoubleClick"
+        MouseWheel="OnMouseWheel"
+        KeyDown="OnKeyDown">
+
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Sao chép ảnh (Ctrl + C)" Click="OnCopyImageClick" />
+            <MenuItem Header="Đặt lại tỉ lệ 100% (Ctrl + 0)" Click="OnResetZoomClick" />
+            <Separator />
+            <MenuItem Header="Tăng độ trong suốt" Click="OnDecreaseOpacityClick" />
+            <MenuItem Header="Giảm độ trong suốt" Click="OnIncreaseOpacityClick" />
+            <Separator />
+            <MenuItem Header="Đóng ghim (Esc / Nháy đúp)" Click="OnCloseClick" />
+        </ContextMenu>
+    </Window.ContextMenu>
+
+    <Border BorderBrush="#4DFFFFFF"
+            BorderThickness="1"
+            CornerRadius="4"
+            Background="#1E1E1E"
+            Opacity="{Binding Opacity}"
+            Cursor="SizeAll"
+            ToolTip="Kéo để di chuyển • Lăn chuột để phóng to/thu nhỏ • Ctrl + Lăn để chỉnh độ mờ • Nháy đúp để đóng">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.4" Direction="270" Color="Black" />
+        </Border.Effect>
+        <Image Source="{Binding PinnedImage}"
+               Width="{Binding ScaledWidth}"
+               Height="{Binding ScaledHeight}"
+               Stretch="Fill"
+               RenderOptions.BitmapScalingMode="HighQuality" />
+    </Border>
+</Window>

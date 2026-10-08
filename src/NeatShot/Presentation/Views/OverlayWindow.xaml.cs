@@ -84,6 +84,7 @@ public partial class OverlayWindow : Window
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);
         Toolbar.CopyRequested += async (s, e) => await ExecuteCopyAsync();
         Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
+        Toolbar.PinRequested += async (s, e) => await ExecutePinAsync();
     }
 
     private async Task ExecuteCopyAsync()
@@ -136,6 +137,32 @@ public partial class OverlayWindow : Window
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi lưu file ảnh: {ex.Message}");
+        }
+    }
+
+    private async Task ExecutePinAsync()
+    {
+        if (ViewModel.BackgroundImage == null || !ViewModel.SelectedRegion.IsValid)
+            return;
+
+        try
+        {
+            var finalImage = _exportService.RenderFinalImage(
+                ViewModel.BackgroundImage,
+                ViewModel.SelectedRegion,
+                DrawingControl.UndoStack.Items);
+
+            var pinWindow = new PinWindow(new PinViewModel());
+            var screenX = Left + ViewModel.SelectedRegion.X;
+            var screenY = Top + ViewModel.SelectedRegion.Y;
+            pinWindow.SetImage(finalImage, new Point(screenX, screenY));
+            pinWindow.Show();
+
+            Close();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi ghim ảnh: {ex.Message}");
         }
     }
 

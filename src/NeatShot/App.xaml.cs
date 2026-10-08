@@ -67,9 +67,11 @@ public partial class App : Application
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();
+        services.AddTransient<PinViewModel>();
 
         // Views
         services.AddTransient<OverlayWindow>();
+        services.AddTransient<PinWindow>();
     }
 
     private void InitializeTrayIcon()

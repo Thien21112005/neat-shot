@@ -80,14 +80,14 @@ graph TD
   - `PinViewModel.Scale`, `PinViewModel.Opacity`, `PinViewModel.ZoomIn()`, `PinViewModel.ZoomOut()`
   - `AnnotationToolbar.PinRequested` event
 
-- [ ] **Step 1: Viết failing test cho `PinViewModel` (Zoom, Opacity, Bounds)**
-- [ ] **Step 2: Viết failing test cho `AnnotationToolbar.PinRequested` và khởi tạo `PinWindow`**
-- [ ] **Step 3: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 4: Triển khai `PinViewModel.cs` kế thừa `ViewModelBase`**
-- [ ] **Step 5: Triển khai `PinWindow.xaml` và `PinWindow.xaml.cs` với kéo thả, MouseWheel Zoom/Opacity**
-- [ ] **Step 6: Thêm nút `PinButton` (📌) vào `AnnotationToolbar.xaml` và kết nối với `OverlayWindow.xaml.cs`**
-- [ ] **Step 7: Chạy `dotnet test` xác nhận test chuyển sang màu xanh (GREEN)**
-- [ ] **Step 8: Commit `feat(pin): implement Pin to Screen floating window with zoom and opacity`**
+- [x] **Step 1: Viết failing test cho `PinViewModel` (Zoom, Opacity, Bounds)**
+- [x] **Step 2: Viết failing test cho `AnnotationToolbar.PinRequested` và khởi tạo `PinWindow`**
+- [x] **Step 3: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 4: Triển khai `PinViewModel.cs` kế thừa `ViewModelBase`**
+- [x] **Step 5: Triển khai `PinWindow.xaml` và `PinWindow.xaml.cs` với kéo thả, MouseWheel Zoom/Opacity**
+- [x] **Step 6: Thêm nút `PinButton` (📌) vào `AnnotationToolbar.xaml` và kết nối với `OverlayWindow.xaml.cs`**
+- [x] **Step 7: Chạy `dotnet test` xác nhận test chuyển sang màu xanh (GREEN)**
+- [x] **Step 8: Commit `feat(pin): implement Pin to Screen floating window with zoom and opacity`**
 
 ---
 

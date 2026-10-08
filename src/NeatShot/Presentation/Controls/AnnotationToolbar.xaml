@@ -193,6 +193,15 @@
 
             <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
+            <!-- Nút Ghim lên màn hình (Pin to Screen) -->
+            <Button x:Name="PinButton"
+                    ToolTip="Ghim ảnh nổi trên màn hình (Pin)"
+                    Margin="2,0"
+                    Padding="6,4"
+                    Click="OnPinClick">
+                <TextBlock Text="📌" FontSize="13" />
+            </Button>
+
             <!-- Nút Copy vào Clipboard -->
             <Button x:Name="CopyButton"
                     ToolTip="Sao chép vào Clipboard (Enter)"
