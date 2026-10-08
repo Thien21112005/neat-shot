@@ -84,6 +84,13 @@ public class DrawingCanvas : Canvas
         set => SetValue(CurrentFontFamilyProperty, value);
     }
 
+    /// <summary>
+    /// Đối tượng vẽ hiện đang được chọn (khi sử dụng công cụ Select hoặc click chọn).
+    /// </summary>
+    public DrawingElement? SelectedElement { get; private set; }
+
+    private bool _isDraggingSelected;
+    private Point _lastDragPoint;
     private TextBox? _inlineEditor;
     private Point _inlineEditorPosition;
 
@@ -274,6 +281,96 @@ public class DrawingCanvas : Canvas
         }
     }
 
+    /// <summary>
+    /// Lựa chọn phần tử vẽ tại toạ độ chỉ định (duyệt từ trên xuống dưới theo thứ tự vẽ).
+    /// </summary>
+    public bool SelectElementAt(Point pos)
+    {
+        for (int i = UndoStack.Items.Count - 1; i >= 0; i--)
+        {
+            var item = UndoStack.Items[i];
+            if (HitTestHelper.HitTest(item, pos))
+            {
+                SelectedElement = item;
+                InvalidateVisual();
+                return true;
+            }
+        }
+
+        SelectedElement = null;
+        InvalidateVisual();
+        return false;
+    }
+
+    /// <summary>
+    /// Bỏ chọn phần tử hiện tại.
+    /// </summary>
+    public void ClearSelection()
+    {
+        if (SelectedElement != null)
+        {
+            SelectedElement = null;
+            InvalidateVisual();
+        }
+    }
+
+    /// <summary>
+    /// Dịch chuyển phần tử đang chọn theo khoảng cách (dx, dy).
+    /// </summary>
+    public void MoveSelectedElement(double dx, double dy)
+    {
+        if (SelectedElement == null) return;
+        if (Math.Abs(dx) < 0.0001 && Math.Abs(dy) < 0.0001) return;
+
+        SelectedElement.StartPoint = new Point(SelectedElement.StartPoint.X + dx, SelectedElement.StartPoint.Y + dy);
+        SelectedElement.EndPoint = new Point(SelectedElement.EndPoint.X + dx, SelectedElement.EndPoint.Y + dy);
+
+        if (!SelectedElement.Rect.IsEmpty)
+        {
+            SelectedElement.Rect = new Rect(
+                SelectedElement.Rect.X + dx,
+                SelectedElement.Rect.Y + dy,
+                SelectedElement.Rect.Width,
+                SelectedElement.Rect.Height);
+        }
+
+        if (SelectedElement.Points != null)
+        {
+            for (int i = 0; i < SelectedElement.Points.Count; i++)
+            {
+                SelectedElement.Points[i] = new Point(SelectedElement.Points[i].X + dx, SelectedElement.Points[i].Y + dy);
+            }
+        }
+
+        InvalidateVisual();
+    }
+
+    /// <summary>
+    /// Xoá phần tử đang được chọn khỏi UndoStack.
+    /// </summary>
+    public bool DeleteSelectedElement()
+    {
+        if (SelectedElement == null) return false;
+
+        var target = SelectedElement;
+        SelectedElement = null;
+
+        var items = UndoStack.Items.ToList();
+        if (items.Remove(target))
+        {
+            UndoStack.Clear();
+            foreach (var it in items)
+            {
+                UndoStack.Push(it);
+            }
+            InvalidateVisual();
+            return true;
+        }
+
+        InvalidateVisual();
+        return false;
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
@@ -281,6 +378,18 @@ public class DrawingCanvas : Canvas
         if (CurrentTool == DrawingToolType.None) return;
 
         var pos = e.GetPosition(this);
+
+        if (CurrentTool == DrawingToolType.Select)
+        {
+            if (SelectElementAt(pos))
+            {
+                _isDraggingSelected = true;
+                _lastDragPoint = pos;
+                CaptureMouse();
+            }
+            e.Handled = true;
+            return;
+        }
 
         if (CurrentTool == DrawingToolType.Text)
         {
@@ -336,15 +445,47 @@ public class DrawingCanvas : Canvas
     {
         base.OnMouseMove(e);
 
+        var currentPoint = e.GetPosition(this);
+
+        if (CurrentTool == DrawingToolType.Select)
+        {
+            if (_isDraggingSelected && SelectedElement != null)
+            {
+                var dx = currentPoint.X - _lastDragPoint.X;
+                var dy = currentPoint.Y - _lastDragPoint.Y;
+                _lastDragPoint = currentPoint;
+                MoveSelectedElement(dx, dy);
+                Cursor = Cursors.SizeAll;
+            }
+            else
+            {
+                var isHovering = UndoStack.Items.Any(item => HitTestHelper.HitTest(item, currentPoint));
+                Cursor = isHovering ? Cursors.SizeAll : Cursors.Hand;
+            }
+            e.Handled = true;
+            return;
+        }
+
         if (!_isDrawing || _currentElement == null) return;
 
-        MoveDrawing(e.GetPosition(this));
+        MoveDrawing(currentPoint);
         e.Handled = true;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
+
+        if (CurrentTool == DrawingToolType.Select)
+        {
+            if (_isDraggingSelected)
+            {
+                _isDraggingSelected = false;
+                ReleaseMouseCapture();
+            }
+            e.Handled = true;
+            return;
+        }
 
         if (!_isDrawing || _currentElement == null) return;
 
@@ -367,6 +508,30 @@ public class DrawingCanvas : Canvas
         if (_currentElement != null)
         {
             DrawingRenderer.RenderElement(dc, _currentElement);
+        }
+
+        // 3. Nếu đang có đối tượng được chọn, vẽ khung viền nét đứt báo hiệu
+        if (SelectedElement != null)
+        {
+            var box = SelectedElement.GetBoundingBox();
+            if (!box.IsEmpty)
+            {
+                var adRect = new Rect(box.X - 4, box.Y - 4, Math.Max(8, box.Width + 8), Math.Max(8, box.Height + 8));
+                var dashPen = new Pen(new SolidColorBrush(Color.FromRgb(0, 120, 212)), 1.5)
+                {
+                    DashStyle = DashStyles.Dash
+                };
+                dashPen.Freeze();
+                dc.DrawRectangle(null, dashPen, adRect);
+
+                var handleBrush = Brushes.White;
+                var handlePen = new Pen(new SolidColorBrush(Color.FromRgb(0, 120, 212)), 1.0);
+                handlePen.Freeze();
+                dc.DrawEllipse(handleBrush, handlePen, new Point(adRect.Left, adRect.Top), 3, 3);
+                dc.DrawEllipse(handleBrush, handlePen, new Point(adRect.Right, adRect.Top), 3, 3);
+                dc.DrawEllipse(handleBrush, handlePen, new Point(adRect.Left, adRect.Bottom), 3, 3);
+                dc.DrawEllipse(handleBrush, handlePen, new Point(adRect.Right, adRect.Bottom), 3, 3);
+            }
         }
     }
 }
