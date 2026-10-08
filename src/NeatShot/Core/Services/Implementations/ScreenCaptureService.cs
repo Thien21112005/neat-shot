@@ -31,9 +31,13 @@ public class ScreenCaptureService : IScreenCaptureService
 
     public async Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default)
     {
-        // 1. Gửi phím Escape để Windows Shell chủ động đóng popup khay hệ thống, context menu, Start menu
-        NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, 0, UIntPtr.Zero);
-        NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, NativeConstants.KEYEVENTF_KEYUP, UIntPtr.Zero);
+        // 1. Chuyển Foreground về Desktop Window để Windows Shell tự động đóng context menu / popup khay hệ thống một cách an toàn
+        // (Tránh dùng keybd_event gửi VK_ESCAPE vì khi người dùng nhấn giữ tổ hợp Ctrl + Shift, Escape sẽ tạo thành Ctrl + Shift + Esc kích hoạt Task Manager)
+        var desktopWnd = NativeMethods.GetDesktopWindow();
+        if (desktopWnd != IntPtr.Zero)
+        {
+            NativeMethods.SetForegroundWindow(desktopWnd);
+        }
 
         // 2. Ẩn chủ động cửa sổ khay hệ thống (NotifyIconOverflowWindow trên Windows 10 & 11)
         var overflowWnd = NativeMethods.FindWindow("NotifyIconOverflowWindow", null);

@@ -211,4 +211,130 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_ShapeDropdown_SelectsRectangleAndEllipse_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var selectedTools = new List<DrawingToolType>();
+                toolbar.ToolSelected += (s, tool) => selectedTools.Add(tool);
+
+                Assert.NotNull(toolbar.ShapeComboBox);
+                Assert.True(toolbar.ShapeComboBox.Items.Count >= 2);
+
+                // Select Rectangle (index 0)
+                toolbar.SelectShapeTool(DrawingToolType.Rectangle);
+                Assert.Equal(DrawingToolType.Rectangle, toolbar.ActiveTool);
+                Assert.Equal(DrawingToolType.Rectangle, selectedTools.Last());
+
+                // Select Ellipse (index 1)
+                toolbar.SelectShapeTool(DrawingToolType.Ellipse);
+                Assert.Equal(DrawingToolType.Ellipse, toolbar.ActiveTool);
+                Assert.Equal(DrawingToolType.Ellipse, selectedTools.Last());
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_LineDropdown_SelectsArrowAndLine_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var selectedTools = new List<DrawingToolType>();
+                toolbar.ToolSelected += (s, tool) => selectedTools.Add(tool);
+
+                Assert.NotNull(toolbar.LineComboBox);
+                Assert.True(toolbar.LineComboBox.Items.Count >= 2);
+
+                // Select Arrow
+                toolbar.SelectLineTool(DrawingToolType.Arrow);
+                Assert.Equal(DrawingToolType.Arrow, toolbar.ActiveTool);
+                Assert.Equal(DrawingToolType.Arrow, selectedTools.Last());
+
+                // Select Line
+                toolbar.SelectLineTool(DrawingToolType.Line);
+                Assert.Equal(DrawingToolType.Line, toolbar.ActiveTool);
+                Assert.Equal(DrawingToolType.Line, selectedTools.Last());
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_FontControls_ChangeFamilyAndSize_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                string? changedFamily = null;
+                double? changedSize = null;
+
+                toolbar.FontFamilyChanged += (s, f) => changedFamily = f;
+                toolbar.FontSizeChanged += (s, size) => changedSize = size;
+
+                Assert.NotNull(toolbar.FontFamilyComboBox);
+                Assert.NotNull(toolbar.FontSizeComboBox);
+                Assert.NotNull(toolbar.FontControlsPanel);
+
+                // Initially with None tool, FontControlsPanel is Collapsed
+                Assert.Equal(System.Windows.Visibility.Collapsed, toolbar.FontControlsPanel.Visibility);
+
+                // Activate Text tool -> FontControlsPanel becomes Visible
+                toolbar.SetActiveTool(DrawingToolType.Text);
+                Assert.Equal(System.Windows.Visibility.Visible, toolbar.FontControlsPanel.Visibility);
+
+                // Change font family
+                toolbar.SelectFontFamily("Arial");
+                Assert.Equal("Arial", changedFamily);
+                Assert.Equal("Arial", toolbar.SelectedFontFamily);
+
+                // Change font size
+                toolbar.SelectFontSize(24.0);
+                Assert.Equal(24.0, changedSize);
+                Assert.Equal(24.0, toolbar.SelectedFontSize);
+
+                // Activate Pencil -> FontControlsPanel is Collapsed
+                toolbar.SetActiveTool(DrawingToolType.Pencil);
+                Assert.Equal(System.Windows.Visibility.Collapsed, toolbar.FontControlsPanel.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

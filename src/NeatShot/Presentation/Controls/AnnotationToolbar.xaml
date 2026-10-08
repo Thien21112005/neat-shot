@@ -48,41 +48,35 @@
                 <TextBlock Text="✏️" FontSize="13" />
             </Button>
 
-            <!-- Nút Khung chữ nhật (Rectangle) -->
-            <Button x:Name="RectButton"
-                    ToolTip="Vẽ khung chữ nhật (R)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnRectClick">
-                <TextBlock Text="🔲" FontSize="13" />
-            </Button>
+            <!-- Ô thả xuống Hình khối: Hình chữ nhật & Oval (R / O) -->
+            <ComboBox x:Name="ShapeComboBox"
+                      ToolTip="Chọn hình khối: Chữ nhật (R) hoặc Oval (O)"
+                      Margin="2,0"
+                      Height="28"
+                      Padding="6,2"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="OnShapeComboBoxSelectionChanged">
+                <ComboBoxItem Content="🔲 Chữ nhật" Tag="Rectangle" IsSelected="True" />
+                <ComboBoxItem Content="⬭ Oval" Tag="Ellipse" />
+            </ComboBox>
 
-            <!-- Nút Hình Oval (Ellipse) -->
-            <Button x:Name="EllipseButton"
-                    ToolTip="Vẽ hình oval / elip (O)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnEllipseClick">
-                <TextBlock Text="⬭" FontSize="14" FontWeight="Bold" />
-            </Button>
+            <!-- Ô thả xuống Đường kẻ: Mũi tên & Đường thẳng (A / L) -->
+            <ComboBox x:Name="LineComboBox"
+                      ToolTip="Chọn đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
+                      Margin="2,0"
+                      Height="28"
+                      Padding="6,2"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="OnLineComboBoxSelectionChanged">
+                <ComboBoxItem Content="↗ Mũi tên" Tag="Arrow" IsSelected="True" />
+                <ComboBoxItem Content="― Đường thẳng" Tag="Line" />
+            </ComboBox>
 
-            <!-- Nút Đường thẳng (Line) -->
-            <Button x:Name="LineButton"
-                    ToolTip="Vẽ đường thẳng (L)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnLineClick">
-                <TextBlock Text="―" FontSize="13" FontWeight="Bold" />
-            </Button>
-
-            <!-- Nút Mũi tên (Arrow) -->
-            <Button x:Name="ArrowButton"
-                    ToolTip="Vẽ mũi tên chỉ dẫn (A)"
-                    Margin="2,0"
-                    Padding="6,4"
-                    Click="OnArrowClick">
-                <TextBlock Text="↗" FontSize="14" FontWeight="Bold" />
-            </Button>
+            <!-- Các nút ẩn giữ tương thích API và kiểm thử tự động -->
+            <Button x:Name="RectButton" Visibility="Collapsed" Click="OnRectClick" />
+            <Button x:Name="EllipseButton" Visibility="Collapsed" Click="OnEllipseClick" />
+            <Button x:Name="LineButton" Visibility="Collapsed" Click="OnLineClick" />
+            <Button x:Name="ArrowButton" Visibility="Collapsed" Click="OnArrowClick" />
 
             <!-- Nút Bút dạ quang (Highlight) -->
             <Button x:Name="HighlightButton"
@@ -101,6 +95,46 @@
                     Click="OnTextClick">
                 <TextBlock Text="T" FontSize="13" FontWeight="Bold" />
             </Button>
+
+            <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
+            <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="3,0,2,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />
+                <ComboBox x:Name="FontFamilyComboBox"
+                          Width="110"
+                          Height="28"
+                          Margin="2,0"
+                          Padding="4,2"
+                          VerticalContentAlignment="Center"
+                          ToolTip="Chọn phông chữ"
+                          SelectionChanged="OnFontFamilySelectionChanged">
+                    <ComboBoxItem Content="Segoe UI" IsSelected="True" />
+                    <ComboBoxItem Content="Arial" />
+                    <ComboBoxItem Content="Calibri" />
+                    <ComboBoxItem Content="Consolas" />
+                    <ComboBoxItem Content="Times New Roman" />
+                    <ComboBoxItem Content="Verdana" />
+                    <ComboBoxItem Content="Tahoma" />
+                    <ComboBoxItem Content="Courier New" />
+                </ComboBox>
+                <ComboBox x:Name="FontSizeComboBox"
+                          Width="60"
+                          Height="28"
+                          Margin="2,0"
+                          Padding="4,2"
+                          VerticalContentAlignment="Center"
+                          ToolTip="Chọn cỡ chữ"
+                          SelectionChanged="OnFontSizeSelectionChanged">
+                    <ComboBoxItem Content="12" />
+                    <ComboBoxItem Content="14" />
+                    <ComboBoxItem Content="16" IsSelected="True" />
+                    <ComboBoxItem Content="18" />
+                    <ComboBoxItem Content="20" />
+                    <ComboBoxItem Content="24" />
+                    <ComboBoxItem Content="28" />
+                    <ComboBoxItem Content="32" />
+                    <ComboBoxItem Content="40" />
+                </ComboBox>
+            </StackPanel>
 
             <!-- Nút Cây bút hút màu (Eyedropper) -->
             <Button x:Name="EyedropperButton"

@@ -54,9 +54,31 @@ public partial class OverlayWindow : Window
             {
                 ExitEyedropperMode();
                 DrawingControl.CurrentTool = tool;
+                if (tool == DrawingToolType.Text)
+                {
+                    DrawingControl.CurrentFontFamily = Toolbar.SelectedFontFamily;
+                    DrawingControl.CurrentFontSize = Toolbar.SelectedFontSize;
+                }
             }
         };
-        Toolbar.ColorSelected += (s, color) => DrawingControl.CurrentColor = color;
+        Toolbar.FontFamilyChanged += (s, fontFamily) =>
+        {
+            DrawingControl.CurrentFontFamily = fontFamily;
+            if (DrawingControl.SelectedElement != null && DrawingControl.SelectedElement.ToolType == DrawingToolType.Text)
+            {
+                DrawingControl.SelectedElement.FontFamily = fontFamily;
+                DrawingControl.InvalidateVisual();
+            }
+        };
+        Toolbar.FontSizeChanged += (s, fontSize) =>
+        {
+            DrawingControl.CurrentFontSize = fontSize;
+            if (DrawingControl.SelectedElement != null && DrawingControl.SelectedElement.ToolType == DrawingToolType.Text)
+            {
+                DrawingControl.SelectedElement.FontSize = fontSize;
+                DrawingControl.InvalidateVisual();
+            }
+        };
         Toolbar.UndoRequested += (s, e) => DrawingControl.Undo();
         Toolbar.RedoRequested += (s, e) => DrawingControl.Redo();
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);
