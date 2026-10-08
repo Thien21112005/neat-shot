@@ -50,7 +50,7 @@
   - `DrawingElement.FontSize`, `DrawingElement.GetBoundingBox()`
   - `HitTestHelper.HitTest(DrawingElement element, Point testPoint, double tolerance = 6.0) -> bool`
 
-- [ ] **Step 1: Viet test that bai cho DrawingToolType moi va HitTestHelper**
+- [x] **Step 1: Viet test that bai cho DrawingToolType moi va HitTestHelper**
 
 ```csharp
 [Fact]
@@ -92,12 +92,12 @@ public void HitTestHelper_LineAndEllipse_IdentifiesHitsCorrectly()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan test that bai**
+- [x] **Step 2: Chay test de xac nhan test that bai**
 
 Run: `dotnet test --filter "FullyQualifiedName~HitTestHelperTests"`
 Expected: FAIL vi `DrawingToolType` chua co cac gia tri moi va `HitTestHelper` chua duoc dinh nghia.
 
-- [ ] **Step 3: Cap nhat `DrawingElement.cs` va tao `HitTestHelper.cs`**
+- [x] **Step 3: Cap nhat `DrawingElement.cs` va tao `HitTestHelper.cs`**
 
 1. Trong `src/NeatShot/Core/Models/DrawingElement.cs`:
    - Bo sung vao `DrawingToolType`: `Ellipse`, `Line`, `Highlight`, `Select`, `Eyedropper`.
@@ -110,12 +110,12 @@ Expected: FAIL vi `DrawingToolType` chua co cac gia tri moi va `HitTestHelper` c
      - `Pencil` / `Highlight`: kiem tra khoang cach toi tung doan thang noi cac diem trong `Points`.
      - `Text`: kiem tra diem co nam trong hop bao cua text hay khong.
 
-- [ ] **Step 4: Chay test de xac nhan test vuot qua**
+- [x] **Step 4: Chay test de xac nhan test vuot qua**
 
 Run: `dotnet test --filter "FullyQualifiedName~HitTestHelperTests"`
 Expected: PASS (tat ca test hit-test deu xanh).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Core/Models/DrawingElement.cs src/NeatShot/Common/Helpers/HitTestHelper.cs tests/NeatShot.Tests/Helpers/HitTestHelperTests.cs
