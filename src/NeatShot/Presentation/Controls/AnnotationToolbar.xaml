@@ -243,7 +243,7 @@
                       ToolTip="Làm đẹp ảnh: Đổ bóng, bo góc &amp; nền Gradient"
                       Margin="2,0"
                       Height="28"
-                      MaxDropDownHeight="180"
+                      MaxDropDownHeight="240"
                       Padding="6,2"
                       VerticalContentAlignment="Center"
                       SelectionChanged="OnBeautifySelectionChanged">

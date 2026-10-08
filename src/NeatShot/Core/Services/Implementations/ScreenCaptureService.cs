@@ -31,15 +31,29 @@ public class ScreenCaptureService : IScreenCaptureService
 
     public async Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default)
     {
-        // 1. Chuyển Foreground về Desktop Window để Windows Shell tự động đóng context menu / popup khay hệ thống một cách an toàn
-        // (Tránh dùng keybd_event gửi VK_ESCAPE vì khi người dùng nhấn giữ tổ hợp Ctrl + Shift, Escape sẽ tạo thành Ctrl + Shift + Esc kích hoạt Task Manager)
+        // 1. Kiểm tra trạng thái các phím bổ trợ (Ctrl, Shift, Alt):
+        // Nếu người dùng kích hoạt qua phím tắt như Ctrl+Shift+A, phím có thể đang được giữ vật lý.
+        // Tuyệt đối KHÔNG gửi VK_ESCAPE khi Ctrl + Shift đang nhấn để tránh tổ hợp Ctrl+Shift+Esc kích hoạt Task Manager của Windows.
+        // Ngược lại, khi người dùng click chuột vào biểu tượng khay hệ thống (System Tray overflow flyout) hoặc menu ngữ cảnh,
+        // các phím bổ trợ không bị nhấn; gửi VK_ESCAPE để Windows Shell lập tức hạ/đóng popup khay hệ thống một cách mượt mà.
+        bool isModifierDown =
+            (NativeMethods.GetAsyncKeyState(NativeConstants.VK_CONTROL) & 0x8000) != 0 ||
+            (NativeMethods.GetAsyncKeyState(NativeConstants.VK_SHIFT) & 0x8000) != 0 ||
+            (NativeMethods.GetAsyncKeyState(NativeConstants.VK_MENU) & 0x8000) != 0;
+
+        if (!isModifierDown)
+        {
+            NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, 0, UIntPtr.Zero);
+            NativeMethods.keybd_event(NativeConstants.VK_ESCAPE, 0, NativeConstants.KEYEVENTF_KEYUP, UIntPtr.Zero);
+        }
+
+        // 2. Chuyển Foreground về Desktop Window và chủ động ẩn cửa sổ khay trên các phiên bản Windows hỗ trợ
         var desktopWnd = NativeMethods.GetDesktopWindow();
         if (desktopWnd != IntPtr.Zero)
         {
             NativeMethods.SetForegroundWindow(desktopWnd);
         }
 
-        // 2. Ẩn chủ động cửa sổ khay hệ thống (NotifyIconOverflowWindow trên Windows 10 & 11)
         var overflowWnd = NativeMethods.FindWindow("NotifyIconOverflowWindow", null);
         if (overflowWnd != IntPtr.Zero)
         {
@@ -52,10 +66,10 @@ public class ScreenCaptureService : IScreenCaptureService
             NativeMethods.ShowWindow(topLevelOverflow, NativeConstants.SW_HIDE);
         }
 
-        // 3. Chờ 200ms để hiệu ứng animation đóng popup của Windows hoàn tất sạch sẽ
-        await Task.Delay(200, cancellationToken);
+        // 3. Chờ 250ms để hiệu ứng animation đóng popup/flyout của Windows hoàn tất sạch sẽ
+        await Task.Delay(250, cancellationToken);
 
-        // 3. Thực hiện chụp ảnh toàn bộ toạ độ Virtual Screen qua Win32 GDI BitBlt
+        // 4. Thực hiện chụp ảnh toàn bộ toạ độ Virtual Screen qua Win32 GDI BitBlt
         var bounds = GetVirtualScreenBounds();
         var physicalLeft = NativeMethods.GetSystemMetrics(NativeConstants.SM_XVIRTUALSCREEN);
         var physicalTop = NativeMethods.GetSystemMetrics(NativeConstants.SM_YVIRTUALSCREEN);

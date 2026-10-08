@@ -98,4 +98,16 @@ public class ScreenCaptureServiceTests
         Assert.Equal(250, cropped.PixelWidth);
         Assert.Equal(125, cropped.PixelHeight);
     }
+
+    [Fact]
+    public async Task CaptureCleanScreenAsync_WithCancellation_ThrowsOperationCanceledException()
+    {
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
+        {
+            await _service.CaptureCleanScreenAsync(cts.Token);
+        });
+    }
 }

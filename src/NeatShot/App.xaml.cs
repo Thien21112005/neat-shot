@@ -142,6 +142,12 @@ public partial class App : Application
                 return;
             }
 
+            // Đóng context menu khay hệ thống nếu đang mở
+            if (_trayContextMenu != null && _trayContextMenu.IsOpen)
+            {
+                _trayContextMenu.IsOpen = false;
+            }
+
             var captureService = Services.GetRequiredService<IScreenCaptureService>();
             var capturedScreen = await captureService.CaptureCleanScreenAsync();
             var virtualBounds = captureService.GetVirtualScreenBounds();

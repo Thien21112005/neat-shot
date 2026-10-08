@@ -51,6 +51,9 @@ public static class NativeConstants
 
     // Keyboard & Window Messages for Dismissing Popups
     public const byte VK_ESCAPE = 0x1B;
+    public const int VK_SHIFT = 0x10;
+    public const int VK_CONTROL = 0x11;
+    public const int VK_MENU = 0x12; // Alt
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const int WM_CLOSE = 0x0010;
 }
