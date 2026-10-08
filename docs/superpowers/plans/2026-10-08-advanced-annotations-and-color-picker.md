@@ -653,7 +653,7 @@ git commit -m "feat: add color history palette and new toolbar tool buttons"
 - Consumes: Tat ca cac cong cu moi (Ellipse, Line, Highlight, Text, Move, Eyedropper, History)
 - Produces: Luong nguoi dung lien mach tren OverlayWindow va xuat anh hoan chinh ra Clipboard / PNG qua `ExportService`.
 
-- [ ] **Step 1: Viet test that bai cho ExportService voi cac hinh ve va text moi**
+- [x] **Step 1: Viet test that bai cho ExportService voi cac hinh ve va text moi**
 
 ```csharp
 [Fact]
@@ -681,12 +681,12 @@ public void ExportService_RendersAllNewAnnotationTypes_Correctly()
 }
 ```
 
-- [ ] **Step 2: Chay test de xac nhan ket qua**
+- [x] **Step 2: Chay test de xac nhan ket qua**
 
 Run: `dotnet test --filter "ExportService_RendersAllNewAnnotationTypes_Correctly"`
 Expected: PASS (do `DrawingRenderer` o Task 2 da duoc chia se va ke thua boi `ExportService`).
 
-- [ ] **Step 3: Ket noi su kien giua `OverlayWindow`, `Toolbar`, va `DrawingControl`**
+- [x] **Step 3: Ket noi su kien giua `OverlayWindow`, `Toolbar`, va `DrawingControl`**
 
 1. Trong `OverlayWindow.xaml.cs`:
    - Ket noi cac nut cong cu moi tu Toolbar vao `DrawingControl.CurrentTool`.
@@ -698,12 +698,12 @@ Expected: PASS (do `DrawingRenderer` o Task 2 da duoc chia se va ke thua boi `Ex
      - Phim `I` hoac `C`: kich hoat Eyedropper tool.
      - Phim `Delete`: xoa phan tu hien dang duoc chon trong `DrawingControl.SelectedElement`.
 
-- [ ] **Step 4: Chay toan bo bo test xUnit**
+- [x] **Step 4: Chay toan bo bo test xUnit**
 
 Run: `dotnet test`
 Expected: PASS tat ca cac test (>= 75 tests), khong co test nao fail hay skip.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/NeatShot/Presentation/Views/OverlayWindow.xaml.cs tests/NeatShot.Tests/Services/ExportServiceAdvancedTests.cs
