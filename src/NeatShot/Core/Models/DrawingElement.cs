@@ -19,7 +19,8 @@ public enum DrawingToolType
     Select,
     Eyedropper,
     Pixelate,
-    Blur
+    Blur,
+    StepCounter
 }
 
 /// <summary>
@@ -82,6 +83,11 @@ public class DrawingElement
     public System.Windows.Media.Imaging.BitmapSource? EffectBitmap { get; set; }
 
     /// <summary>
+    /// Số thứ tự bước (dùng cho công cụ StepCounter, ví dụ: 1, 2, 3...).
+    /// </summary>
+    public int StepNumber { get; set; } = 1;
+
+    /// <summary>
     /// Tính toán hộp bao quanh (bounding box) của phần tử vẽ.
     /// </summary>
     public Rect GetBoundingBox()
@@ -93,6 +99,13 @@ public class DrawingElement
             case DrawingToolType.Pixelate:
             case DrawingToolType.Blur:
                 return Rect;
+
+            case DrawingToolType.StepCounter:
+                if (!Rect.IsEmpty && Rect.Width > 0 && Rect.Height > 0)
+                {
+                    return Rect;
+                }
+                return new Rect(StartPoint.X - 14, StartPoint.Y - 14, 28, 28);
 
             case DrawingToolType.Line:
             case DrawingToolType.Arrow:

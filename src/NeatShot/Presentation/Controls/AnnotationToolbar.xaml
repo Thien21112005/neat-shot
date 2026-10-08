@@ -116,6 +116,15 @@
                 <TextBlock Text="🌫️" FontSize="13" />
             </Button>
 
+            <!-- Nút Đánh số bước tự động (Step Counter) -->
+            <Button x:Name="StepCounterButton"
+                    ToolTip="Đánh số bước tự động (N)"
+                    Margin="2,0"
+                    Padding="6,4"
+                    Click="OnStepCounterClick">
+                <TextBlock Text="①" FontSize="14" FontWeight="Bold" />
+            </Button>
+
             <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
             <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
                 <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="3,0,2,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />

@@ -20,6 +20,22 @@ public class DrawingCanvas : Canvas
     public UndoStack<DrawingElement> UndoStack { get; } = new();
 
     /// <summary>
+    /// Số thứ tự bước tiếp theo tự động tăng dần đồng bộ theo UndoStack.
+    /// </summary>
+    public int NextStepNumber
+    {
+        get
+        {
+            var maxStep = UndoStack.Items
+                .Where(i => i.ToolType == DrawingToolType.StepCounter)
+                .Select(i => i.StepNumber)
+                .DefaultIfEmpty(0)
+                .Max();
+            return maxStep + 1;
+        }
+    }
+
+    /// <summary>
     /// Ảnh chụp màn hình nền dùng để cắt và áp dụng hiệu ứng Blur / Pixelate.
     /// </summary>
     public System.Windows.Media.Imaging.BitmapSource? BackgroundImage { get; set; }
@@ -165,6 +181,7 @@ public class DrawingCanvas : Canvas
                 DrawingToolType.Eyedropper => Cursors.Cross,
                 DrawingToolType.Pixelate => Cursors.Cross,
                 DrawingToolType.Blur => Cursors.Cross,
+                DrawingToolType.StepCounter => Cursors.Hand,
                 _ => Cursors.Arrow
             };
         }
@@ -245,8 +262,11 @@ public class DrawingCanvas : Canvas
             Thickness = CurrentThickness,
             StartPoint = startPoint,
             EndPoint = startPoint,
+            StepNumber = CurrentTool == DrawingToolType.StepCounter ? NextStepNumber : 1,
             Points = new List<Point> { startPoint },
-            Rect = new Rect(startPoint, startPoint)
+            Rect = CurrentTool == DrawingToolType.StepCounter
+                ? new Rect(startPoint.X - 14, startPoint.Y - 14, 28, 28)
+                : new Rect(startPoint, startPoint)
         };
 
         InvalidateVisual();

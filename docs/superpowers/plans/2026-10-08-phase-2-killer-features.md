@@ -175,14 +175,14 @@ graph TD
   - `DrawingCanvas.NextStepNumber` (tự động tăng sau mỗi click, đồng bộ với UndoStack)
   - `DrawingRenderer.DrawStepBadge(DrawingContext dc, Point center, int number, Color color, double radius = 14)`
 
-- [ ] **Step 1: Viết failing test cho bộ đếm bước (tăng số thứ tự, Undo giảm số, vẽ nhãn số đúng tọa độ)**
-- [ ] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
-- [ ] **Step 3: Bổ sung `StepNumber` vào `DrawingElement.cs` và cập nhật `HitTestHelper.cs`**
-- [ ] **Step 4: Cập nhật `DrawingRenderer.cs` để render huy hiệu tròn sắc nét kèm số nổi bật**
-- [ ] **Step 5: Cập nhật `DrawingCanvas.cs` xử lý click tạo StepCounter và tự động tính `NextStepNumber`**
-- [ ] **Step 6: Thêm nút `StepCounterButton` (①) trên `AnnotationToolbar.xaml` và phím tắt `N`**
-- [ ] **Step 7: Chạy `dotnet test` xác nhận test xanh (GREEN)**
-- [ ] **Step 8: Commit `feat(annotations): add automatic incremental step counter badge tool`**
+- [x] **Step 1: Viết failing test cho bộ đếm bước (tăng số thứ tự, Undo giảm số, vẽ nhãn số đúng tọa độ)**
+- [x] **Step 2: Chạy `dotnet test` xác nhận test thất bại (RED)**
+- [x] **Step 3: Bổ sung `StepNumber` vào `DrawingElement.cs` và cập nhật `HitTestHelper.cs`**
+- [x] **Step 4: Cập nhật `DrawingRenderer.cs` để render huy hiệu tròn sắc nét kèm số nổi bật**
+- [x] **Step 5: Cập nhật `DrawingCanvas.cs` xử lý click tạo StepCounter và tự động tính `NextStepNumber`**
+- [x] **Step 6: Thêm nút `StepCounterButton` (①) trên `AnnotationToolbar.xaml` và phím tắt `N`**
+- [x] **Step 7: Chạy `dotnet test` xác nhận test xanh (GREEN)**
+- [x] **Step 8: Commit `feat(annotations): add automatic incremental step counter badge tool`**
 
 ---
 

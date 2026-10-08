@@ -517,6 +517,10 @@ public partial class OverlayWindow : Window
                     Toolbar.SetActiveTool(DrawingToolType.Pixelate);
                     DrawingControl.CurrentTool = DrawingToolType.Pixelate;
                     return true;
+                case Key.N:
+                    Toolbar.SetActiveTool(DrawingToolType.StepCounter);
+                    DrawingControl.CurrentTool = DrawingToolType.StepCounter;
+                    return true;
                 case Key.I:
                     Toolbar.SetActiveTool(DrawingToolType.Eyedropper);
                     EnterEyedropperMode();

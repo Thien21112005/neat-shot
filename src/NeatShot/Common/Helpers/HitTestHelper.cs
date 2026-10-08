@@ -43,6 +43,10 @@ public static class HitTestHelper
             case DrawingToolType.Highlight:
                 return HitTestPolyline(element.Points, testPoint, effTol);
 
+            case DrawingToolType.StepCounter:
+                var badgeRadius = 14.0 + tolerance;
+                return (testPoint - element.StartPoint).Length <= badgeRadius;
+
             case DrawingToolType.Text:
                 var textBounds = element.GetBoundingBox();
                 var expandedText = new Rect(

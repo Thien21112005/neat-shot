@@ -274,6 +274,7 @@ public partial class AnnotationToolbar : UserControl
         SetButtonActive(TextButton, _activeTool == DrawingToolType.Text);
         SetButtonActive(PixelateButton, _activeTool == DrawingToolType.Pixelate);
         SetButtonActive(BlurButton, _activeTool == DrawingToolType.Blur);
+        SetButtonActive(StepCounterButton, _activeTool == DrawingToolType.StepCounter);
         SetButtonActive(EyedropperButton, _activeTool == DrawingToolType.Eyedropper);
 
         SetControlActive(ShapeComboBox, _activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse);
@@ -329,6 +330,7 @@ public partial class AnnotationToolbar : UserControl
     private void OnTextClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.Text);
     private void OnPixelateClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.Pixelate);
     private void OnBlurClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.Blur);
+    private void OnStepCounterClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.StepCounter);
     private void OnEyedropperClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.Eyedropper);
 
     private void OnShapeComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -125,7 +125,38 @@ public static class DrawingRenderer
                     dc.DrawText(formattedText, element.StartPoint);
                 }
                 break;
+
+            case DrawingToolType.StepCounter:
+                DrawStepBadge(dc, element.StartPoint, element.StepNumber, element.Color);
+                break;
         }
+    }
+
+    public static void DrawStepBadge(DrawingContext dc, Point center, int number, Color color, double radius = 14.0)
+    {
+        var bgBrush = new SolidColorBrush(color);
+        bgBrush.Freeze();
+
+        var borderPen = new Pen(Brushes.White, 2.0);
+        borderPen.Freeze();
+
+        dc.DrawEllipse(bgBrush, borderPen, center, radius, radius);
+
+        var typeface = new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
+        var formattedText = new FormattedText(
+            number.ToString(),
+            System.Globalization.CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            typeface,
+            13.0,
+            Brushes.White,
+            1.0)
+        {
+            TextAlignment = TextAlignment.Center
+        };
+
+        var textOrigin = new Point(center.X, center.Y - formattedText.Height / 2.0);
+        dc.DrawText(formattedText, textOrigin);
     }
 
     private static void DrawArrow(DrawingContext dc, Pen pen, Brush brush, Point p1, Point p2, double thickness)
