@@ -53,8 +53,10 @@ public partial class AnnotationToolbar : UserControl
     /// </summary>
     public BeautifyOptions? SelectedBeautifyOptions { get; private set; }
 
+    private bool _isDragPending;
     private bool _isDraggingToolbar;
     private Point _dragStartPoint;
+    private Point _dragLastPoint;
     private bool _isUpdatingSelection;
     private bool _isInitialized;
     private Rect _lastRegionRect;
@@ -79,8 +81,10 @@ public partial class AnnotationToolbar : UserControl
 
         if (e.LeftButton == MouseButtonState.Pressed)
         {
-            _isDraggingToolbar = true;
+            _isDragPending = true;
+            _isDraggingToolbar = false;
             _dragStartPoint = e.GetPosition(this);
+            _dragLastPoint = _dragStartPoint;
             DragGrip.CaptureMouse();
             e.Handled = true;
         }
@@ -88,23 +92,70 @@ public partial class AnnotationToolbar : UserControl
 
     private void OnDragGripMouseMove(object sender, MouseEventArgs e)
     {
-        if (_isDraggingToolbar)
+        if (!_isDragPending && !_isDraggingToolbar) return;
+
+        var cur = e.GetPosition(this);
+
+        if (_isDragPending && !_isDraggingToolbar)
         {
-            var cur = e.GetPosition(this);
-            var delta = new Point(cur.X - _dragStartPoint.X, cur.Y - _dragStartPoint.Y);
-            ToolbarMoved?.Invoke(this, delta);
+            var minX = Math.Max(4.0, SystemParameters.MinimumHorizontalDragDistance);
+            var minY = Math.Max(4.0, SystemParameters.MinimumVerticalDragDistance);
+
+            if (Math.Abs(cur.X - _dragStartPoint.X) >= minX || Math.Abs(cur.Y - _dragStartPoint.Y) >= minY)
+            {
+                _isDraggingToolbar = true;
+                _dragLastPoint = cur;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (_isDraggingToolbar && VerticalBar != null)
+        {
+            var deltaX = cur.X - _dragLastPoint.X;
+            var deltaY = cur.Y - _dragLastPoint.Y;
+            _dragLastPoint = cur;
+
+            MoveVerticalBarDelta(deltaX, deltaY);
             e.Handled = true;
         }
     }
 
     private void OnDragGripMouseUp(object sender, MouseButtonEventArgs e)
     {
-        if (_isDraggingToolbar)
+        _isDragPending = false;
+        _isDraggingToolbar = false;
+        if (DragGrip.IsMouseCaptured)
         {
-            _isDraggingToolbar = false;
             DragGrip.ReleaseMouseCapture();
-            e.Handled = true;
         }
+        e.Handled = true;
+    }
+
+    internal void MoveVerticalBarDelta(double deltaX, double deltaY)
+    {
+        if (VerticalBar == null) return;
+        var curLeft = Canvas.GetLeft(VerticalBar);
+        var curTop = Canvas.GetTop(VerticalBar);
+        if (double.IsNaN(curLeft)) curLeft = 0;
+        if (double.IsNaN(curTop)) curTop = 0;
+
+        var screenSize = _lastScreenSize.Width > 0
+            ? _lastScreenSize
+            : new Size(ActualWidth > 0 ? ActualWidth : 1920, ActualHeight > 0 ? ActualHeight : 1080);
+        var vWidth = VerticalBar.ActualWidth > 0 ? VerticalBar.ActualWidth : 42;
+        var vHeight = VerticalBar.ActualHeight > 0 ? VerticalBar.ActualHeight : 360;
+
+        var newLeft = Math.Clamp(curLeft + deltaX, 4, Math.Max(4, screenSize.Width - vWidth - 4));
+        var newTop = Math.Clamp(curTop + deltaY, 4, Math.Max(4, screenSize.Height - vHeight - 4));
+
+        Canvas.SetLeft(VerticalBar, newLeft);
+        Canvas.SetTop(VerticalBar, newTop);
+        UpdateFlyoutPosition();
+
+        ToolbarMoved?.Invoke(this, new Point(newLeft, newTop));
     }
 
     /// <summary>

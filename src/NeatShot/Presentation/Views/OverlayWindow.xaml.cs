@@ -19,7 +19,6 @@ public partial class OverlayWindow : Window
     private readonly ISettingsService? _settingsService;
     private DrawingToolType _previousTool = DrawingToolType.None;
     private bool _isToolbarManuallyPositioned;
-    private Point _manualToolbarPosition;
     public OverlayViewModel ViewModel { get; }
 
     public OverlayWindow(
@@ -41,8 +40,10 @@ public partial class OverlayWindow : Window
 
         SelectionControl.RegionMoved += (s, delta) =>
         {
+            _isToolbarManuallyPositioned = false;
             DrawingControl.OffsetElements(delta.X, delta.Y);
             UpdateBeautifyPreview(ViewModel.SelectedRegion);
+            UpdateToolbarPosition(ViewModel.SelectedRegion);
         };
 
         DrawingControl.EyedropperHovered += OnDrawingEyedropperHovered;
@@ -366,6 +367,7 @@ public partial class OverlayWindow : Window
     {
         if (e.PropertyName == nameof(OverlayViewModel.SelectedRegion))
         {
+            _isToolbarManuallyPositioned = false;
             UpdateBeautifyPreview(ViewModel.SelectedRegion);
             UpdateToolbarPosition(ViewModel.SelectedRegion);
         }
@@ -375,26 +377,9 @@ public partial class OverlayWindow : Window
         }
     }
 
-    private void OnToolbarMoved(object? sender, Point delta)
+    private void OnToolbarMoved(object? sender, Point newPos)
     {
-        var curX = Canvas.GetLeft(Toolbar);
-        var curY = Canvas.GetTop(Toolbar);
-        if (double.IsNaN(curX)) curX = 0;
-        if (double.IsNaN(curY)) curY = 0;
-
-        var newX = curX + delta.X;
-        var newY = curY + delta.Y;
-
-        var tbWidth = Toolbar.ActualWidth > 0 ? Toolbar.ActualWidth : 640;
-        var tbHeight = Toolbar.ActualHeight > 0 ? Toolbar.ActualHeight : 44;
-
-        _manualToolbarPosition = new Point(
-            Math.Clamp(newX, 8, Math.Max(8, ActualWidth - tbWidth - 8)),
-            Math.Clamp(newY, 4, Math.Max(4, ActualHeight - tbHeight - 4)));
-
         _isToolbarManuallyPositioned = true;
-        Canvas.SetLeft(Toolbar, _manualToolbarPosition.X);
-        Canvas.SetTop(Toolbar, _manualToolbarPosition.Y);
     }
 
     private void OnToolbarResetPosition(object? sender, EventArgs e)
