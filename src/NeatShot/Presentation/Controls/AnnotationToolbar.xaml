@@ -113,6 +113,7 @@
                 <!-- Popup danh sách xổ xuống -->
                 <Popup x:Name="PART_Popup"
                        IsOpen="{TemplateBinding IsDropDownOpen}"
+                       StaysOpen="False"
                        Placement="Right"
                        AllowsTransparency="True"
                        Focusable="False"
@@ -206,6 +207,7 @@
                 <!-- Popup danh sách xổ xuống -->
                 <Popup x:Name="PART_Popup"
                        IsOpen="{TemplateBinding IsDropDownOpen}"
+                       StaysOpen="False"
                        Placement="Right"
                        AllowsTransparency="True"
                        Focusable="False"
@@ -324,13 +326,15 @@
                           PreviewMouseLeftButtonDown="OnShapeComboBoxPreviewMouseDown"
                           SelectionChanged="OnShapeComboBoxSelectionChanged"
                           DropDownOpened="OnShapeComboBoxDropDownOpened">
-                    <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)">
+                    <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)"
+                                  PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="▭" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Text="Chữ nhật (R)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="Ellipse" ToolTip="Hình tròn / Oval (O)">
+                    <ComboBoxItem Tag="Ellipse" ToolTip="Hình tròn / Oval (O)"
+                                  PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="◯" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Text="Oval / Tròn (O)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
@@ -347,13 +351,15 @@
                           PreviewMouseLeftButtonDown="OnLineComboBoxPreviewMouseDown"
                           SelectionChanged="OnLineComboBoxSelectionChanged"
                           DropDownOpened="OnLineComboBoxDropDownOpened">
-                    <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)">
+                    <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)"
+                                  PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="↗" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Text="Mũi tên (A)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="Line" ToolTip="Đường thẳng (L)">
+                    <ComboBoxItem Tag="Line" ToolTip="Đường thẳng (L)"
+                                  PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="―" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Text="Đường thẳng (L)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />

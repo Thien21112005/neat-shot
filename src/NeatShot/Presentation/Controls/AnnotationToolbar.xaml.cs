@@ -57,6 +57,8 @@ public partial class AnnotationToolbar : UserControl
     private Point _dragStartPoint;
     private bool _isUpdatingSelection;
     private bool _isInitialized;
+    private Rect _lastRegionRect;
+    private Size _lastScreenSize;
 
     public AnnotationToolbar()
     {
@@ -273,6 +275,10 @@ public partial class AnnotationToolbar : UserControl
         _selectedColor = color;
         _selectedColorHex = $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
 
+        // Đóng các dropdown nếu đang mở để tránh giữ capture chuột
+        if (ShapeComboBox != null && ShapeComboBox.IsDropDownOpen) ShapeComboBox.IsDropDownOpen = false;
+        if (LineComboBox != null && LineComboBox.IsDropDownOpen) LineComboBox.IsDropDownOpen = false;
+
         // Nếu người dùng chọn màu khi chưa có công cụ vẽ nào bật, tự động kích hoạt bút vẽ (Pencil)
         if (_activeTool == DrawingToolType.None || _activeTool == DrawingToolType.Select || _activeTool == DrawingToolType.Eyedropper)
         {
@@ -370,6 +376,10 @@ public partial class AnnotationToolbar : UserControl
         if (FlyoutOptionsPanel != null)
         {
             FlyoutOptionsPanel.Visibility = (isFontActive || isStepActive) ? Visibility.Visible : Visibility.Collapsed;
+            if (FlyoutOptionsPanel.Visibility == Visibility.Visible)
+            {
+                UpdateFlyoutPosition();
+            }
         }
 
         if (ColorPalettePanel != null)
@@ -429,14 +439,33 @@ public partial class AnnotationToolbar : UserControl
 
     private void OnShapeComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (_activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse)
+        var pos = e.GetPosition(ShapeComboBox);
+        var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
+
+        if (!isArrowCorner)
         {
-            var pos = e.GetPosition(ShapeComboBox);
-            if (pos.X < 24 || pos.Y < 20)
+            if (_activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse)
             {
                 ResetTools();
-                e.Handled = true;
             }
+            else
+            {
+                var tool = ShapeComboBox.SelectedIndex == 1 ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
+                SelectShapeTool(tool);
+            }
+            ShapeComboBox.IsDropDownOpen = false;
+            e.Handled = true;
+        }
+    }
+
+    private void OnShapeItemPreviewMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is ComboBoxItem item)
+        {
+            var tool = item.Tag?.ToString() == "Ellipse" ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
+            SelectShapeTool(tool);
+            if (ShapeComboBox != null) ShapeComboBox.IsDropDownOpen = false;
+            e.Handled = true;
         }
     }
 
@@ -466,14 +495,33 @@ public partial class AnnotationToolbar : UserControl
 
     private void OnLineComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (_activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line)
+        var pos = e.GetPosition(LineComboBox);
+        var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
+
+        if (!isArrowCorner)
         {
-            var pos = e.GetPosition(LineComboBox);
-            if (pos.X < 24 || pos.Y < 20)
+            if (_activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line)
             {
                 ResetTools();
-                e.Handled = true;
             }
+            else
+            {
+                var tool = LineComboBox.SelectedIndex == 1 ? DrawingToolType.Line : DrawingToolType.Arrow;
+                SelectLineTool(tool);
+            }
+            LineComboBox.IsDropDownOpen = false;
+            e.Handled = true;
+        }
+    }
+
+    private void OnLineItemPreviewMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is ComboBoxItem item)
+        {
+            var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;
+            SelectLineTool(tool);
+            if (LineComboBox != null) LineComboBox.IsDropDownOpen = false;
+            e.Handled = true;
         }
     }
 
@@ -685,6 +733,9 @@ public partial class AnnotationToolbar : UserControl
     {
         if (VerticalBar == null || HorizontalBar == null) return;
 
+        _lastRegionRect = regionRect;
+        _lastScreenSize = screenSize;
+
         VerticalBar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         HorizontalBar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 
@@ -705,19 +756,84 @@ public partial class AnnotationToolbar : UserControl
         Canvas.SetLeft(HorizontalBar, posAction.X);
         Canvas.SetTop(HorizontalBar, posAction.Y);
 
-        // Canh chỉnh thanh phụ Options (Font hoặc Step Size) bám sát cạnh thanh dọc
-        if (FlyoutOptionsPanel != null && FlyoutOptionsPanel.Visibility == Visibility.Visible)
+        UpdateFlyoutPosition();
+    }
+
+    /// <summary>
+    /// Căn chỉnh vị trí của bảng Flyout (Phông chữ hoặc Cỡ số bước) bám sát cạnh thanh dọc
+    /// và thẳng hàng với nút công cụ đang được kích hoạt, không để tràn màn hình.
+    /// </summary>
+    public void UpdateFlyoutPosition()
+    {
+        if (FlyoutOptionsPanel == null || FlyoutOptionsPanel.Visibility != Visibility.Visible) return;
+        if (VerticalBar == null) return;
+
+        var screenSize = _lastScreenSize.Width > 0
+            ? _lastScreenSize
+            : new Size(SystemParameters.PrimaryScreenWidth > 0 ? SystemParameters.PrimaryScreenWidth : 1920,
+                       SystemParameters.PrimaryScreenHeight > 0 ? SystemParameters.PrimaryScreenHeight : 1080);
+
+        FlyoutOptionsPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var flyoutWidth = FlyoutOptionsPanel.ActualWidth > 0 ? FlyoutOptionsPanel.ActualWidth : FlyoutOptionsPanel.DesiredSize.Width;
+        var flyoutHeight = FlyoutOptionsPanel.ActualHeight > 0 ? FlyoutOptionsPanel.ActualHeight : FlyoutOptionsPanel.DesiredSize.Height;
+        if (flyoutWidth <= 0) flyoutWidth = 190;
+        if (flyoutHeight <= 0) flyoutHeight = 36;
+
+        var vX = Canvas.GetLeft(VerticalBar);
+        var vY = Canvas.GetTop(VerticalBar);
+        if (double.IsNaN(vX) || double.IsNaN(vY))
         {
-            FlyoutOptionsPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var flyoutWidth = FlyoutOptionsPanel.ActualWidth > 0 ? FlyoutOptionsPanel.ActualWidth : FlyoutOptionsPanel.DesiredSize.Width;
-
-            var flyoutX = (posDrawing.X + drawingSize.Width + flyoutWidth > screenSize.Width - 4)
-                ? posDrawing.X - flyoutWidth - 6
-                : posDrawing.X + drawingSize.Width + 6;
-            var flyoutY = posDrawing.Y;
-
-            Canvas.SetLeft(FlyoutOptionsPanel, Math.Clamp(flyoutX, 4, screenSize.Width - flyoutWidth - 4));
-            Canvas.SetTop(FlyoutOptionsPanel, Math.Clamp(flyoutY, 4, screenSize.Height - 40));
+            var drawingSize = new Size(
+                VerticalBar.ActualWidth > 0 ? VerticalBar.ActualWidth : 42,
+                VerticalBar.ActualHeight > 0 ? VerticalBar.ActualHeight : 400);
+            var pos = ToolbarPositionHelper.CalculateDrawingBarPosition(_lastRegionRect, drawingSize, screenSize);
+            vX = pos.X;
+            vY = pos.Y;
+            Canvas.SetLeft(VerticalBar, vX);
+            Canvas.SetTop(VerticalBar, vY);
         }
+
+        var vWidth = VerticalBar.ActualWidth > 0 ? VerticalBar.ActualWidth : 42;
+
+        // Horizontally: Ưu tiên đặt bên phải thanh dọc nếu còn đủ chỗ trên màn hình, ngược lại đặt bên trái
+        double flyoutX;
+        if (vX + vWidth + 6 + flyoutWidth <= screenSize.Width - 4)
+        {
+            flyoutX = vX + vWidth + 6;
+        }
+        else
+        {
+            flyoutX = vX - flyoutWidth - 6;
+        }
+        flyoutX = Math.Clamp(flyoutX, 4, Math.Max(4, screenSize.Width - flyoutWidth - 4));
+
+        // Vertically: Canh theo nút công cụ đang được kích hoạt (TextButton hoặc StepCounterButton)
+        FrameworkElement? targetBtn = _activeTool switch
+        {
+            DrawingToolType.Text => TextButton,
+            DrawingToolType.StepCounter => StepCounterButton,
+            _ => null
+        };
+
+        double btnOffsetY = 0;
+        if (targetBtn != null)
+        {
+            try
+            {
+                var transform = targetBtn.TransformToAncestor(VerticalBar);
+                var pt = transform.Transform(new Point(0, 0));
+                btnOffsetY = pt.Y;
+            }
+            catch
+            {
+                btnOffsetY = _activeTool == DrawingToolType.Text ? 180 : 270;
+            }
+        }
+
+        var flyoutY = vY + btnOffsetY;
+        flyoutY = Math.Clamp(flyoutY, 4, Math.Max(4, screenSize.Height - flyoutHeight - 4));
+
+        Canvas.SetLeft(FlyoutOptionsPanel, flyoutX);
+        Canvas.SetTop(FlyoutOptionsPanel, flyoutY);
     }
 }

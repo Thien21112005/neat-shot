@@ -368,4 +368,156 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_ShapeAndLineComboBox_ActivateImmediately_WithoutDropdownToggle_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var selectedTools = new List<DrawingToolType>();
+                toolbar.ToolSelected += (s, tool) => selectedTools.Add(tool);
+
+                // Initial state: tool is None
+                Assert.Equal(DrawingToolType.None, toolbar.ActiveTool);
+
+                // Simulate primary mouse down on ShapeComboBox (x=10, y=10)
+                var mouseArgs = new System.Windows.Input.MouseButtonEventArgs(
+                    System.Windows.Input.Mouse.PrimaryDevice,
+                    0,
+                    System.Windows.Input.MouseButton.Left)
+                {
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                };
+                toolbar.ShapeComboBox.RaiseEvent(mouseArgs);
+
+                // Should activate Rectangle immediately and keep dropdown closed
+                Assert.Equal(DrawingToolType.Rectangle, toolbar.ActiveTool);
+                Assert.False(toolbar.ShapeComboBox.IsDropDownOpen);
+                Assert.Equal(DrawingToolType.Rectangle, selectedTools.Last());
+
+                // Second click should toggle off to None
+                var mouseArgs2 = new System.Windows.Input.MouseButtonEventArgs(
+                    System.Windows.Input.Mouse.PrimaryDevice,
+                    0,
+                    System.Windows.Input.MouseButton.Left)
+                {
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                };
+                toolbar.ShapeComboBox.RaiseEvent(mouseArgs2);
+                Assert.Equal(DrawingToolType.None, toolbar.ActiveTool);
+                Assert.Equal(DrawingToolType.None, selectedTools.Last());
+
+                // Primary click on LineComboBox should activate Arrow immediately
+                var mouseArgsLine = new System.Windows.Input.MouseButtonEventArgs(
+                    System.Windows.Input.Mouse.PrimaryDevice,
+                    0,
+                    System.Windows.Input.MouseButton.Left)
+                {
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                };
+                toolbar.LineComboBox.RaiseEvent(mouseArgsLine);
+                Assert.Equal(DrawingToolType.Arrow, toolbar.ActiveTool);
+                Assert.False(toolbar.LineComboBox.IsDropDownOpen);
+                Assert.Equal(DrawingToolType.Arrow, selectedTools.Last());
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_FlyoutPosition_AnchoredNearVerticalBar_NotAtZeroZero_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var region = new System.Windows.Rect(200, 200, 400, 300);
+                var screenSize = new System.Windows.Size(1920, 1080);
+
+                // Position the toolbar
+                toolbar.UpdatePositions(region, screenSize);
+
+                // Act: Activate Text tool
+                toolbar.SetActiveTool(DrawingToolType.Text);
+
+                // Assert: FlyoutOptionsPanel must be visible
+                Assert.Equal(System.Windows.Visibility.Visible, toolbar.FlyoutOptionsPanel.Visibility);
+
+                // Position must NOT be at (0, 0) or NaN; must be near region or VerticalBar
+                var flyoutX = System.Windows.Controls.Canvas.GetLeft(toolbar.FlyoutOptionsPanel);
+                var flyoutY = System.Windows.Controls.Canvas.GetTop(toolbar.FlyoutOptionsPanel);
+
+                Assert.False(double.IsNaN(flyoutX));
+                Assert.False(double.IsNaN(flyoutY));
+                Assert.True(flyoutX > 100, $"Expected flyoutX > 100, but was {flyoutX}");
+                Assert.True(flyoutY > 100, $"Expected flyoutY > 100, but was {flyoutY}");
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_DropdownItemClick_ActivatesTool_AndClosesDropdown_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                toolbar.ResetTools();
+                Assert.Equal(DrawingToolType.None, toolbar.ActiveTool);
+
+                // Open dropdown
+                toolbar.ShapeComboBox.IsDropDownOpen = true;
+
+                // Click first item (Rectangle, index 0, already selected item)
+                var item0 = (System.Windows.Controls.ComboBoxItem)toolbar.ShapeComboBox.Items[0];
+                var mouseArgs = new System.Windows.Input.MouseButtonEventArgs(
+                    System.Windows.Input.Mouse.PrimaryDevice,
+                    0,
+                    System.Windows.Input.MouseButton.Left)
+                {
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonUpEvent
+                };
+                item0.RaiseEvent(mouseArgs);
+
+                // Assert tool is activated and dropdown is closed
+                Assert.Equal(DrawingToolType.Rectangle, toolbar.ActiveTool);
+                Assert.False(toolbar.ShapeComboBox.IsDropDownOpen);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }
+
