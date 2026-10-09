@@ -71,4 +71,72 @@ public class PinWindowTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void PinWindow_DoubleClick_DoesNotCloseWindow_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var vm = new PinViewModel();
+                var window = new PinWindow(vm);
+                var requestCloseFired = false;
+                vm.RequestClose += (s, e) => requestCloseFired = true;
+
+                // Giả lập sự kiện nháy đúp chuột
+                window.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(
+                    System.Windows.Input.Mouse.PrimaryDevice,
+                    0,
+                    System.Windows.Input.MouseButton.Left)
+                {
+                    RoutedEvent = System.Windows.Controls.Control.MouseDoubleClickEvent
+                });
+
+                // Nháy đúp chuột KHÔNG ĐƯỢC làm đóng cửa sổ
+                Assert.False(requestCloseFired);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void PinWindow_HasCloseAndCopyButtons_AndCloseButtonClosesWindow_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var vm = new PinViewModel();
+                var window = new PinWindow(vm);
+                var requestCloseFired = false;
+                vm.RequestClose += (s, e) => requestCloseFired = true;
+
+                Assert.NotNull(window.PinCloseButton);
+                Assert.NotNull(window.PinCopyButton);
+
+                window.PinCloseButton.RaiseEvent(new System.Windows.RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                Assert.True(requestCloseFired);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

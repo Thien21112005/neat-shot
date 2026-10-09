@@ -89,11 +89,11 @@
   - Thêm header bar ẩn/hiện khi hover chứa: Nút đóng `✕`, Nút sao chép `📋`, Nút bật/tắt vẽ chú thích `✏️`
   - Click chuột trái vào ảnh ghim sẽ không bị đóng hay biến mất.
 
-- [ ] **Step 1: Viết test xác nhận click chuột đơn/đúp vào PinWindow không kích hoạt RequestClose**
-- [ ] **Step 2: Chạy test xác minh lỗi thất bại ban đầu**
-- [ ] **Step 3: Loại bỏ sự kiện `MouseDoubleClick` gọi `Close()` và xây dựng thanh header mini với nút `✕`**
-- [ ] **Step 4: Chạy test xác nhận test chuyển sang GREEN**
-- [ ] **Step 5: Commit `fix(pin): prevent accidental close on left click and add mini header controls`**
+- [x] **Step 1: Viết test xác nhận click chuột đơn/đúp vào PinWindow không kích hoạt RequestClose**
+- [x] **Step 2: Chạy test xác minh lỗi thất bại ban đầu**
+- [x] **Step 3: Loại bỏ sự kiện `MouseDoubleClick` gọi `Close()` và xây dựng thanh header mini với nút `✕`**
+- [x] **Step 4: Chạy test xác nhận test chuyển sang GREEN**
+- [x] **Step 5: Commit `fix(pin): prevent accidental close on left click and add mini header controls`**
 
 ---
 

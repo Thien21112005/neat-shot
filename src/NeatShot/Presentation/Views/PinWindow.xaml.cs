@@ -32,13 +32,15 @@ public partial class PinWindow : Window
     {
         if (e.ButtonState == MouseButtonState.Pressed)
         {
-            DragMove();
+            try
+            {
+                DragMove();
+            }
+            catch
+            {
+                // Bỏ qua lỗi nếu chuột đã nhả hoặc không thể kéo
+            }
         }
-    }
-
-    private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        Close();
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -73,7 +75,7 @@ public partial class PinWindow : Window
     {
         if (e.Key == Key.Escape)
         {
-            Close();
+            ViewModel.CloseCommand.Execute(null);
             e.Handled = true;
             return;
         }
@@ -126,5 +128,5 @@ public partial class PinWindow : Window
     private void OnResetZoomClick(object sender, RoutedEventArgs e) => ViewModel.ResetZoom();
     private void OnDecreaseOpacityClick(object sender, RoutedEventArgs e) => ViewModel.DecreaseOpacity();
     private void OnIncreaseOpacityClick(object sender, RoutedEventArgs e) => ViewModel.IncreaseOpacity();
-    private void OnCloseClick(object sender, RoutedEventArgs e) => Close();
+    private void OnCloseClick(object sender, RoutedEventArgs e) => ViewModel.CloseCommand.Execute(null);
 }

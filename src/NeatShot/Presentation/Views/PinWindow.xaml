@@ -14,7 +14,6 @@
         WindowStartupLocation="Manual"
         SizeToContent="WidthAndHeight"
         MouseLeftButtonDown="OnMouseLeftButtonDown"
-        MouseDoubleClick="OnMouseDoubleClick"
         MouseWheel="OnMouseWheel"
         KeyDown="OnKeyDown">
 
@@ -26,24 +25,70 @@
             <MenuItem Header="Tăng độ trong suốt" Click="OnDecreaseOpacityClick" />
             <MenuItem Header="Giảm độ trong suốt" Click="OnIncreaseOpacityClick" />
             <Separator />
-            <MenuItem Header="Đóng ghim (Esc / Nháy đúp)" Click="OnCloseClick" />
+            <MenuItem Header="Đóng ghim (Esc / Nút ✕)" Click="OnCloseClick" />
         </ContextMenu>
     </Window.ContextMenu>
 
     <Border BorderBrush="#4DFFFFFF"
             BorderThickness="1"
-            CornerRadius="4"
+            CornerRadius="6"
             Background="#1E1E1E"
             Opacity="{Binding Opacity}"
             Cursor="SizeAll"
-            ToolTip="Kéo để di chuyển • Lăn chuột để phóng to/thu nhỏ • Ctrl + Lăn để chỉnh độ mờ • Nháy đúp để đóng">
+            ToolTip="Kéo để di chuyển • Lăn chuột để phóng to/thu nhỏ • Ctrl + Lăn để chỉnh độ mờ • Esc hoặc nút ✕ để đóng">
         <Border.Effect>
             <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.4" Direction="270" Color="Black" />
         </Border.Effect>
-        <Image Source="{Binding PinnedImage}"
-               Width="{Binding ScaledWidth}"
-               Height="{Binding ScaledHeight}"
-               Stretch="Fill"
-               RenderOptions.BitmapScalingMode="HighQuality" />
+
+        <Grid x:Name="PinRootGrid">
+            <!-- Ảnh ghim -->
+            <Image x:Name="PinnedImageControl"
+                   Source="{Binding PinnedImage}"
+                   Width="{Binding ScaledWidth}"
+                   Height="{Binding ScaledHeight}"
+                   Stretch="Fill"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+
+            <!-- Thanh điều khiển nút ghim ở góc trên bên phải -->
+            <Border x:Name="PinControlBar"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Background="#CC1E1E1E"
+                    CornerRadius="0,6,0,6"
+                    Padding="4,2"
+                    Panel.ZIndex="10">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Nút sao chép ảnh -->
+                    <Button x:Name="PinCopyButton"
+                            ToolTip="Sao chép ảnh vào Clipboard (Ctrl + C)"
+                            Width="26"
+                            Height="24"
+                            Margin="1,0"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="White"
+                            Cursor="Hand"
+                            Click="OnCopyImageClick">
+                        <TextBlock Text="📋" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+
+                    <!-- Nút đóng ghim -->
+                    <Button x:Name="PinCloseButton"
+                            ToolTip="Đóng ghim (Esc)"
+                            Width="26"
+                            Height="24"
+                            Margin="1,0"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="#E81123"
+                            Cursor="Hand"
+                            Click="OnCloseClick">
+                        <TextBlock Text="✕" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Border>
 </Window>
