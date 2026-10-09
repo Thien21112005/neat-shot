@@ -49,6 +49,8 @@
                                       Opacity="0.55" />
                 </Border.Effect>
                 <Border x:Name="BeautifyInnerPhotoFrame"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         Margin="20"
                         CornerRadius="12"
                         BorderBrush="#4DFFFFFF"

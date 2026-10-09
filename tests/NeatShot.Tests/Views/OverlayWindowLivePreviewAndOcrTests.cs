@@ -5,6 +5,8 @@ using NeatShot.Presentation.Views;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Xunit;
 
 namespace NeatShot.Tests.Views;
@@ -44,6 +46,53 @@ public class OverlayWindowLivePreviewAndOcrTests
                 // Chọn lại preset None (Gốc)
                 window.Toolbar.SelectBeautifyPreset(BeautifyPreset.None);
                 Assert.Equal(Visibility.Collapsed, window.BeautifyPreviewFrame.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void OverlayWindow_LiveBeautifyPreview_RendersScreenshotImageInsideInnerPhotoFrame_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var vm = new OverlayViewModel();
+                var dummyBitmap = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+                vm.BackgroundImage = dummyBitmap;
+                vm.SelectedRegion = new CaptureRegion(50, 50, 200, 150);
+
+                var captureService = new ScreenCaptureService();
+                var exportService = new ExportService(captureService);
+                var window = new OverlayWindow(vm, exportService);
+
+                // Chọn preset Sunset
+                window.Toolbar.SelectBeautifyPreset(BeautifyPreset.Sunset);
+
+                // Khung làm đẹp ngoài hiển thị
+                Assert.Equal(Visibility.Visible, window.BeautifyPreviewFrame.Visibility);
+
+                // Khung ảnh bên trong phải chứa ImageBrush của ảnh chụp thực tế
+                Assert.NotNull(window.BeautifyInnerPhotoFrame.Background);
+                var imageBrush = Assert.IsType<ImageBrush>(window.BeautifyInnerPhotoFrame.Background);
+                Assert.NotNull(imageBrush.ImageSource);
+                Assert.Equal(200, window.BeautifyInnerPhotoFrame.Width);
+                Assert.Equal(150, window.BeautifyInnerPhotoFrame.Height);
+
+                // Đổi về preset None -> Ẩn và giải phóng background của khung ảnh
+                window.Toolbar.SelectBeautifyPreset(BeautifyPreset.None);
+                Assert.Equal(Visibility.Collapsed, window.BeautifyPreviewFrame.Visibility);
+                Assert.Null(window.BeautifyInnerPhotoFrame.Background);
             }
             catch (Exception ex)
             {

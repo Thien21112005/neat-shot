@@ -48,6 +48,13 @@ public partial class OverlayWindow : Window
 
         DrawingControl.EyedropperHovered += OnDrawingEyedropperHovered;
         DrawingControl.EyedropperClicked += OnDrawingEyedropperClicked;
+        DrawingControl.UndoStack.StateChanged += (s, e) =>
+        {
+            if (BeautifyPreviewFrame.Visibility == Visibility.Visible)
+            {
+                UpdateBeautifyPreview(ViewModel.SelectedRegion);
+            }
+        };
 
         Toolbar.ToolbarMoved += OnToolbarMoved;
         Toolbar.ToolbarResetPosition += OnToolbarResetPosition;
@@ -354,12 +361,34 @@ public partial class OverlayWindow : Window
             Canvas.SetLeft(BeautifyPreviewFrame, rect.X - padding);
             Canvas.SetTop(BeautifyPreviewFrame, rect.Y - padding);
 
+            BeautifyInnerPhotoFrame.Width = rect.Width;
+            BeautifyInnerPhotoFrame.Height = rect.Height;
             BeautifyInnerPhotoFrame.Margin = new Thickness(padding);
             BeautifyInnerPhotoFrame.CornerRadius = new CornerRadius(options.CornerRadius);
+
+            if (ViewModel.BackgroundImage != null)
+            {
+                var photo = _exportService.RenderFinalImage(
+                    ViewModel.BackgroundImage,
+                    region,
+                    DrawingControl.UndoStack.Items);
+
+                var brush = new ImageBrush(photo)
+                {
+                    Stretch = Stretch.Fill
+                };
+                brush.Freeze();
+                BeautifyInnerPhotoFrame.Background = brush;
+            }
+            else
+            {
+                BeautifyInnerPhotoFrame.Background = null;
+            }
         }
         else
         {
             BeautifyPreviewFrame.Visibility = Visibility.Collapsed;
+            BeautifyInnerPhotoFrame.Background = null;
         }
     }
 
@@ -374,6 +403,10 @@ public partial class OverlayWindow : Window
         else if (e.PropertyName == nameof(OverlayViewModel.BackgroundImage))
         {
             DrawingControl.BackgroundImage = ViewModel.BackgroundImage;
+            if (BeautifyPreviewFrame.Visibility == Visibility.Visible)
+            {
+                UpdateBeautifyPreview(ViewModel.SelectedRegion);
+            }
         }
     }
 
