@@ -7,11 +7,89 @@
              mc:Ignorable="d"
              Background="{x:Null}">
 
+    <UserControl.Resources>
+        <!-- Style cho ComboBox dạng nút công cụ (hiển thị Icon ở giữa kèm tam giác nhỏ ở góc) -->
+        <ControlTemplate x:Key="ToolComboBoxTemplate" TargetType="ComboBox">
+            <Grid x:Name="MainGrid" Width="32" Height="30" HorizontalAlignment="Center">
+                <ToggleButton x:Name="ToggleButton"
+                              Focusable="False"
+                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                              ClickMode="Press"
+                              Background="Transparent"
+                              BorderBrush="Transparent"
+                              BorderThickness="1"
+                              Cursor="Hand">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Border"
+                                    CornerRadius="4"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <ContentPresenter Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" />
+                                    <!-- Dấu tam giác nhỏ ở góc dưới bên phải -->
+                                    <Path HorizontalAlignment="Right"
+                                          VerticalAlignment="Bottom"
+                                          Margin="0,0,2,2"
+                                          Fill="#80FFFFFF"
+                                          Data="M 0 0 L 4 0 L 2 3 Z" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#33FFFFFF" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#FF0078D4" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                    <ContentPresenter IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                </ToggleButton>
+
+                <!-- Popup danh sách xổ xuống -->
+                <Popup x:Name="PART_Popup"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       Placement="Right"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       PopupAnimation="Slide">
+                    <Border Background="#F01E1E1E"
+                            BorderBrush="#40FFFFFF"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="2"
+                            MinWidth="110"
+                            Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                        <ScrollViewer SnapsToDevicePixels="True">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="HasItems" Value="False">
+                    <Setter TargetName="PART_Popup" Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+
     <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
     <Canvas x:Name="ToolbarCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
         <!-- 1. THANH DỌC CÔNG CỤ VẼ & CHÚ THÍCH (Vertical Drawing Toolbar - Cạnh phải vùng chọn) -->
         <Border x:Name="VerticalBar"
+                Width="42"
                 Background="#F01E1E1E"
                 BorderBrush="#40FFFFFF"
                 BorderThickness="1"
@@ -21,9 +99,11 @@
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                 <!-- Tay cầm kéo di chuyển thanh công cụ tự do (Drag Grip) -->
                 <Border x:Name="DragGrip"
+                        Width="32"
+                        Height="14"
                         Cursor="SizeAll"
                         Background="Transparent"
-                        Padding="0,2,0,4"
+                        Padding="0,1,0,3"
                         HorizontalAlignment="Center"
                         ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
                         MouseLeftButtonDown="OnDragGripMouseDown"
@@ -38,48 +118,56 @@
 
                 <!-- Nút Chọn & Di chuyển (Select) -->
                 <Button x:Name="SelectButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Chọn &amp; di chuyển hình vẽ (Click chuột phải để di chuyển khung chụp)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnSelectClick">
-                    <TextBlock Text="👆" FontSize="13" />
+                    <TextBlock Text="👆" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Bút chì (Pencil) -->
                 <Button x:Name="PencilButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Bút vẽ tự do (P)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnPencilClick">
-                    <TextBlock Text="✏️" FontSize="13" />
+                    <TextBlock Text="✏️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
-                <!-- Ô thả xuống Hình khối: Hình chữ nhật & Oval (R / O) -->
+                <!-- Ô thả xuống Hình khối: Hiển thị biểu tượng ▭ / ◯ rõ ràng -->
                 <ComboBox x:Name="ShapeComboBox"
-                          ToolTip="Chọn hình khối: Chữ nhật (R) hoặc Oval (O)"
-                          Margin="0,2"
-                          Width="36"
-                          Height="28"
-                          MaxDropDownHeight="180"
-                          Padding="4,2"
-                          VerticalContentAlignment="Center"
+                          Width="32"
+                          Height="30"
+                          Margin="0,1.5"
+                          HorizontalAlignment="Center"
+                          FontSize="14"
+                          FontWeight="Bold"
+                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O)"
+                          Template="{StaticResource ToolComboBoxTemplate}"
                           SelectionChanged="OnShapeComboBoxSelectionChanged">
-                    <ComboBoxItem Content="🔲 Chữ nhật" Tag="Rectangle" IsSelected="True" />
-                    <ComboBoxItem Content="⬭ Oval" Tag="Ellipse" />
+                    <ComboBoxItem Content="▭" Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)" />
+                    <ComboBoxItem Content="◯" Tag="Ellipse" ToolTip="Hình tròn / Oval (O)" />
                 </ComboBox>
 
-                <!-- Ô thả xuống Đường kẻ: Mũi tên & Đường thẳng (A / L) -->
+                <!-- Ô thả xuống Đường kẻ: Hiển thị biểu tượng ↗ / ― rõ ràng -->
                 <ComboBox x:Name="LineComboBox"
-                          ToolTip="Chọn đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
-                          Margin="0,2"
-                          Width="36"
-                          Height="28"
-                          MaxDropDownHeight="180"
-                          Padding="4,2"
-                          VerticalContentAlignment="Center"
+                          Width="32"
+                          Height="30"
+                          Margin="0,1.5"
+                          HorizontalAlignment="Center"
+                          FontSize="14"
+                          FontWeight="Bold"
+                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
+                          Template="{StaticResource ToolComboBoxTemplate}"
                           SelectionChanged="OnLineComboBoxSelectionChanged">
-                    <ComboBoxItem Content="↗ Mũi tên" Tag="Arrow" IsSelected="True" />
-                    <ComboBoxItem Content="― Đường thẳng" Tag="Line" />
+                    <ComboBoxItem Content="↗" Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)" />
+                    <ComboBoxItem Content="―" Tag="Line" ToolTip="Đường thẳng (L)" />
                 </ComboBox>
 
                 <!-- Các nút ẩn giữ tương thích API và kiểm thử tự động -->
@@ -90,103 +178,127 @@
 
                 <!-- Nút Bút dạ quang (Highlight) -->
                 <Button x:Name="HighlightButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Bút dạ quang highlight (H)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnHighlightClick">
-                    <TextBlock Text="🖍️" FontSize="13" />
+                    <TextBlock Text="🖍️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Chèn văn bản (Text) -->
                 <Button x:Name="TextButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Chèn chữ văn bản (T)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnTextClick">
-                    <TextBlock Text="T" FontSize="13" FontWeight="Bold" />
+                    <TextBlock Text="T" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Khảm ô vuông (Pixelate / Mosaic) -->
                 <Button x:Name="PixelateButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnPixelateClick">
-                    <TextBlock Text="🧊" FontSize="13" />
+                    <TextBlock Text="🧊" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Làm mờ (Blur) -->
                 <Button x:Name="BlurButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Làm mờ che thông tin nhạy cảm (Blur)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnBlurClick">
-                    <TextBlock Text="🌫️" FontSize="13" />
+                    <TextBlock Text="🌫️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Đánh số bước tự động (Step Counter) -->
                 <Button x:Name="StepCounterButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Đánh số bước tự động (N)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnStepCounterClick">
-                    <TextBlock Text="①" FontSize="14" FontWeight="Bold" />
+                    <TextBlock Text="①" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
-                <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <!-- Nhóm công cụ chọn màu & lịch sử màu (Chỉ hiển thị khi đang bật công cụ vẽ dùng màu, ẩn khi cắt/kéo/none) -->
+                <StackPanel x:Name="ColorPalettePanel" Orientation="Vertical" HorizontalAlignment="Center" Visibility="Collapsed">
+                    <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                <!-- Nhóm công cụ chọn màu & lịch sử màu (Ẩn khi dùng Mosaic / Blur vì không sử dụng màu) -->
-                <StackPanel x:Name="ColorPalettePanel" Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- Nút Cây bút hút màu (Eyedropper) -->
                     <Button x:Name="EyedropperButton"
+                            Width="32"
+                            Height="30"
+                            Margin="0,1.5"
+                            Padding="0"
+                            HorizontalAlignment="Center"
                             ToolTip="Cây bút hút màu màn hình (I)"
-                            Margin="0,2"
-                            Padding="5,4"
                             Click="OnEyedropperClick">
-                        <TextBlock Text="💉" FontSize="12" />
+                        <TextBlock Text="💉" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
 
                     <Separator Margin="2,3" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <!-- Bảng màu mặc định (xếp dọc 1 cột gọn gàng) -->
-                    <Button x:Name="ColorRedButton" ToolTip="Màu đỏ" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFE81123">
+                    <!-- Bảng màu mặc định (xếp dọc 1 cột đồng bộ kích thước) -->
+                    <Button x:Name="ColorRedButton" ToolTip="Màu đỏ" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFE81123">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFE81123" />
                     </Button>
-                    <Button x:Name="ColorYellowButton" ToolTip="Màu vàng" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFFFB900">
+                    <Button x:Name="ColorYellowButton" ToolTip="Màu vàng" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFFFB900">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFB900" />
                     </Button>
-                    <Button x:Name="ColorGreenButton" ToolTip="Màu xanh lá" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FF107C41">
+                    <Button x:Name="ColorGreenButton" ToolTip="Màu xanh lá" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FF107C41">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FF107C41" />
                     </Button>
-                    <Button x:Name="ColorBlueButton" ToolTip="Màu xanh dương" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FF0078D4">
+                    <Button x:Name="ColorBlueButton" ToolTip="Màu xanh dương" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FF0078D4">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FF0078D4" />
                     </Button>
-                    <Button x:Name="ColorWhiteButton" ToolTip="Màu trắng" Margin="0,2" Padding="2" Click="OnColorSelect" Tag="#FFFFFFFF">
+                    <Button x:Name="ColorWhiteButton" ToolTip="Màu trắng" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFFFFFFF">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFFFFF" />
                     </Button>
 
                     <!-- Lịch sử các màu đã chọn/hút gần đây (Color History) -->
-                    <StackPanel x:Name="HistoryColorsPanel" Orientation="Vertical" Margin="0,2" />
+                    <StackPanel x:Name="HistoryColorsPanel" Orientation="Vertical" Margin="0,2" HorizontalAlignment="Center" />
                 </StackPanel>
 
                 <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
                 <!-- Nút Hoàn tác (Undo) -->
                 <Button x:Name="UndoButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Hoàn tác nét vẽ (Ctrl + Z)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnUndoClick">
-                    <TextBlock Text="↩" FontSize="13" FontWeight="Bold" />
+                    <TextBlock Text="↩" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
 
                 <!-- Nút Làm lại (Redo) -->
                 <Button x:Name="RedoButton"
+                        Width="32"
+                        Height="30"
+                        Margin="0,1.5"
+                        Padding="0"
+                        HorizontalAlignment="Center"
                         ToolTip="Làm lại nét vẽ (Ctrl + Y)"
-                        Margin="0,2"
-                        Padding="5,4"
                         Click="OnRedoClick">
-                    <TextBlock Text="↪" FontSize="13" FontWeight="Bold" />
+                    <TextBlock Text="↪" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
         </Border>

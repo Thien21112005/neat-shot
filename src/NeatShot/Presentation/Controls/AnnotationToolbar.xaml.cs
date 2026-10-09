@@ -374,9 +374,9 @@ public partial class AnnotationToolbar : UserControl
 
         if (ColorPalettePanel != null)
         {
-            ColorPalettePanel.Visibility = (_activeTool == DrawingToolType.Pixelate || _activeTool == DrawingToolType.Blur)
-                ? Visibility.Collapsed
-                : Visibility.Visible;
+            ColorPalettePanel.Visibility = IsColorToolActive()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 
@@ -485,15 +485,28 @@ public partial class AnnotationToolbar : UserControl
         }
     }
 
+    private bool IsColorToolActive()
+    {
+        return _activeTool is DrawingToolType.Pencil
+            or DrawingToolType.Rectangle
+            or DrawingToolType.Ellipse
+            or DrawingToolType.Line
+            or DrawingToolType.Arrow
+            or DrawingToolType.Highlight
+            or DrawingToolType.Text
+            or DrawingToolType.StepCounter
+            or DrawingToolType.Eyedropper;
+    }
+
     private void UpdateColorButtonVisuals()
     {
         if (!_isInitialized || ColorRedButton == null) return;
 
         if (ColorPalettePanel != null)
         {
-            ColorPalettePanel.Visibility = (_activeTool == DrawingToolType.Pixelate || _activeTool == DrawingToolType.Blur)
-                ? Visibility.Collapsed
-                : Visibility.Visible;
+            ColorPalettePanel.Visibility = IsColorToolActive()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         UpdateColorBorder(ColorRedButton);
@@ -508,8 +521,8 @@ public partial class AnnotationToolbar : UserControl
     {
         if (btn == null) return;
 
-        // CHỈ hiển thị viền chọn màu khi đang có công cụ vẽ được kích hoạt (_activeTool != None)
-        var isSelected = _activeTool != DrawingToolType.None &&
+        // CHỈ hiển thị viền chọn màu khi đang có công cụ vẽ dùng màu được kích hoạt
+        var isSelected = IsColorToolActive() &&
                          btn.Tag is string hex &&
                          string.Equals(hex, _selectedColorHex, StringComparison.OrdinalIgnoreCase);
 
@@ -522,7 +535,7 @@ public partial class AnnotationToolbar : UserControl
         HistoryColorsPanel.Children.Clear();
         foreach (var col in History.Colors)
         {
-            var isSelected = _activeTool != DrawingToolType.None &&
+            var isSelected = IsColorToolActive() &&
                              col.A == _selectedColor.A &&
                              col.R == _selectedColor.R &&
                              col.G == _selectedColor.G &&

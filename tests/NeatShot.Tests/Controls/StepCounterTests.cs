@@ -155,7 +155,7 @@ public class StepCounterTests
     }
 
     [Fact]
-    public void AnnotationToolbar_MosaicAndBlur_HidesColorPalette_OnStaThread()
+    public void AnnotationToolbar_ColorPalette_OnlyVisibleWhenDrawingToolWithColorActive_OnStaThread()
     {
         Exception? threadEx = null;
         var thread = new Thread(() =>
@@ -163,22 +163,67 @@ public class StepCounterTests
             try
             {
                 var toolbar = new AnnotationToolbar();
-                Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+                // 1. Ban đầu khi chưa chọn công cụ vẽ (None / Kéo chọn vùng), bảng màu phải ẩn
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
-                // Khi chọn Pixelate, ColorPalettePanel phải ẩn
+                // 2. Khi chọn Select, bảng màu vẫn ẩn
+                toolbar.SetActiveTool(DrawingToolType.Select);
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
+
+                // 3. Khi chọn Pixelate hoặc Blur, bảng màu vẫn ẩn
                 toolbar.SetActiveTool(DrawingToolType.Pixelate);
                 Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
-                // Khi chọn Blur, ColorPalettePanel vẫn ẩn
                 toolbar.SetActiveTool(DrawingToolType.Blur);
                 Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
-                // Khi chọn lại Pencil hoặc StepCounter, ColorPalettePanel hiển thị lại
+                // 4. Khi chọn Pencil, Rectangle, hoặc StepCounter, bảng màu mới hiển thị
                 toolbar.SetActiveTool(DrawingToolType.Pencil);
+                Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+
+                toolbar.SetActiveTool(DrawingToolType.Rectangle);
                 Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
 
                 toolbar.SetActiveTool(DrawingToolType.StepCounter);
                 Assert.Equal(Visibility.Visible, toolbar.ColorPalettePanel.Visibility);
+
+                // 5. Khi tắt công cụ (ResetTools / None), bảng màu ẩn lại
+                toolbar.ResetTools();
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadEx = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadEx);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_VerticalBarButtons_HaveUniformWidth_OnStaThread()
+    {
+        Exception? threadEx = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                Assert.Equal(32, toolbar.SelectButton.Width);
+                Assert.Equal(32, toolbar.PencilButton.Width);
+                Assert.Equal(32, toolbar.ShapeComboBox.Width);
+                Assert.Equal(32, toolbar.LineComboBox.Width);
+                Assert.Equal(32, toolbar.HighlightButton.Width);
+                Assert.Equal(32, toolbar.TextButton.Width);
+                Assert.Equal(32, toolbar.PixelateButton.Width);
+                Assert.Equal(32, toolbar.BlurButton.Width);
+                Assert.Equal(32, toolbar.StepCounterButton.Width);
+                Assert.Equal(32, toolbar.EyedropperButton.Width);
+                Assert.Equal(32, toolbar.UndoButton.Width);
+                Assert.Equal(32, toolbar.RedoButton.Width);
             }
             catch (Exception ex)
             {
