@@ -65,6 +65,20 @@
                 </Border>
             </Border>
 
+            <!-- 8 nút điều chỉnh kích thước hiển thị trên khung Làm đẹp (Resize Handles) -->
+            <Canvas x:Name="BeautifyHandlesLayer"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False">
+                <Rectangle x:Name="BHandleNW" Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleN"  Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleNE" Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleW"  Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleE"  Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleSW" Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleS"  Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+                <Rectangle x:Name="BHandleSE" Width="8" Height="8" RadiusX="2" RadiusY="2" Fill="White" Stroke="#0078D4" StrokeThickness="1.5" />
+            </Canvas>
+
             <controls:AnnotationToolbar x:Name="Toolbar"
                                         Visibility="Collapsed" />
 

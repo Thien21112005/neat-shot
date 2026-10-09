@@ -384,12 +384,31 @@ public partial class OverlayWindow : Window
             {
                 BeautifyInnerPhotoFrame.Background = null;
             }
+
+            UpdateBeautifyHandles(rect);
         }
         else
         {
             BeautifyPreviewFrame.Visibility = Visibility.Collapsed;
             BeautifyInnerPhotoFrame.Background = null;
+            BeautifyHandlesLayer.Visibility = Visibility.Collapsed;
         }
+    }
+
+    private void UpdateBeautifyHandles(Rect rect)
+    {
+        BeautifyHandlesLayer.Visibility = Visibility.Visible;
+        var halfW = rect.Width / 2;
+        var halfH = rect.Height / 2;
+
+        Canvas.SetLeft(BHandleNW, rect.Left - 4); Canvas.SetTop(BHandleNW, rect.Top - 4);
+        Canvas.SetLeft(BHandleN, rect.Left + halfW - 4); Canvas.SetTop(BHandleN, rect.Top - 4);
+        Canvas.SetLeft(BHandleNE, rect.Right - 4); Canvas.SetTop(BHandleNE, rect.Top - 4);
+        Canvas.SetLeft(BHandleW, rect.Left - 4); Canvas.SetTop(BHandleW, rect.Top + halfH - 4);
+        Canvas.SetLeft(BHandleE, rect.Right - 4); Canvas.SetTop(BHandleE, rect.Top + halfH - 4);
+        Canvas.SetLeft(BHandleSW, rect.Left - 4); Canvas.SetTop(BHandleSW, rect.Bottom - 4);
+        Canvas.SetLeft(BHandleS, rect.Left + halfW - 4); Canvas.SetTop(BHandleS, rect.Bottom - 4);
+        Canvas.SetLeft(BHandleSE, rect.Right - 4); Canvas.SetTop(BHandleSE, rect.Bottom - 4);
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

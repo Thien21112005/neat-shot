@@ -4,6 +4,7 @@ using NeatShot.Presentation.ViewModels;
 using NeatShot.Presentation.Views;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -93,6 +94,52 @@ public class OverlayWindowLivePreviewAndOcrTests
                 window.Toolbar.SelectBeautifyPreset(BeautifyPreset.None);
                 Assert.Equal(Visibility.Collapsed, window.BeautifyPreviewFrame.Visibility);
                 Assert.Null(window.BeautifyInnerPhotoFrame.Background);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void OverlayWindow_LiveBeautifyPreview_ShowsResizeHandlesOnOverlay_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var vm = new OverlayViewModel();
+                var dummyBitmap = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+                vm.BackgroundImage = dummyBitmap;
+                vm.SelectedRegion = new CaptureRegion(50, 50, 200, 150);
+
+                var captureService = new ScreenCaptureService();
+                var exportService = new ExportService(captureService);
+                var window = new OverlayWindow(vm, exportService);
+
+                // Ban đầu chưa chọn preset -> BeautifyHandlesLayer ẩn
+                Assert.Equal(Visibility.Collapsed, window.BeautifyHandlesLayer.Visibility);
+
+                // Chọn preset Sunset
+                window.Toolbar.SelectBeautifyPreset(BeautifyPreset.Sunset);
+
+                // BeautifyHandlesLayer phải hiển thị trên khung review
+                Assert.Equal(Visibility.Visible, window.BeautifyHandlesLayer.Visibility);
+                Assert.Equal(50 - 4, Canvas.GetLeft(window.BHandleNW));
+                Assert.Equal(50 - 4, Canvas.GetTop(window.BHandleNW));
+                Assert.Equal(250 - 4, Canvas.GetLeft(window.BHandleSE));
+                Assert.Equal(200 - 4, Canvas.GetTop(window.BHandleSE));
+
+                // Đổi về preset None -> BeautifyHandlesLayer ẩn đi
+                window.Toolbar.SelectBeautifyPreset(BeautifyPreset.None);
+                Assert.Equal(Visibility.Collapsed, window.BeautifyHandlesLayer.Visibility);
             }
             catch (Exception ex)
             {
