@@ -82,7 +82,7 @@
             <controls:AnnotationToolbar x:Name="Toolbar"
                                         Visibility="Collapsed" />
 
-            <!-- Bảng kết quả Nhận diện chữ trực quan (OCR Result Card) -->
+            <!-- Bảng kết quả Trích xuất chữ trực quan (Text Extraction Result Card) -->
             <Border x:Name="OcrResultCard"
                     Visibility="Collapsed"
                     Width="480"
@@ -97,7 +97,7 @@
                     <Grid Margin="0,0,0,10">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="🔍" FontSize="16" Margin="0,0,6,0" VerticalAlignment="Center" />
-                            <TextBlock Text="Kết quả Nhận diện chữ (OCR)"
+                            <TextBlock Text="Kết quả Trích xuất chữ"
                                        FontWeight="Bold"
                                        FontSize="14"
                                        Foreground="White"
@@ -112,7 +112,7 @@
                                 Background="Transparent"
                                 BorderThickness="0"
                                 Foreground="#A0FFFFFF"
-                                ToolTip="Đóng kết quả OCR (Esc)"
+                                ToolTip="Đóng kết quả trích xuất chữ (Esc)"
                                 Click="OnOcrCloseClick">
                             <TextBlock Text="✕" FontSize="12" FontWeight="Bold" />
                         </Button>

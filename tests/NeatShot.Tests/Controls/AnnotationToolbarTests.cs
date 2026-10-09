@@ -617,6 +617,39 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_OcrButton_HasUserFriendlyLabelAndTooltip_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                Assert.NotNull(toolbar.OcrButton);
+
+                // Tooltip must contain "Trích xuất chữ"
+                var tooltip = toolbar.OcrButton.ToolTip?.ToString();
+                Assert.NotNull(tooltip);
+                Assert.Contains("Trích xuất chữ", tooltip);
+
+                // Button content must be "Trích xuất chữ"
+                var textBlock = toolbar.OcrButton.Content as System.Windows.Controls.TextBlock;
+                Assert.NotNull(textBlock);
+                Assert.Equal("Trích xuất chữ", textBlock.Text);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }
 
 

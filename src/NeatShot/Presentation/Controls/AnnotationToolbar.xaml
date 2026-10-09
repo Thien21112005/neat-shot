@@ -715,13 +715,13 @@
                     <TextBlock Text="📌" FontSize="13" />
                 </Button>
 
-                <!-- Nút Nhận diện chữ tức thì (Quick OCR) -->
+                <!-- Nút Trích xuất chữ tức thì (Text Extraction) -->
                 <Button x:Name="OcrButton"
-                        ToolTip="Trích xuất chữ vào Clipboard (OCR)"
+                        ToolTip="Trích xuất chữ từ ảnh vào Clipboard (Ctrl + O)"
                         Margin="2,0"
-                        Padding="6,4"
+                        Padding="8,4"
                         Click="OnOcrClick">
-                    <TextBlock Text="OCR" FontWeight="SemiBold" FontSize="11" />
+                    <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="11" />
                 </Button>
 
                 <!-- Tùy chọn Làm đẹp ảnh (Beautify: Padding, Shadow & Gradient) -->

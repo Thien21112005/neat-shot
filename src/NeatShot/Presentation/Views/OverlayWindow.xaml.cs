@@ -264,7 +264,7 @@ public partial class OverlayWindow : Window
                 MessageBox.Show(
                     this,
                     "Không phát hiện thấy ký tự văn bản nào trong vùng chọn.",
-                    "NeatShot - OCR",
+                    "NeatShot - Trích xuất chữ",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 return;
@@ -279,17 +279,17 @@ public partial class OverlayWindow : Window
             MessageBox.Show(
                 this,
                 ex.Message,
-                "NeatShot - OCR",
+                "NeatShot - Trích xuất chữ",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Lỗi OCR: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Lỗi Trích xuất chữ: {ex.Message}");
             MessageBox.Show(
                 this,
-                $"Đã xảy ra lỗi trong quá trình nhận diện chữ: {ex.Message}",
-                "NeatShot - OCR",
+                $"Đã xảy ra lỗi trong quá trình trích xuất chữ: {ex.Message}",
+                "NeatShot - Trích xuất chữ",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
