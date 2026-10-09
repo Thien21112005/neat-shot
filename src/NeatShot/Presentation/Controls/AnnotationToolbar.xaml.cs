@@ -427,6 +427,19 @@ public partial class AnnotationToolbar : UserControl
     private void OnStepCounterClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.StepCounter);
     private void OnEyedropperClick(object sender, RoutedEventArgs e) => ToggleTool(DrawingToolType.Eyedropper);
 
+    private void OnShapeComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (_activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse)
+        {
+            var pos = e.GetPosition(ShapeComboBox);
+            if (pos.X < 24 || pos.Y < 20)
+            {
+                ResetTools();
+                e.Handled = true;
+            }
+        }
+    }
+
     private void OnShapeComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_isInitialized || _isUpdatingSelection) return;
@@ -434,16 +447,33 @@ public partial class AnnotationToolbar : UserControl
         {
             var tool = item.Tag?.ToString() == "Ellipse" ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
             SelectShapeTool(tool);
+            ShapeComboBox.IsDropDownOpen = false;
         }
     }
 
     private void OnShapeComboBoxDropDownOpened(object? sender, EventArgs e)
     {
         if (!_isInitialized) return;
-        if (ShapeComboBox?.SelectedItem is ComboBoxItem item)
+        if (_activeTool != DrawingToolType.Rectangle && _activeTool != DrawingToolType.Ellipse)
         {
-            var tool = item.Tag?.ToString() == "Ellipse" ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
-            SelectShapeTool(tool);
+            if (ShapeComboBox?.SelectedItem is ComboBoxItem item)
+            {
+                var tool = item.Tag?.ToString() == "Ellipse" ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
+                SelectShapeTool(tool);
+            }
+        }
+    }
+
+    private void OnLineComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (_activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line)
+        {
+            var pos = e.GetPosition(LineComboBox);
+            if (pos.X < 24 || pos.Y < 20)
+            {
+                ResetTools();
+                e.Handled = true;
+            }
         }
     }
 
@@ -454,16 +484,20 @@ public partial class AnnotationToolbar : UserControl
         {
             var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;
             SelectLineTool(tool);
+            LineComboBox.IsDropDownOpen = false;
         }
     }
 
     private void OnLineComboBoxDropDownOpened(object? sender, EventArgs e)
     {
         if (!_isInitialized) return;
-        if (LineComboBox?.SelectedItem is ComboBoxItem item)
+        if (_activeTool != DrawingToolType.Arrow && _activeTool != DrawingToolType.Line)
         {
-            var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;
-            SelectLineTool(tool);
+            if (LineComboBox?.SelectedItem is ComboBoxItem item)
+            {
+                var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;
+                SelectLineTool(tool);
+            }
         }
     }
 
@@ -514,8 +548,7 @@ public partial class AnnotationToolbar : UserControl
             or DrawingToolType.Arrow
             or DrawingToolType.Highlight
             or DrawingToolType.Text
-            or DrawingToolType.StepCounter
-            or DrawingToolType.Eyedropper;
+            or DrawingToolType.StepCounter;
     }
 
     private void UpdateColorButtonVisuals()

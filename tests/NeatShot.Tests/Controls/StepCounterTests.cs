@@ -170,11 +170,14 @@ public class StepCounterTests
                 toolbar.SetActiveTool(DrawingToolType.Select);
                 Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
-                // 3. Khi chọn Pixelate hoặc Blur, bảng màu vẫn ẩn
+                // 3. Khi chọn Pixelate, Blur, hoặc Eyedropper, bảng màu vẫn ẩn
                 toolbar.SetActiveTool(DrawingToolType.Pixelate);
                 Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
                 toolbar.SetActiveTool(DrawingToolType.Blur);
+                Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
+
+                toolbar.SetActiveTool(DrawingToolType.Eyedropper);
                 Assert.Equal(Visibility.Collapsed, toolbar.ColorPalettePanel.Visibility);
 
                 // 4. Khi chọn Pencil, Rectangle, hoặc StepCounter, bảng màu mới hiển thị

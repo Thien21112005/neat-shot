@@ -534,6 +534,21 @@ public partial class OverlayWindow : Window
         Toolbar.SetActiveTool(_previousTool == DrawingToolType.None || _previousTool == DrawingToolType.Eyedropper ? DrawingToolType.Pencil : _previousTool);
     }
 
+    private bool HandleToolShortcut(DrawingToolType tool)
+    {
+        if (DrawingControl.CurrentTool == tool)
+        {
+            Toolbar.ResetTools();
+            DrawingControl.CurrentTool = DrawingToolType.None;
+        }
+        else
+        {
+            Toolbar.SetActiveTool(tool);
+            DrawingControl.CurrentTool = tool;
+        }
+        return true;
+    }
+
     /// <summary>
     /// Xử lý các phím tắt hệ thống và chuyển đổi công cụ vẽ (hỗ trợ kiểm thử trực tiếp).
     /// </summary>
@@ -613,45 +628,25 @@ public partial class OverlayWindow : Window
             switch (key)
             {
                 case Key.V:
-                    Toolbar.SetActiveTool(DrawingToolType.Select);
-                    DrawingControl.CurrentTool = DrawingToolType.Select;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Select);
                 case Key.P:
-                    Toolbar.SetActiveTool(DrawingToolType.Pencil);
-                    DrawingControl.CurrentTool = DrawingToolType.Pencil;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Pencil);
                 case Key.R:
-                    Toolbar.SetActiveTool(DrawingToolType.Rectangle);
-                    DrawingControl.CurrentTool = DrawingToolType.Rectangle;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Rectangle);
                 case Key.O:
-                    Toolbar.SetActiveTool(DrawingToolType.Ellipse);
-                    DrawingControl.CurrentTool = DrawingToolType.Ellipse;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Ellipse);
                 case Key.L:
-                    Toolbar.SetActiveTool(DrawingToolType.Line);
-                    DrawingControl.CurrentTool = DrawingToolType.Line;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Line);
                 case Key.A:
-                    Toolbar.SetActiveTool(DrawingToolType.Arrow);
-                    DrawingControl.CurrentTool = DrawingToolType.Arrow;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Arrow);
                 case Key.H:
-                    Toolbar.SetActiveTool(DrawingToolType.Highlight);
-                    DrawingControl.CurrentTool = DrawingToolType.Highlight;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Highlight);
                 case Key.T:
-                    Toolbar.SetActiveTool(DrawingToolType.Text);
-                    DrawingControl.CurrentTool = DrawingToolType.Text;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Text);
                 case Key.B:
-                    Toolbar.SetActiveTool(DrawingToolType.Pixelate);
-                    DrawingControl.CurrentTool = DrawingToolType.Pixelate;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.Pixelate);
                 case Key.N:
-                    Toolbar.SetActiveTool(DrawingToolType.StepCounter);
-                    DrawingControl.CurrentTool = DrawingToolType.StepCounter;
-                    return true;
+                    return HandleToolShortcut(DrawingToolType.StepCounter);
                 case Key.I:
                     Toolbar.SetActiveTool(DrawingToolType.Eyedropper);
                     EnterEyedropperMode();
