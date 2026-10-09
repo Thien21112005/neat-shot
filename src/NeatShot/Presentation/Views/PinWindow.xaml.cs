@@ -23,7 +23,14 @@ public partial class PinWindow : Window
 
         AnnotationToolbar.ToolSelected += (s, tool) =>
         {
-            DrawingControl.CurrentTool = tool;
+            if (tool == DrawingToolType.Select)
+            {
+                DrawingControl.CurrentTool = DrawingToolType.None;
+            }
+            else
+            {
+                DrawingControl.CurrentTool = tool;
+            }
         };
 
         AnnotationToolbar.ColorSelected += (s, color) =>
@@ -38,7 +45,7 @@ public partial class PinWindow : Window
 
         AnnotationToolbar.CloseRequested += (s, e) =>
         {
-            ToggleAnnotationToolbar(false);
+            ToggleAllControls(false);
         };
     }
 
@@ -50,6 +57,39 @@ public partial class PinWindow : Window
         DrawingControl.BackgroundImage = image;
         Left = initialPosition.X;
         Top = initialPosition.Y;
+    }
+
+    /// <summary>
+    /// Bật/tắt toàn bộ thanh điều khiển (header + toolbar vẽ) khi người dùng nhấp vào ảnh.
+    /// </summary>
+    public void ToggleAllControls(bool? show = null)
+    {
+        bool target;
+        if (show.HasValue)
+        {
+            target = show.Value;
+        }
+        else
+        {
+            // Nếu có bất kỳ thanh nào đang hiện -> Tắt cả hai
+            bool anyVisible = (PinControlBar.Visibility == Visibility.Visible || AnnotationToolbar.Visibility == Visibility.Visible);
+            target = !anyVisible;
+        }
+
+        PinControlBar.Visibility = target ? Visibility.Visible : Visibility.Collapsed;
+        AnnotationToolbar.Visibility = target ? Visibility.Visible : Visibility.Collapsed;
+
+        if (!target)
+        {
+            DrawingControl.CurrentTool = DrawingToolType.None;
+            AnnotationToolbar.SelectTool(DrawingToolType.None);
+        }
+        else
+        {
+            // Mặc định ở chế độ Select (Di chuyển/Chọn) để người dùng có thể nhấp lại vào ảnh để tắt
+            DrawingControl.CurrentTool = DrawingToolType.None;
+            AnnotationToolbar.SelectTool(DrawingToolType.Select);
+        }
     }
 
     public void ToggleAnnotationToolbar(bool? show = null)
@@ -69,25 +109,57 @@ public partial class PinWindow : Window
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ButtonState == MouseButtonState.Pressed)
-        {
-            if (DrawingControl.CurrentTool == DrawingToolType.None)
-            {
-                if (AnnotationToolbar.Visibility != Visibility.Visible)
-                {
-                    ToggleAnnotationToolbar(true);
-                }
+        if (e.ButtonState != MouseButtonState.Pressed)
+            return;
 
-                try
-                {
-                    DragMove();
-                }
-                catch
-                {
-                    // Bỏ qua lỗi nếu chuột đã nhả hoặc không thể kéo
-                }
+        // Bỏ qua nếu người dùng bấm trúng thanh điều khiển trên hoặc thanh công cụ vẽ dưới
+        if (e.OriginalSource is DependencyObject dep)
+        {
+            if (IsVisualChildOf(dep, PinControlBar) || IsVisualChildOf(dep, AnnotationToolbar))
+            {
+                return;
             }
         }
+
+        if (DrawingControl.CurrentTool == DrawingToolType.None)
+        {
+            var startLeft = Left;
+            var startTop = Top;
+
+            try
+            {
+                DragMove();
+            }
+            catch
+            {
+                // Bỏ qua lỗi nếu chuột đã nhả hoặc không thể kéo
+            }
+
+            var deltaX = Math.Abs(Left - startLeft);
+            var deltaY = Math.Abs(Top - startTop);
+
+            // Nếu cửa sổ bị dịch chuyển hơn 2px -> Đây là thao tác KÉO (Drag), KHÔNG thay đổi thanh công cụ
+            if (deltaX > 2 || deltaY > 2)
+            {
+                return;
+            }
+
+            // Nếu cửa sổ KHÔNG dịch chuyển -> Đây là thao tác CLICK (Nhấn chuột vào ảnh)
+            // Nhấn lần 1: xuất hiện thanh công cụ; Nhấn lần 2: tắt thanh công cụ
+            ToggleAllControls();
+        }
+    }
+
+    private static bool IsVisualChildOf(DependencyObject? child, DependencyObject? parent)
+    {
+        if (child == null || parent == null) return false;
+        var current = child;
+        while (current != null)
+        {
+            if (current == parent) return true;
+            current = VisualTreeHelper.GetParent(current);
+        }
+        return false;
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -122,9 +194,9 @@ public partial class PinWindow : Window
     {
         if (e.Key == Key.Escape)
         {
-            if (AnnotationToolbar.Visibility == Visibility.Visible && DrawingControl.CurrentTool != DrawingToolType.None)
+            if (PinControlBar.Visibility == Visibility.Visible || AnnotationToolbar.Visibility == Visibility.Visible)
             {
-                ToggleAnnotationToolbar(false);
+                ToggleAllControls(false);
                 e.Handled = true;
                 return;
             }

@@ -27,7 +27,10 @@ public class PinWindowAnnotationTests
                 // Phải có lớp vẽ DrawingCanvas
                 Assert.NotNull(window.DrawingControl);
 
-                // Phải có thanh công cụ chú thích PinAnnotationToolbar
+                // Mặc định ban đầu: Cả PinControlBar và PinAnnotationToolbar đều ẩn (Collapsed)
+                Assert.NotNull(window.PinControlBar);
+                Assert.Equal(Visibility.Collapsed, window.PinControlBar.Visibility);
+
                 Assert.NotNull(window.AnnotationToolbar);
                 Assert.Equal(Visibility.Collapsed, window.AnnotationToolbar.Visibility);
 
@@ -144,6 +147,49 @@ public class PinWindowAnnotationTests
                 Assert.NotNull(annotatedImage);
                 Assert.Equal(100, annotatedImage.PixelWidth);
                 Assert.Equal(80, annotatedImage.PixelHeight);
+
+                window.Close();
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void PinWindow_ToggleAllControls_TogglesBothHeaderAndAnnotationToolbar_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var vm = new PinViewModel();
+                var window = new PinWindow(vm);
+                var dummyBitmap = new RenderTargetBitmap(100, 80, 96, 96, PixelFormats.Pbgra32);
+                window.SetImage(dummyBitmap, new Point(50, 60));
+
+                // Ban đầu: Cả 2 đều ẩn
+                Assert.Equal(Visibility.Collapsed, window.PinControlBar.Visibility);
+                Assert.Equal(Visibility.Collapsed, window.AnnotationToolbar.Visibility);
+
+                // Nhấn vào ảnh lần 1 -> Cả 2 hiện lên
+                window.ToggleAllControls();
+                Assert.Equal(Visibility.Visible, window.PinControlBar.Visibility);
+                Assert.Equal(Visibility.Visible, window.AnnotationToolbar.Visibility);
+                Assert.Equal(DrawingToolType.None, window.DrawingControl.CurrentTool);
+
+                // Nhấn vào ảnh lần 2 -> Cả 2 tắt đi
+                window.ToggleAllControls();
+                Assert.Equal(Visibility.Collapsed, window.PinControlBar.Visibility);
+                Assert.Equal(Visibility.Collapsed, window.AnnotationToolbar.Visibility);
+                Assert.Equal(DrawingToolType.None, window.DrawingControl.CurrentTool);
 
                 window.Close();
             }

@@ -18,6 +18,60 @@
         MouseWheel="OnMouseWheel"
         KeyDown="OnKeyDown">
 
+    <Window.Resources>
+        <Style x:Key="PinHeaderButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#33FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#4DFFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PinCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource PinHeaderButtonStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#E81123" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#C4101E" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Vẽ chú thích (Ctrl + P)" Click="OnToggleAnnotateClick" />
@@ -59,58 +113,49 @@
                                      VerticalAlignment="Center"
                                      Panel.ZIndex="5" />
 
-            <!-- Thanh điều khiển nút ghim ở góc trên bên phải -->
+            <!-- Thanh điều khiển nút ghim ở góc trên bên phải (Mặc định ẩn, click vào ảnh để hiện) -->
             <Border x:Name="PinControlBar"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
-                    Background="#CC1E1E1E"
+                    Background="#EB1E1E22"
+                    BorderBrush="#55FFFFFF"
+                    BorderThickness="1"
                     CornerRadius="0,6,0,6"
                     Padding="4,2"
+                    Visibility="Collapsed"
                     Panel.ZIndex="10">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="6" ShadowDepth="2" Opacity="0.4" Direction="270" Color="Black" />
+                </Border.Effect>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Nút Bật/Tắt vẽ chú thích -->
+                    <!-- Nút Bật/Tắt vẽ chú thích (Vector Path siêu sáng & sắc nét) -->
                     <Button x:Name="PinAnnotateButton"
-                            ToolTip="Vẽ chú thích lên ảnh"
-                            Width="26"
-                            Height="24"
-                            Margin="1,0"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="White"
-                            Cursor="Hand"
+                            Style="{StaticResource PinHeaderButtonStyle}"
+                            ToolTip="Vẽ chú thích lên ảnh (Ctrl + P)"
                             Click="OnAnnotateButtonClick">
-                        <TextBlock Text="✏️" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Path Width="13" Height="13"
+                              Stretch="Uniform"
+                              Fill="#FFFFFF"
+                              Data="M3,17.25V21h3.75L17.81,9.94l-3.75-3.75L3,17.25z M20.71,7.04c0.39-0.39,0.39-1.02,0-1.41l-2.34-2.34c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75L20.71,7.04z" />
                     </Button>
 
-                    <!-- Nút sao chép ảnh -->
+                    <!-- Nút sao chép ảnh (Vector Path siêu sáng & sắc nét) -->
                     <Button x:Name="PinCopyButton"
+                            Style="{StaticResource PinHeaderButtonStyle}"
                             ToolTip="Sao chép ảnh vào Clipboard (Ctrl + C)"
-                            Width="26"
-                            Height="24"
-                            Margin="1,0"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="White"
-                            Cursor="Hand"
                             Click="OnCopyImageClick">
-                        <TextBlock Text="📋" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Path Width="13" Height="13"
+                              Stretch="Uniform"
+                              Fill="#FFFFFF"
+                              Data="M16,1H4C2.9,1,2,1.9,2,3v14h2V3h12V1z M19,5H8C6.9,5,6,5.9,6,7v14c0,1.1,0.9,2,2,2h11c1.1,0,2-0.9,2-2V7C21,5.9,20.1,5,19,5z M19,21H8V7h11V21z" />
                     </Button>
 
                     <!-- Nút đóng ghim -->
                     <Button x:Name="PinCloseButton"
+                            Style="{StaticResource PinCloseButtonStyle}"
                             ToolTip="Đóng ghim (Esc)"
-                            Width="26"
-                            Height="24"
-                            Margin="1,0"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="#E81123"
-                            Cursor="Hand"
                             Click="OnCloseClick">
-                        <TextBlock Text="✕" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Text="✕" FontSize="13" FontWeight="Bold" Foreground="#FF5C5C" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
             </Border>
