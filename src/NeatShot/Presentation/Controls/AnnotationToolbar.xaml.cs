@@ -439,22 +439,35 @@ public partial class AnnotationToolbar : UserControl
 
     private void OnShapeComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        var pos = e.GetPosition(ShapeComboBox);
-        var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
-
-        if (!isArrowCorner)
+        if (e.ChangedButton == MouseButton.Right)
         {
-            if (_activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse)
+            if (ShapeComboBox != null)
             {
-                ResetTools();
+                ShapeComboBox.IsDropDownOpen = !ShapeComboBox.IsDropDownOpen;
+                e.Handled = true;
             }
-            else
+            return;
+        }
+
+        if (e.ChangedButton == MouseButton.Left)
+        {
+            var pos = e.GetPosition(ShapeComboBox);
+            var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
+
+            if (!isArrowCorner)
             {
-                var tool = ShapeComboBox.SelectedIndex == 1 ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
-                SelectShapeTool(tool);
+                if (_activeTool == DrawingToolType.Rectangle || _activeTool == DrawingToolType.Ellipse)
+                {
+                    ResetTools();
+                }
+                else
+                {
+                    var tool = ShapeComboBox.SelectedIndex == 1 ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
+                    SelectShapeTool(tool);
+                }
+                ShapeComboBox.IsDropDownOpen = false;
+                e.Handled = true;
             }
-            ShapeComboBox.IsDropDownOpen = false;
-            e.Handled = true;
         }
     }
 
@@ -495,22 +508,35 @@ public partial class AnnotationToolbar : UserControl
 
     private void OnLineComboBoxPreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        var pos = e.GetPosition(LineComboBox);
-        var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
-
-        if (!isArrowCorner)
+        if (e.ChangedButton == MouseButton.Right)
         {
-            if (_activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line)
+            if (LineComboBox != null)
             {
-                ResetTools();
+                LineComboBox.IsDropDownOpen = !LineComboBox.IsDropDownOpen;
+                e.Handled = true;
             }
-            else
+            return;
+        }
+
+        if (e.ChangedButton == MouseButton.Left)
+        {
+            var pos = e.GetPosition(LineComboBox);
+            var isArrowCorner = pos.X >= 22 && pos.Y >= 18;
+
+            if (!isArrowCorner)
             {
-                var tool = LineComboBox.SelectedIndex == 1 ? DrawingToolType.Line : DrawingToolType.Arrow;
-                SelectLineTool(tool);
+                if (_activeTool == DrawingToolType.Arrow || _activeTool == DrawingToolType.Line)
+                {
+                    ResetTools();
+                }
+                else
+                {
+                    var tool = LineComboBox.SelectedIndex == 1 ? DrawingToolType.Line : DrawingToolType.Arrow;
+                    SelectLineTool(tool);
+                }
+                LineComboBox.IsDropDownOpen = false;
+                e.Handled = true;
             }
-            LineComboBox.IsDropDownOpen = false;
-            e.Handled = true;
         }
     }
 
@@ -628,7 +654,7 @@ public partial class AnnotationToolbar : UserControl
                          string.Equals(hex, _selectedColorHex, StringComparison.OrdinalIgnoreCase);
 
         btn.BorderBrush = isSelected ? Brushes.White : Brushes.Transparent;
-        btn.BorderThickness = isSelected ? new Thickness(2) : new Thickness(1);
+        btn.BorderThickness = new Thickness(1.5);
     }
 
     private void UpdateHistorySwatches()
@@ -644,13 +670,16 @@ public partial class AnnotationToolbar : UserControl
 
             var btn = new Button
             {
-                Margin = new Thickness(2, 0, 2, 0),
-                Padding = new Thickness(2),
+                Width = 32,
+                Height = 26,
+                Margin = new Thickness(0, 1.5, 0, 1.5),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Tag = col,
                 ToolTip = $"#{col.R:X2}{col.G:X2}{col.B:X2}",
                 Background = Brushes.Transparent,
                 BorderBrush = isSelected ? Brushes.White : Brushes.Transparent,
-                BorderThickness = isSelected ? new Thickness(2) : new Thickness(1),
+                BorderThickness = new Thickness(1.5),
                 Content = new Border
                 {
                     Width = 14,
@@ -659,6 +688,12 @@ public partial class AnnotationToolbar : UserControl
                     Background = new SolidColorBrush(col)
                 }
             };
+
+            if (TryFindResource("ColorButtonStyle") is Style colorStyle)
+            {
+                btn.Style = colorStyle;
+            }
+
             btn.Click += OnHistoryColorClick;
             HistoryColorsPanel.Children.Add(btn);
         }

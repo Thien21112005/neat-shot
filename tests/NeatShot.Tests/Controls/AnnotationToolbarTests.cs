@@ -390,7 +390,7 @@ public class AnnotationToolbarTests
                     0,
                     System.Windows.Input.MouseButton.Left)
                 {
-                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseDownEvent
                 };
                 toolbar.ShapeComboBox.RaiseEvent(mouseArgs);
 
@@ -405,7 +405,7 @@ public class AnnotationToolbarTests
                     0,
                     System.Windows.Input.MouseButton.Left)
                 {
-                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseDownEvent
                 };
                 toolbar.ShapeComboBox.RaiseEvent(mouseArgs2);
                 Assert.Equal(DrawingToolType.None, toolbar.ActiveTool);
@@ -417,7 +417,7 @@ public class AnnotationToolbarTests
                     0,
                     System.Windows.Input.MouseButton.Left)
                 {
-                    RoutedEvent = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent
+                    RoutedEvent = System.Windows.UIElement.PreviewMouseDownEvent
                 };
                 toolbar.LineComboBox.RaiseEvent(mouseArgsLine);
                 Assert.Equal(DrawingToolType.Arrow, toolbar.ActiveTool);
@@ -519,5 +519,104 @@ public class AnnotationToolbarTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void AnnotationToolbar_RightClick_OpensDropdown_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+                var window = new System.Windows.Window
+                {
+                    Content = toolbar,
+                    Width = 600,
+                    Height = 400,
+                    ShowInTaskbar = false,
+                    WindowStyle = System.Windows.WindowStyle.None
+                };
+                window.Show();
+
+                try
+                {
+                    Assert.False(toolbar.ShapeComboBox.IsDropDownOpen);
+                    Assert.False(toolbar.LineComboBox.IsDropDownOpen);
+
+                    // Right click on ShapeComboBox
+                    var rightClickArgs = new System.Windows.Input.MouseButtonEventArgs(
+                        System.Windows.Input.Mouse.PrimaryDevice,
+                        0,
+                        System.Windows.Input.MouseButton.Right)
+                    {
+                        RoutedEvent = System.Windows.UIElement.PreviewMouseDownEvent
+                    };
+                    toolbar.ShapeComboBox.RaiseEvent(rightClickArgs);
+                    Assert.True(toolbar.ShapeComboBox.IsDropDownOpen);
+
+                    // Right click on LineComboBox
+                    var rightClickArgsLine = new System.Windows.Input.MouseButtonEventArgs(
+                        System.Windows.Input.Mouse.PrimaryDevice,
+                        0,
+                        System.Windows.Input.MouseButton.Right)
+                    {
+                        RoutedEvent = System.Windows.UIElement.PreviewMouseDownEvent
+                    };
+                    toolbar.LineComboBox.RaiseEvent(rightClickArgsLine);
+                    Assert.True(toolbar.LineComboBox.IsDropDownOpen);
+                }
+                finally
+                {
+                    window.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
+
+    [Fact]
+    public void AnnotationToolbar_ColorButtons_HaveConsistentWidth32_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var toolbar = new AnnotationToolbar();
+
+                // Default color buttons should have width 32
+                Assert.Equal(32, toolbar.ColorRedButton.Width);
+                Assert.Equal(32, toolbar.ColorYellowButton.Width);
+                Assert.Equal(32, toolbar.ColorGreenButton.Width);
+                Assert.Equal(32, toolbar.ColorBlueButton.Width);
+                Assert.Equal(32, toolbar.ColorWhiteButton.Width);
+
+                // History swatches must also have width 32 to match tools above
+                toolbar.AddColorToHistory(System.Windows.Media.Color.FromRgb(10, 20, 30));
+                Assert.Single(toolbar.HistoryColorsPanel.Children);
+                var historyBtn = (System.Windows.Controls.Button)toolbar.HistoryColorsPanel.Children[0];
+                Assert.Equal(32, historyBtn.Width);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }
+
 

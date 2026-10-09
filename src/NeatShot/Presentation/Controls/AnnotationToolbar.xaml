@@ -259,6 +259,41 @@
             <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
             <Setter Property="Template" Value="{StaticResource LineComboBoxTemplate}" />
         </Style>
+
+        <!-- Style cho các nút chọn màu: Đồng bộ kích thước 32x26, bo góc 4px viền chuẩn nét khi chọn -->
+        <Style x:Key="ColorButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Margin" Value="0,1.5" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Width="32"
+                                Height="26"
+                                CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#33FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
@@ -322,8 +357,8 @@
                           Width="32"
                           Height="30"
                           Style="{StaticResource ShapeComboBoxStyle}"
-                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O)"
-                          PreviewMouseLeftButtonDown="OnShapeComboBoxPreviewMouseDown"
+                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O) - Chuột phải để đổi hình"
+                          PreviewMouseDown="OnShapeComboBoxPreviewMouseDown"
                           SelectionChanged="OnShapeComboBoxSelectionChanged"
                           DropDownOpened="OnShapeComboBoxDropDownOpened">
                     <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)"
@@ -347,8 +382,8 @@
                           Width="32"
                           Height="30"
                           Style="{StaticResource LineComboBoxStyle}"
-                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
-                          PreviewMouseLeftButtonDown="OnLineComboBoxPreviewMouseDown"
+                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L) - Chuột phải để đổi đường kẻ"
+                          PreviewMouseDown="OnLineComboBoxPreviewMouseDown"
                           SelectionChanged="OnLineComboBoxSelectionChanged"
                           DropDownOpened="OnLineComboBoxDropDownOpened">
                     <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)"
@@ -451,20 +486,20 @@
 
                     <Separator Margin="2,3" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <!-- Bảng màu mặc định (xếp dọc 1 cột đồng bộ kích thước) -->
-                    <Button x:Name="ColorRedButton" ToolTip="Màu đỏ" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFE81123">
+                    <!-- Bảng màu mặc định (xếp dọc 1 cột đồng bộ kích thước chuẩn 32x26) -->
+                    <Button x:Name="ColorRedButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu đỏ" Click="OnColorSelect" Tag="#FFE81123">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFE81123" />
                     </Button>
-                    <Button x:Name="ColorYellowButton" ToolTip="Màu vàng" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFFFB900">
+                    <Button x:Name="ColorYellowButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu vàng" Click="OnColorSelect" Tag="#FFFFB900">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFB900" />
                     </Button>
-                    <Button x:Name="ColorGreenButton" ToolTip="Màu xanh lá" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FF107C41">
+                    <Button x:Name="ColorGreenButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh lá" Click="OnColorSelect" Tag="#FF107C41">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FF107C41" />
                     </Button>
-                    <Button x:Name="ColorBlueButton" ToolTip="Màu xanh dương" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FF0078D4">
+                    <Button x:Name="ColorBlueButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh dương" Click="OnColorSelect" Tag="#FF0078D4">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FF0078D4" />
                     </Button>
-                    <Button x:Name="ColorWhiteButton" ToolTip="Màu trắng" Width="32" Height="22" Margin="0,1" Padding="2" HorizontalAlignment="Center" Click="OnColorSelect" Tag="#FFFFFFFF">
+                    <Button x:Name="ColorWhiteButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu trắng" Click="OnColorSelect" Tag="#FFFFFFFF">
                         <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFFFFF" />
                     </Button>
 
