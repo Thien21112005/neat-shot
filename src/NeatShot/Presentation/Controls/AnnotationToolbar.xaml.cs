@@ -437,9 +437,29 @@ public partial class AnnotationToolbar : UserControl
         }
     }
 
+    private void OnShapeComboBoxDropDownOpened(object? sender, EventArgs e)
+    {
+        if (!_isInitialized) return;
+        if (ShapeComboBox?.SelectedItem is ComboBoxItem item)
+        {
+            var tool = item.Tag?.ToString() == "Ellipse" ? DrawingToolType.Ellipse : DrawingToolType.Rectangle;
+            SelectShapeTool(tool);
+        }
+    }
+
     private void OnLineComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_isInitialized || _isUpdatingSelection) return;
+        if (LineComboBox?.SelectedItem is ComboBoxItem item)
+        {
+            var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;
+            SelectLineTool(tool);
+        }
+    }
+
+    private void OnLineComboBoxDropDownOpened(object? sender, EventArgs e)
+    {
+        if (!_isInitialized) return;
         if (LineComboBox?.SelectedItem is ComboBoxItem item)
         {
             var tool = item.Tag?.ToString() == "Line" ? DrawingToolType.Line : DrawingToolType.Arrow;

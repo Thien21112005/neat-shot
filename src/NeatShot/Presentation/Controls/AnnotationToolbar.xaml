@@ -8,52 +8,56 @@
              Background="{x:Null}">
 
     <UserControl.Resources>
-        <!-- Style cho ComboBox dạng nút công cụ (hiển thị Icon ở giữa kèm tam giác nhỏ ở góc) -->
+        <!-- Template cho ComboBox dạng nút công cụ (Đồng bộ tuyệt đối kích thước 32x30, viền, nền như Button chuẩn Fluent) -->
         <ControlTemplate x:Key="ToolComboBoxTemplate" TargetType="ComboBox">
-            <Grid x:Name="MainGrid" Width="32" Height="30" HorizontalAlignment="Center">
+            <Grid Width="32" Height="30" HorizontalAlignment="Center">
                 <ToggleButton x:Name="ToggleButton"
+                              Width="32"
+                              Height="30"
+                              Style="{x:Null}"
                               Focusable="False"
                               IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                               ClickMode="Press"
-                              Background="Transparent"
-                              BorderBrush="Transparent"
-                              BorderThickness="1"
-                              Cursor="Hand">
+                              Cursor="Hand"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
                             <Border x:Name="Border"
+                                    Width="32"
+                                    Height="30"
                                     CornerRadius="4"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                <Grid>
-                                    <ContentPresenter Content="{TemplateBinding Content}"
+                                    Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                    BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                    BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                    SnapsToDevicePixels="True">
+                                <Grid Width="32" Height="30">
+                                    <!-- Biểu tượng hình vẽ/đường kẻ căn chính giữa -->
+                                    <ContentPresenter Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center" />
-                                    <!-- Dấu tam giác nhỏ ở góc dưới bên phải -->
+
+                                    <!-- Dấu tam giác nhỏ ở góc dưới bên phải báo hiệu menu xổ xuống -->
                                     <Path HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"
-                                          Margin="0,0,2,2"
-                                          Fill="#80FFFFFF"
+                                          Margin="0,0,2.5,2.5"
+                                          Fill="#90FFFFFF"
                                           Data="M 0 0 L 4 0 L 2 3 Z" />
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#33FFFFFF" />
+                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ControlStrokeColorSecondaryBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="Border" Property="Background" Value="#FF0078D4" />
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="#FFFFFFFF" />
+                                    <Setter TargetName="Border" Property="BorderThickness" Value="1.5" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </ToggleButton.Template>
-                    <ContentPresenter IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center" />
                 </ToggleButton>
 
                 <!-- Popup danh sách xổ xuống -->
@@ -67,8 +71,8 @@
                             BorderBrush="#40FFFFFF"
                             BorderThickness="1"
                             CornerRadius="6"
-                            Padding="2"
-                            MinWidth="110"
+                            Padding="3"
+                            MinWidth="40"
                             Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
                         <ScrollViewer SnapsToDevicePixels="True">
                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
@@ -82,6 +86,21 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+
+        <Style x:Key="ToolComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,1.5" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template" Value="{StaticResource ToolComboBoxTemplate}" />
+        </Style>
     </UserControl.Resources>
 
     <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
@@ -144,30 +163,24 @@
                 <ComboBox x:Name="ShapeComboBox"
                           Width="32"
                           Height="30"
-                          Margin="0,1.5"
-                          HorizontalAlignment="Center"
-                          FontSize="14"
-                          FontWeight="Bold"
+                          Style="{StaticResource ToolComboBoxStyle}"
                           ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O)"
-                          Template="{StaticResource ToolComboBoxTemplate}"
-                          SelectionChanged="OnShapeComboBoxSelectionChanged">
-                    <ComboBoxItem Content="▭" Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)" />
-                    <ComboBoxItem Content="◯" Tag="Ellipse" ToolTip="Hình tròn / Oval (O)" />
+                          SelectionChanged="OnShapeComboBoxSelectionChanged"
+                          DropDownOpened="OnShapeComboBoxDropDownOpened">
+                    <ComboBoxItem Content="▭" Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)" HorizontalContentAlignment="Center" Width="34" Height="30" />
+                    <ComboBoxItem Content="◯" Tag="Ellipse" ToolTip="Hình tròn / Oval (O)" HorizontalContentAlignment="Center" Width="34" Height="30" />
                 </ComboBox>
 
                 <!-- Ô thả xuống Đường kẻ: Hiển thị biểu tượng ↗ / ― rõ ràng -->
                 <ComboBox x:Name="LineComboBox"
                           Width="32"
                           Height="30"
-                          Margin="0,1.5"
-                          HorizontalAlignment="Center"
-                          FontSize="14"
-                          FontWeight="Bold"
+                          Style="{StaticResource ToolComboBoxStyle}"
                           ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L)"
-                          Template="{StaticResource ToolComboBoxTemplate}"
-                          SelectionChanged="OnLineComboBoxSelectionChanged">
-                    <ComboBoxItem Content="↗" Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)" />
-                    <ComboBoxItem Content="―" Tag="Line" ToolTip="Đường thẳng (L)" />
+                          SelectionChanged="OnLineComboBoxSelectionChanged"
+                          DropDownOpened="OnLineComboBoxDropDownOpened">
+                    <ComboBoxItem Content="↗" Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)" HorizontalContentAlignment="Center" Width="34" Height="30" />
+                    <ComboBoxItem Content="―" Tag="Line" ToolTip="Đường thẳng (L)" HorizontalContentAlignment="Center" Width="34" Height="30" />
                 </ComboBox>
 
                 <!-- Các nút ẩn giữ tương thích API và kiểm thử tự động -->
