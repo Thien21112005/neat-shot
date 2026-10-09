@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:NeatShot.Presentation.ViewModels"
+        xmlns:controls="clr-namespace:NeatShot.Presentation.Controls"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:PinViewModel}"
         WindowStyle="None"
@@ -19,6 +20,7 @@
 
     <Window.ContextMenu>
         <ContextMenu>
+            <MenuItem Header="Vẽ chú thích (Ctrl + P)" Click="OnToggleAnnotateClick" />
             <MenuItem Header="Sao chép ảnh (Ctrl + C)" Click="OnCopyImageClick" />
             <MenuItem Header="Đặt lại tỉ lệ 100% (Ctrl + 0)" Click="OnResetZoomClick" />
             <Separator />
@@ -49,6 +51,14 @@
                    Stretch="Fill"
                    RenderOptions.BitmapScalingMode="HighQuality" />
 
+            <!-- Lớp vẽ chú thích vector trên ảnh ghim -->
+            <controls:DrawingCanvas x:Name="DrawingControl"
+                                     Width="{Binding ScaledWidth}"
+                                     Height="{Binding ScaledHeight}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Panel.ZIndex="5" />
+
             <!-- Thanh điều khiển nút ghim ở góc trên bên phải -->
             <Border x:Name="PinControlBar"
                     VerticalAlignment="Top"
@@ -58,6 +68,21 @@
                     Padding="4,2"
                     Panel.ZIndex="10">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Nút Bật/Tắt vẽ chú thích -->
+                    <Button x:Name="PinAnnotateButton"
+                            ToolTip="Vẽ chú thích lên ảnh"
+                            Width="26"
+                            Height="24"
+                            Margin="1,0"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="White"
+                            Cursor="Hand"
+                            Click="OnAnnotateButtonClick">
+                        <TextBlock Text="✏️" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+
                     <!-- Nút sao chép ảnh -->
                     <Button x:Name="PinCopyButton"
                             ToolTip="Sao chép ảnh vào Clipboard (Ctrl + C)"
@@ -89,6 +114,14 @@
                     </Button>
                 </StackPanel>
             </Border>
+
+            <!-- Thanh công cụ vẽ chú thích mini nổi ở cạnh dưới ảnh ghim -->
+            <controls:PinAnnotationToolbar x:Name="AnnotationToolbar"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,0,0,8"
+                                            Visibility="Collapsed"
+                                            Panel.ZIndex="12" />
         </Grid>
     </Border>
 </Window>

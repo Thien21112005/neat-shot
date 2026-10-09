@@ -113,12 +113,12 @@
   - `PinAnnotationToolbar`: Thanh công cụ mini nổi (Pencil, Rectangle, Arrow, Text, StepCounter, Color, Undo, Close).
   - Khi người dùng click chuột trái vào ảnh hoặc click nút `✏️`, thanh công cụ vẽ hiển thị cho phép vẽ chú thích trực tiếp.
 
-- [ ] **Step 1: Viết unit test cho tính năng vẽ chú thích và undo trên PinWindow**
-- [ ] **Step 2: Chạy test xác nhận RED**
-- [ ] **Step 3: Tạo `PinAnnotationToolbar` và lồng `DrawingCanvas` vào `PinWindow.xaml`**
-- [ ] **Step 4: Kết nối sự kiện vẽ, chọn màu, chọn công cụ trong `PinWindow.xaml.cs`**
-- [ ] **Step 5: Chạy test xác nhận GREEN**
-- [ ] **Step 6: Commit `feat(pin): add live vector annotations and sticky note editing to PinWindow`**
+- [x] **Step 1: Viết unit test cho tính năng vẽ chú thích và undo trên PinWindow**
+- [x] **Step 2: Chạy test xác nhận RED**
+- [x] **Step 3: Tạo `PinAnnotationToolbar` và lồng `DrawingCanvas` vào `PinWindow.xaml`**
+- [x] **Step 4: Kết nối sự kiện vẽ, chọn màu, chọn công cụ trong `PinWindow.xaml.cs`**
+- [x] **Step 5: Chạy test xác nhận GREEN**
+- [x] **Step 6: Commit `feat(pin): add live vector annotations and sticky note editing to PinWindow`**
 
 ---
 
