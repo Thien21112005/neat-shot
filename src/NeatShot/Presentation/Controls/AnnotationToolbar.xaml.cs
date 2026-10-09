@@ -1,5 +1,6 @@
 using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -66,6 +67,7 @@ public partial class AnnotationToolbar : UserControl
     {
         InitializeComponent();
         _isInitialized = true;
+        SetupStepperListeners();
         UpdateToolButtonVisuals();
         UpdateColorButtonVisuals();
     }
@@ -271,19 +273,28 @@ public partial class AnnotationToolbar : UserControl
     public void SelectFontSize(double fontSize)
     {
         if (fontSize <= 0) return;
-        SelectedFontSize = fontSize;
+        SelectedFontSize = Math.Clamp(fontSize, 8.0, 96.0);
         if (FontSizeComboBox != null)
         {
-            foreach (ComboBoxItem item in FontSizeComboBox.Items)
+            _isUpdatingSelection = true;
+            try
             {
-                if (double.TryParse(item.Content?.ToString(), out var sz) && Math.Abs(sz - fontSize) < 0.1)
+                FontSizeComboBox.Text = SelectedFontSize.ToString("0.#");
+                foreach (ComboBoxItem item in FontSizeComboBox.Items)
                 {
-                    FontSizeComboBox.SelectedItem = item;
-                    break;
+                    if (double.TryParse(item.Content?.ToString(), out var sz) && Math.Abs(sz - SelectedFontSize) < 0.1)
+                    {
+                        FontSizeComboBox.SelectedItem = item;
+                        break;
+                    }
                 }
             }
+            finally
+            {
+                _isUpdatingSelection = false;
+            }
         }
-        FontSizeChanged?.Invoke(this, fontSize);
+        FontSizeChanged?.Invoke(this, SelectedFontSize);
     }
 
     /// <summary>
@@ -292,29 +303,83 @@ public partial class AnnotationToolbar : UserControl
     public void SelectStepSize(double radius)
     {
         if (radius <= 0) return;
-        SelectedStepRadius = radius;
+        SelectedStepRadius = Math.Clamp(radius, 6.0, 60.0);
         if (StepSizeComboBox != null)
         {
-            foreach (ComboBoxItem item in StepSizeComboBox.Items)
+            _isUpdatingSelection = true;
+            try
             {
-                if (double.TryParse(item.Tag?.ToString(), out var r) && Math.Abs(r - radius) < 0.1)
+                StepSizeComboBox.Text = SelectedStepRadius.ToString("0.#");
+                foreach (ComboBoxItem item in StepSizeComboBox.Items)
                 {
-                    StepSizeComboBox.SelectedItem = item;
-                    break;
+                    if (double.TryParse(item.Tag?.ToString() ?? item.Content?.ToString(), out var r) && Math.Abs(r - SelectedStepRadius) < 0.1)
+                    {
+                        StepSizeComboBox.SelectedItem = item;
+                        break;
+                    }
                 }
             }
+            finally
+            {
+                _isUpdatingSelection = false;
+            }
         }
-        StepSizeChanged?.Invoke(this, radius);
+        StepSizeChanged?.Invoke(this, SelectedStepRadius);
+    }
+
+    private void OnStepSizeDecreaseClick(object sender, RoutedEventArgs e)
+    {
+        SelectStepSize(Math.Max(6.0, SelectedStepRadius - 1.0));
+    }
+
+    private void OnStepSizeIncreaseClick(object sender, RoutedEventArgs e)
+    {
+        SelectStepSize(Math.Min(60.0, SelectedStepRadius + 1.0));
+    }
+
+    private void OnFontSizeDecreaseClick(object sender, RoutedEventArgs e)
+    {
+        SelectFontSize(Math.Max(8.0, SelectedFontSize - 1.0));
+    }
+
+    private void OnFontSizeIncreaseClick(object sender, RoutedEventArgs e)
+    {
+        SelectFontSize(Math.Min(96.0, SelectedFontSize + 1.0));
+    }
+
+    private void OnStepSizeMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (e.Delta > 0)
+        {
+            SelectStepSize(Math.Min(60.0, SelectedStepRadius + 1.0));
+        }
+        else if (e.Delta < 0)
+        {
+            SelectStepSize(Math.Max(6.0, SelectedStepRadius - 1.0));
+        }
+        e.Handled = true;
+    }
+
+    private void OnFontSizeMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (e.Delta > 0)
+        {
+            SelectFontSize(Math.Min(96.0, SelectedFontSize + 1.0));
+        }
+        else if (e.Delta < 0)
+        {
+            SelectFontSize(Math.Max(8.0, SelectedFontSize - 1.0));
+        }
+        e.Handled = true;
     }
 
     private void OnStepSizeSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_isUpdatingSelection) return;
+        if (!_isInitialized || _isUpdatingSelection) return;
         if (StepSizeComboBox?.SelectedItem is ComboBoxItem item &&
-            double.TryParse(item.Tag?.ToString(), out var radius))
+            double.TryParse(item.Tag?.ToString() ?? item.Content?.ToString(), out var radius))
         {
-            SelectedStepRadius = radius;
-            StepSizeChanged?.Invoke(this, radius);
+            SelectStepSize(radius);
         }
     }
 
@@ -642,8 +707,48 @@ public partial class AnnotationToolbar : UserControl
         if (FontSizeComboBox?.SelectedItem is ComboBoxItem item &&
             double.TryParse(item.Content?.ToString(), out var size))
         {
-            SelectedFontSize = size;
-            FontSizeChanged?.Invoke(this, SelectedFontSize);
+            SelectFontSize(size);
+        }
+    }
+
+    private void SetupStepperListeners()
+    {
+        if (StepSizeComboBox != null)
+        {
+            StepSizeComboBox.Text = SelectedStepRadius.ToString("0.#");
+            DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, typeof(ComboBox))
+                .AddValueChanged(StepSizeComboBox, (s, e) =>
+                {
+                    if (!_isInitialized || _isUpdatingSelection) return;
+                    var text = StepSizeComboBox.Text.Trim();
+                    if (double.TryParse(text, out var radius) && radius >= 6.0 && radius <= 60.0)
+                    {
+                        if (Math.Abs(radius - SelectedStepRadius) > 0.01)
+                        {
+                            SelectedStepRadius = radius;
+                            StepSizeChanged?.Invoke(this, radius);
+                        }
+                    }
+                });
+        }
+
+        if (FontSizeComboBox != null)
+        {
+            FontSizeComboBox.Text = SelectedFontSize.ToString("0.#");
+            DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, typeof(ComboBox))
+                .AddValueChanged(FontSizeComboBox, (s, e) =>
+                {
+                    if (!_isInitialized || _isUpdatingSelection) return;
+                    var text = FontSizeComboBox.Text.Trim();
+                    if (double.TryParse(text, out var size) && size >= 8.0 && size <= 96.0)
+                    {
+                        if (Math.Abs(size - SelectedFontSize) > 0.01)
+                        {
+                            SelectedFontSize = size;
+                            FontSizeChanged?.Invoke(this, size);
+                        }
+                    }
+                });
         }
     }
 

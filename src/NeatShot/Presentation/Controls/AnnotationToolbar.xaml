@@ -294,6 +294,47 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Style cho các nút tăng/giảm cỡ số và cỡ chữ (+ / -): Thiết kế nhỏ gọn, hiện đại chuẩn Fluent -->
+        <Style x:Key="SpinButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#25FFFFFF" />
+            <Setter Property="BorderBrush" Value="#40FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="SpinBorder"
+                                CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="SpinBorder" Property="Background" Value="#40FFFFFF" />
+                                <Setter TargetName="SpinBorder" Property="BorderBrush" Value="#80FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="SpinBorder" Property="Background" Value="#FF0078D4" />
+                                <Setter TargetName="SpinBorder" Property="BorderBrush" Value="#FFFFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="SpinBorder" Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
@@ -545,23 +586,46 @@
                 Padding="6,4"
                 Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Bảng tùy chọn kích thước đánh số bước (Step Counter Size) -->
+                <!-- Bảng tùy chọn kích thước đánh số bước (Step Counter Size: Nhập số, Tăng/Giảm + / -, Gợi ý dropdown) -->
                 <StackPanel x:Name="StepSizeControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
-                    <TextBlock Text="Cỡ số:" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0" Foreground="#CCCCCC" ToolTip="Kích thước ô đánh số bước" />
+                    <TextBlock Text="Cỡ số:" FontSize="12" VerticalAlignment="Center" Margin="2,0,5,0" Foreground="#CCCCCC" ToolTip="Kích thước ô đánh số bước (Cuộn chuột để tăng/giảm)" />
+
+                    <!-- Nút giảm cỡ số bước [-] -->
+                    <Button x:Name="StepSizeDecreaseButton"
+                            Style="{StaticResource SpinButtonStyle}"
+                            Content="−"
+                            FontSize="13"
+                            FontWeight="Bold"
+                            ToolTip="Giảm cỡ số bước (Cuộn chuột xuống)"
+                            Click="OnStepSizeDecreaseClick" />
+
+                    <!-- Ô nhập cỡ số bước kết hợp dropdown các mức gợi ý -->
                     <ComboBox x:Name="StepSizeComboBox"
-                              Width="80"
-                              Height="28"
+                              IsEditable="True"
+                              Width="60"
+                              Height="26"
                               MaxDropDownHeight="180"
                               Margin="2,0"
                               Padding="4,2"
                               VerticalContentAlignment="Center"
-                              ToolTip="Chọn kích thước ô số bước"
+                              HorizontalContentAlignment="Center"
+                              ToolTip="Nhập cỡ số trực tiếp hoặc chọn mức gợi ý (Cuộn chuột để tăng/giảm)"
+                              PreviewMouseWheel="OnStepSizeMouseWheel"
                               SelectionChanged="OnStepSizeSelectionChanged">
-                        <ComboBoxItem Content="Nhỏ (11)" Tag="11" />
-                        <ComboBoxItem Content="Vừa (14)" Tag="14" IsSelected="True" />
-                        <ComboBoxItem Content="Lớn (18)" Tag="18" />
-                        <ComboBoxItem Content="Rất lớn (24)" Tag="24" />
+                        <ComboBoxItem Content="11" Tag="11" TextSearch.Text="11" ToolTip="Nhỏ (11)" />
+                        <ComboBoxItem Content="14" Tag="14" TextSearch.Text="14" ToolTip="Vừa (14 - Mặc định)" IsSelected="True" />
+                        <ComboBoxItem Content="18" Tag="18" TextSearch.Text="18" ToolTip="Lớn (18)" />
+                        <ComboBoxItem Content="24" Tag="24" TextSearch.Text="24" ToolTip="Rất lớn (24)" />
                     </ComboBox>
+
+                    <!-- Nút tăng cỡ số bước [+] -->
+                    <Button x:Name="StepSizeIncreaseButton"
+                            Style="{StaticResource SpinButtonStyle}"
+                            Content="+"
+                            FontSize="13"
+                            FontWeight="Bold"
+                            ToolTip="Tăng cỡ số bước (Cuộn chuột lên)"
+                            Click="OnStepSizeIncreaseClick" />
                 </StackPanel>
 
                 <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
@@ -569,7 +633,7 @@
                     <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />
                     <ComboBox x:Name="FontFamilyComboBox"
                               Width="105"
-                              Height="28"
+                              Height="26"
                               MaxDropDownHeight="180"
                               Margin="2,0"
                               Padding="4,2"
@@ -585,14 +649,29 @@
                         <ComboBoxItem Content="Tahoma" />
                         <ComboBoxItem Content="Courier New" />
                     </ComboBox>
+
+                    <!-- Nút giảm cỡ chữ [-] -->
+                    <Button x:Name="FontSizeDecreaseButton"
+                            Style="{StaticResource SpinButtonStyle}"
+                            Content="−"
+                            FontSize="13"
+                            FontWeight="Bold"
+                            Margin="4,0,0,0"
+                            ToolTip="Giảm cỡ chữ (Cuộn chuột xuống)"
+                            Click="OnFontSizeDecreaseClick" />
+
+                    <!-- Ô nhập cỡ chữ kết hợp dropdown các mức gợi ý -->
                     <ComboBox x:Name="FontSizeComboBox"
-                              Width="55"
-                              Height="28"
+                              IsEditable="True"
+                              Width="56"
+                              Height="26"
                               MaxDropDownHeight="180"
                               Margin="2,0"
                               Padding="4,2"
                               VerticalContentAlignment="Center"
-                              ToolTip="Chọn cỡ chữ"
+                              HorizontalContentAlignment="Center"
+                              ToolTip="Nhập cỡ chữ trực tiếp hoặc chọn mức gợi ý (Cuộn chuột để tăng/giảm)"
+                              PreviewMouseWheel="OnFontSizeMouseWheel"
                               SelectionChanged="OnFontSizeSelectionChanged">
                         <ComboBoxItem Content="12" />
                         <ComboBoxItem Content="14" />
@@ -602,7 +681,18 @@
                         <ComboBoxItem Content="24" />
                         <ComboBoxItem Content="28" />
                         <ComboBoxItem Content="32" />
+                        <ComboBoxItem Content="40" />
+                        <ComboBoxItem Content="48" />
                     </ComboBox>
+
+                    <!-- Nút tăng cỡ chữ [+] -->
+                    <Button x:Name="FontSizeIncreaseButton"
+                            Style="{StaticResource SpinButtonStyle}"
+                            Content="+"
+                            FontSize="13"
+                            FontWeight="Bold"
+                            ToolTip="Tăng cỡ chữ (Cuộn chuột lên)"
+                            Click="OnFontSizeIncreaseClick" />
                 </StackPanel>
             </StackPanel>
         </Border>
