@@ -167,12 +167,12 @@
   - Nút "Mở thư mục" -> mở `explorer.exe C:\Users\<User>\Pictures\NeatShot`.
   - Tích hợp mục "Thư viện ảnh chụp" và "Mở thư mục ảnh NeatShot" trong menu khay hệ thống `App.xaml.cs`.
 
-- [ ] **Step 1: Viết test cho GalleryViewModel (tải danh sách ảnh, lệnh Ghim ảnh, lệnh Xoá ảnh)**
-- [ ] **Step 2: Chạy test xác nhận RED**
-- [ ] **Step 3: Xây dựng `GalleryViewModel` và XAML giao diện `GalleryWindow` với Fluent Dark theme**
-- [ ] **Step 4: Bổ sung lệnh mở GalleryWindow vào menu khay hệ thống trong `App.xaml.cs`**
-- [ ] **Step 5: Chạy toàn bộ kiểm thử xác nhận GREEN**
-- [ ] **Step 6: Commit `feat(gallery): add screenshot gallery window with sticky note pin-to-screen feature`**
+- [x] **Step 1: Viết test cho GalleryViewModel (tải danh sách ảnh, lệnh Ghim ảnh, lệnh Xoá ảnh)**
+- [x] **Step 2: Chạy test xác nhận RED**
+- [x] **Step 3: Xây dựng `GalleryViewModel` và XAML giao diện `GalleryWindow` với Fluent Dark theme**
+- [x] **Step 4: Bổ sung lệnh mở GalleryWindow vào menu khay hệ thống trong `App.xaml.cs`**
+- [x] **Step 5: Chạy toàn bộ kiểm thử xác nhận GREEN**
+- [x] **Step 6: Commit `feat(gallery): add screenshot gallery window with sticky note pin-to-screen feature`**
 
 ---
 

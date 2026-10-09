@@ -72,10 +72,12 @@ public partial class App : Application
         // ViewModels
         services.AddTransient<OverlayViewModel>();
         services.AddTransient<PinViewModel>();
+        services.AddTransient<GalleryViewModel>();
 
         // Views
         services.AddTransient<OverlayWindow>();
         services.AddTransient<PinWindow>();
+        services.AddTransient<GalleryWindow>();
     }
 
     private void InitializeTrayIcon()
@@ -89,6 +91,16 @@ public partial class App : Application
         var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
         fullscreenItem.Click += (s, e) => TriggerCapture();
         _trayContextMenu.Items.Add(fullscreenItem);
+
+        _trayContextMenu.Items.Add(new Separator());
+
+        var galleryItem = new MenuItem { Header = "🖼️ Thư viện ảnh chụp" };
+        galleryItem.Click += (s, e) => OpenGallery();
+        _trayContextMenu.Items.Add(galleryItem);
+
+        var folderItem = new MenuItem { Header = "📁 Mở thư mục ảnh NeatShot" };
+        folderItem.Click += (s, e) => OpenScreenshotsFolder();
+        _trayContextMenu.Items.Add(folderItem);
 
         _trayContextMenu.Items.Add(new Separator());
 
@@ -132,6 +144,52 @@ public partial class App : Application
     }
 
     private OverlayWindow? _activeOverlayWindow;
+    private GalleryWindow? _activeGalleryWindow;
+
+    private void OpenGallery()
+    {
+        try
+        {
+            if (_activeGalleryWindow != null && _activeGalleryWindow.IsLoaded)
+            {
+                _activeGalleryWindow.Activate();
+                if (_activeGalleryWindow.WindowState == WindowState.Minimized)
+                {
+                    _activeGalleryWindow.WindowState = WindowState.Normal;
+                }
+                return;
+            }
+
+            _activeGalleryWindow = Services.GetRequiredService<GalleryWindow>();
+            _activeGalleryWindow.Closed += (s, e) => _activeGalleryWindow = null;
+            _activeGalleryWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở thư viện ảnh: {ex.Message}");
+        }
+    }
+
+    private void OpenScreenshotsFolder()
+    {
+        try
+        {
+            var galleryService = Services.GetRequiredService<IScreenshotGalleryService>();
+            var dir = galleryService.GetScreenshotsDirectory();
+            if (System.IO.Directory.Exists(dir))
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = dir,
+                    UseShellExecute = true
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở thư mục ảnh: {ex.Message}");
+        }
+    }
 
     private async void TriggerCapture()
     {
