@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace NeatShot.Core.Models;
 
 /// <summary>
@@ -11,9 +13,10 @@ public class AppSettings
     public List<string> RecentColorsHex { get; set; } = new();
 
     /// <summary>
-    /// Thư mục lưu ảnh mặc định khi người dùng chọn lưu file.
+    /// Thư mục lưu ảnh mặc định khi người dùng chọn lưu file (mặc định: Pictures\NeatShot).
     /// </summary>
-    public string DefaultSaveDirectory { get; set; } = string.Empty;
+    public string DefaultSaveDirectory { get; set; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
 
     /// <summary>
     /// Phím tắt kích hoạt chụp ảnh màn hình (mặc định: Ctrl+Shift+A).

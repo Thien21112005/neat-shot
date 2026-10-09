@@ -140,12 +140,12 @@
   - `IScreenshotGalleryService.SaveScreenshotAsync(BitmapSource image, string? filename = null): Task<string>`
   - `IScreenshotGalleryService.DeleteScreenshot(string filePath): bool`
 
-- [ ] **Step 1: Viết test cho ScreenshotGalleryService kiểm tra đường dẫn mặc định và lưu file**
-- [ ] **Step 2: Chạy test xác nhận RED**
-- [ ] **Step 3: Triển khai `GalleryItem`, `IScreenshotGalleryService` và `ScreenshotGalleryService`**
-- [ ] **Step 4: Cập nhật `SettingsService` để `DefaultSaveDirectory` mặc định luôn là `Pictures\NeatShot`**
-- [ ] **Step 5: Chạy test xác nhận GREEN**
-- [ ] **Step 6: Commit `feat(storage): setup default Pictures\NeatShot directory and ScreenshotGalleryService`**
+- [x] **Step 1: Viết test cho ScreenshotGalleryService kiểm tra đường dẫn mặc định và lưu file**
+- [x] **Step 2: Chạy test xác nhận RED**
+- [x] **Step 3: Triển khai `GalleryItem`, `IScreenshotGalleryService` và `ScreenshotGalleryService`**
+- [x] **Step 4: Cập nhật `SettingsService` để `DefaultSaveDirectory` mặc định luôn là `Pictures\NeatShot`**
+- [x] **Step 5: Chạy test xác nhận GREEN**
+- [x] **Step 6: Commit `feat(storage): setup default Pictures\NeatShot directory and ScreenshotGalleryService`**
 
 ---
 

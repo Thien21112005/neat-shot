@@ -183,7 +183,24 @@ public partial class OverlayWindow : Window
                 Toolbar.SelectedBeautifyOptions);
 
             var defaultDir = _settingsService?.CurrentSettings.DefaultSaveDirectory;
-            var initialDir = !string.IsNullOrEmpty(defaultDir) && System.IO.Directory.Exists(defaultDir)
+            if (string.IsNullOrWhiteSpace(defaultDir))
+            {
+                defaultDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
+            }
+
+            try
+            {
+                if (!System.IO.Directory.Exists(defaultDir))
+                {
+                    System.IO.Directory.CreateDirectory(defaultDir);
+                }
+            }
+            catch
+            {
+                // Fallback gracefully if directory cannot be created
+            }
+
+            var initialDir = System.IO.Directory.Exists(defaultDir)
                 ? defaultDir
                 : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 

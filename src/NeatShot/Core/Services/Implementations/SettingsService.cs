@@ -43,6 +43,11 @@ public class SettingsService : ISettingsService
                         var loaded = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions);
                         if (loaded != null)
                         {
+                            if (string.IsNullOrWhiteSpace(loaded.DefaultSaveDirectory))
+                            {
+                                loaded.DefaultSaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
+                            }
+
                             CurrentSettings = loaded;
                             return CurrentSettings;
                         }

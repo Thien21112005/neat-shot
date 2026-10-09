@@ -136,4 +136,33 @@ public class SettingsServiceTests : IDisposable
         Assert.Empty(settings.RecentColorsHex);
         Assert.Equal("Ctrl+Shift+A", settings.HotkeyCapture);
     }
+
+    [Fact]
+    public void LoadSettings_DefaultSaveDirectoryPointsToPicturesNeatShot_ByDefault()
+    {
+        // Arrange
+        ISettingsService service = new SettingsService(_settingsFilePath);
+
+        // Act
+        var settings = service.LoadSettings();
+
+        // Assert
+        var expectedDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
+        Assert.Equal(expectedDir, settings.DefaultSaveDirectory);
+    }
+
+    [Fact]
+    public void LoadSettings_FallsBackToPicturesNeatShot_WhenDirectoryIsEmptyInJson()
+    {
+        // Arrange
+        File.WriteAllText(_settingsFilePath, "{\"DefaultSaveDirectory\": \"\"}");
+        ISettingsService service = new SettingsService(_settingsFilePath);
+
+        // Act
+        var settings = service.LoadSettings();
+
+        // Assert
+        var expectedDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
+        Assert.Equal(expectedDir, settings.DefaultSaveDirectory);
+    }
 }
