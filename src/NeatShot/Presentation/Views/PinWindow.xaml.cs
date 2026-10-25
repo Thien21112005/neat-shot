@@ -2,6 +2,7 @@ using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Presentation.ViewModels;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -192,54 +193,65 @@ public partial class PinWindow : Window
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Escape)
+        if (ProcessShortcut(e.Key, Keyboard.Modifiers, e.OriginalSource))
+        {
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    /// Xử lý phím tắt của cửa sổ ghim. Bỏ qua khi người dùng đang gõ chữ trong ô nhập văn bản chú thích.
+    /// </summary>
+    public bool ProcessShortcut(Key key, ModifierKeys modifiers, object? source = null)
+    {
+        if (source is TextBox)
+        {
+            return false;
+        }
+
+        if (key == Key.Escape)
         {
             if (PinControlBar.Visibility == Visibility.Visible || AnnotationToolbar.Visibility == Visibility.Visible)
             {
                 ToggleAllControls(false);
-                e.Handled = true;
-                return;
+                return true;
             }
 
             ViewModel.CloseCommand.Execute(null);
-            e.Handled = true;
-            return;
+            return true;
         }
 
-        if (e.Key == Key.P && (Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers.HasFlag(ModifierKeys.Control)))
+        if (key == Key.P && (modifiers == ModifierKeys.None || modifiers.HasFlag(ModifierKeys.Control)))
         {
             ToggleAnnotationToolbar();
-            e.Handled = true;
-            return;
+            return true;
         }
 
-        if (e.Key == Key.C && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        if (key == Key.C && modifiers.HasFlag(ModifierKeys.Control))
         {
             CopyImageToClipboard();
-            e.Handled = true;
-            return;
+            return true;
         }
 
-        if (e.Key == Key.D0 && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        if (key == Key.D0 && modifiers.HasFlag(ModifierKeys.Control))
         {
             ViewModel.ResetZoom();
-            e.Handled = true;
-            return;
+            return true;
         }
 
-        if (e.Key == Key.OemPlus || e.Key == Key.Add)
+        if (key == Key.OemPlus || key == Key.Add)
         {
             ViewModel.ZoomIn();
-            e.Handled = true;
-            return;
+            return true;
         }
 
-        if (e.Key == Key.OemMinus || e.Key == Key.Subtract)
+        if (key == Key.OemMinus || key == Key.Subtract)
         {
             ViewModel.ZoomOut();
-            e.Handled = true;
-            return;
+            return true;
         }
+
+        return false;
     }
 
     public BitmapSource GetAnnotatedImage()
