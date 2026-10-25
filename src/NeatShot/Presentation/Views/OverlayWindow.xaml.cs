@@ -255,9 +255,8 @@ public partial class OverlayWindow : Window
             await SaveToGalleryAsync(finalImage);
 
             var pinWindow = new PinWindow(new PinViewModel());
-            var screenX = Left + ViewModel.SelectedRegion.X;
-            var screenY = Top + ViewModel.SelectedRegion.Y;
-            pinWindow.SetImage(finalImage, new Point(screenX, screenY));
+            var pinPosition = CalculatePinPosition(new Point(Left, Top), ViewModel.SelectedRegion, Toolbar.SelectedBeautifyOptions);
+            pinWindow.SetImage(finalImage, pinPosition);
             pinWindow.Show();
 
             Close();
@@ -266,6 +265,19 @@ public partial class OverlayWindow : Window
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi ghim ảnh: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// Tính vị trí cửa sổ ghim (DIP) sao cho phần ảnh gốc trùng khớp vùng chọn,
+    /// kể cả khi ảnh đã được làm đẹp (có thêm khoảng đệm quanh ảnh).
+    /// </summary>
+    public static Point CalculatePinPosition(Point overlayOrigin, CaptureRegion region, BeautifyOptions? beautifyOptions)
+    {
+        var norm = region.Normalize();
+        var isBeautified = beautifyOptions != null && beautifyOptions.IsEnabled && beautifyOptions.Preset != BeautifyPreset.None;
+        var padding = isBeautified ? Math.Max(0, beautifyOptions!.Padding) : 0;
+
+        return new Point(overlayOrigin.X + norm.X - padding, overlayOrigin.Y + norm.Y - padding);
     }
 
     /// <summary>
