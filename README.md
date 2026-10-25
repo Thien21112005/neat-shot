@@ -90,12 +90,16 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 
 ### Getting Started
 
-**Prerequisites**
-- Windows 10 version 2004 (build 19041) or later, or Windows 11.
-- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+**Download (recommended)**
+1. Download `NeatShot-v<version>-win-x64.zip` from the [latest release](https://github.com/Thien21112005/neat-shot/releases/latest).
+2. Extract it and run `NeatShot.exe`. No installer and no .NET runtime needed (self-contained).
+3. If Windows SmartScreen warns about an unknown publisher (the build is not code-signed yet), choose **More info → Run anyway**.
+
+**Requirements**
+- Windows 10 version 2004 (build 19041) or later, or Windows 11 (x64).
 - An OCR language pack (installed with most Windows display languages) to use text extraction.
 
-**Build & run**
+**Build from source** (requires the [.NET 10 SDK](https://dotnet.microsoft.com/download))
 ```bash
 git clone https://github.com/Thien21112005/neat-shot.git
 cd neat-shot
@@ -105,6 +109,8 @@ dotnet run --project src/NeatShot
 ```
 
 NeatShot starts in the system tray. Left-click the tray icon to capture, or right-click it to open the menu (full-screen capture, gallery, screenshots folder, exit). Only one instance can run at a time.
+
+**Package a release build:** `./scripts/publish.ps1` runs the tests and produces `artifacts/NeatShot-v<version>-win-x64.zip`. See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 
 ### Running Tests
 
@@ -226,10 +232,16 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 
 ### Cài đặt và chạy
 
+**Tải về (khuyên dùng)**
+1. Tải file `NeatShot-v<version>-win-x64.zip` ở [bản phát hành mới nhất](https://github.com/Thien21112005/neat-shot/releases/latest).
+2. Giải nén và chạy `NeatShot.exe`. Không cần cài đặt, không cần cài .NET (bản self-contained).
+3. Nếu Windows SmartScreen cảnh báo "nhà phát hành không xác định" (bản build chưa ký số), chọn **More info → Run anyway**.
+
 **Yêu cầu**
-- Windows 10 bản 2004 (build 19041) trở lên, hoặc Windows 11.
-- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+- Windows 10 bản 2004 (build 19041) trở lên, hoặc Windows 11 (x64).
 - Gói ngôn ngữ có hỗ trợ OCR (đa số ngôn ngữ hiển thị của Windows đã có sẵn) để dùng tính năng trích xuất chữ.
+
+**Build từ mã nguồn** (cần [.NET 10 SDK](https://dotnet.microsoft.com/download))
 
 ```bash
 git clone https://github.com/Thien21112005/neat-shot.git
@@ -240,6 +252,8 @@ dotnet run --project src/NeatShot
 ```
 
 Ứng dụng chạy ngầm dưới khay hệ thống. Click trái vào icon để chụp; click phải để mở menu (chụp toàn màn hình, thư viện ảnh, thư mục ảnh, thoát). Mỗi lúc chỉ chạy được một phiên bản.
+
+**Đóng gói bản phát hành:** `./scripts/publish.ps1` sẽ chạy test rồi tạo `artifacts/NeatShot-v<version>-win-x64.zip`. Ghi chú các phiên bản xem tại [CHANGELOG.md](./CHANGELOG.md).
 
 ### Chạy kiểm thử
 
