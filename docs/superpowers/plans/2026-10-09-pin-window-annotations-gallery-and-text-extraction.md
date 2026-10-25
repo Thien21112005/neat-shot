@@ -80,7 +80,7 @@
 - Modify: `src/NeatShot/Presentation/Views/PinWindow.xaml.cs`
 - Modify: `src/NeatShot/Presentation/ViewModels/PinViewModel.cs`
 - Test: `tests/NeatShot.Tests/ViewModels/PinViewModelTests.cs`
-- Test: `tests/NeatShot.Tests/Views/PinWindowInteractionTests.cs`
+- Test: `tests/NeatShot.Tests/Views/PinWindowTests.cs` (kịch bản click/double-click không đóng cửa sổ)
 
 **Interfaces:**
 - Consumes: `PinViewModel.RequestClose`, `PinViewModel.Opacity`
@@ -146,6 +146,8 @@
 - [x] **Step 4: Cập nhật `SettingsService` để `DefaultSaveDirectory` mặc định luôn là `Pictures\NeatShot`**
 - [x] **Step 5: Chạy test xác nhận GREEN**
 - [x] **Step 6: Commit `feat(storage): setup default Pictures\NeatShot directory and ScreenshotGalleryService`**
+
+> **Ghi chú audit (2026-10-25):** Commit trên chỉ tạo service; `OverlayWindow` chưa từng gọi `SaveScreenshotAsync`, nên mục tiêu "tự động lưu" thực tế chưa hoạt động. Đã bổ sung trong commit `fix(gallery): auto-save copied and pinned captures to Pictures\NeatShot` (Copy và Ghim đều tự lưu ảnh; lưu lỗi không chặn thao tác).
 
 ---
 

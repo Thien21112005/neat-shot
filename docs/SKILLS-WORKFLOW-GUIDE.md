@@ -121,7 +121,7 @@ Dự án hiện có **11 skills** được chia thành 2 nhóm chính:
 * **Vị trí:** [csharp-async/SKILL.md](file:///d:/Tu-hoc/project/NeatShot/.agents/skills/csharp-async/SKILL.md)
 * **Mục đích:** Hướng dẫn viết `async/await` chuẩn, tránh gây treo/lag UI Thread trong WPF, xử lý `CancellationToken` (khi bấm Esc hủy chụp), quản lý Task an toàn.
 * **Khi nào dùng:** 
-  - Đợi 120ms ẩn popup trước khi chụp (`Task.Delay(120, cancellationToken)`).
+  - Đợi 250ms ẩn popup trước khi chụp (`Task.Delay(250, cancellationToken)`) để animation đóng flyout của Windows 11 hoàn tất.
   - Quét văn bản OCR qua `Windows.Media.Ocr` (`RecognizeAsync`).
   - Lưu file ảnh PNG dung lượng lớn xuống ổ cứng ở background thread.
 * **Câu lệnh / Prompt kích hoạt:**
