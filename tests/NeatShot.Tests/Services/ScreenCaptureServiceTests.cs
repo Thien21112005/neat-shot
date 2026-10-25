@@ -71,6 +71,7 @@ public class ScreenCaptureServiceTests
     }
 
     [Fact]
+    [Trait("Category", "Desktop")]
     public async Task CaptureCleanScreenAsync_ReturnsValidBitmap()
     {
         // Act
@@ -100,6 +101,7 @@ public class ScreenCaptureServiceTests
     }
 
     [Fact]
+    [Trait("Category", "Desktop")]
     public async Task CaptureCleanScreenAsync_WithCancellation_ThrowsOperationCanceledException()
     {
         using var cts = new CancellationTokenSource();
