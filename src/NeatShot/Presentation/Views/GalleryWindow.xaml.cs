@@ -28,14 +28,22 @@ public partial class GalleryWindow : Window
         var pinWindow = new PinWindow(new PinViewModel());
 
         // Đặt vị trí ảnh ghim tại trung tâm màn hình chính
-        var screenWidth = SystemParameters.PrimaryScreenWidth;
-        var screenHeight = SystemParameters.PrimaryScreenHeight;
-
-        var x = Math.Max(40, (screenWidth - image.PixelWidth) / 2);
-        var y = Math.Max(40, (screenHeight - image.PixelHeight) / 2);
-
-        pinWindow.SetImage(image, new Point(x, y));
+        var screenSize = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
+        pinWindow.SetImage(image, CalculatePinPosition(image, screenSize));
         pinWindow.Show();
+    }
+
+    /// <summary>
+    /// Tính vị trí căn giữa ảnh ghim theo đơn vị DIP (WPF 96 DPI), giữ lề tối thiểu 40px.
+    /// </summary>
+    public static Point CalculatePinPosition(BitmapSource image, Size screenSize)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+
+        // image.Width/Height là kích thước DIP; PixelWidth chỉ đúng khi ảnh ở 96 DPI
+        var x = Math.Max(40, (screenSize.Width - image.Width) / 2);
+        var y = Math.Max(40, (screenSize.Height - image.Height) / 2);
+        return new Point(x, y);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

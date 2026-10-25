@@ -17,6 +17,7 @@ public partial class OverlayWindow : Window
     private readonly IExportService _exportService;
     private readonly IOcrService _ocrService;
     private readonly ISettingsService? _settingsService;
+    private readonly IScreenshotGalleryService? _galleryService;
     private DrawingToolType _previousTool = DrawingToolType.None;
     private bool _isToolbarManuallyPositioned;
     public OverlayViewModel ViewModel { get; }
@@ -25,7 +26,8 @@ public partial class OverlayWindow : Window
         OverlayViewModel viewModel,
         IExportService exportService,
         IOcrService? ocrService = null,
-        ISettingsService? settingsService = null)
+        ISettingsService? settingsService = null,
+        IScreenshotGalleryService? galleryService = null)
     {
         InitializeComponent();
 
@@ -33,6 +35,7 @@ public partial class OverlayWindow : Window
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         _ocrService = ocrService ?? new NeatShot.Core.Services.Implementations.WindowsOcrService();
         _settingsService = settingsService;
+        _galleryService = galleryService;
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
@@ -160,6 +163,7 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
+            await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
             Close();
         }
@@ -248,10 +252,11 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
+            await SaveToGalleryAsync(finalImage);
+
             var pinWindow = new PinWindow(new PinViewModel());
-            var screenX = Left + ViewModel.SelectedRegion.X;
-            var screenY = Top + ViewModel.SelectedRegion.Y;
-            pinWindow.SetImage(finalImage, new Point(screenX, screenY));
+            var pinPosition = CalculatePinPosition(new Point(Left, Top), ViewModel.SelectedRegion, Toolbar.SelectedBeautifyOptions);
+            pinWindow.SetImage(finalImage, pinPosition);
             pinWindow.Show();
 
             Close();
@@ -259,6 +264,36 @@ public partial class OverlayWindow : Window
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi ghim ảnh: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Tính vị trí cửa sổ ghim (DIP) sao cho phần ảnh gốc trùng khớp vùng chọn,
+    /// kể cả khi ảnh đã được làm đẹp (có thêm khoảng đệm quanh ảnh).
+    /// </summary>
+    public static Point CalculatePinPosition(Point overlayOrigin, CaptureRegion region, BeautifyOptions? beautifyOptions)
+    {
+        var norm = region.Normalize();
+        var isBeautified = beautifyOptions != null && beautifyOptions.IsEnabled && beautifyOptions.Preset != BeautifyPreset.None;
+        var padding = isBeautified ? Math.Max(0, beautifyOptions!.Padding) : 0;
+
+        return new Point(overlayOrigin.X + norm.X - padding, overlayOrigin.Y + norm.Y - padding);
+    }
+
+    /// <summary>
+    /// Tự động lưu ảnh chụp vào thư viện Pictures\NeatShot. Lỗi lưu không được chặn thao tác Copy/Ghim.
+    /// </summary>
+    private async Task SaveToGalleryAsync(BitmapSource image)
+    {
+        if (_galleryService == null) return;
+
+        try
+        {
+            await _galleryService.SaveScreenshotAsync(image);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi tự động lưu ảnh vào thư viện: {ex.Message}");
         }
     }
 
@@ -504,7 +539,7 @@ public partial class OverlayWindow : Window
         }
     }
 
-    public void Display(Rect virtualBounds, BitmapSource frozenScreen)
+    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false)
     {
         Left = virtualBounds.Left;
         Top = virtualBounds.Top;
@@ -517,6 +552,19 @@ public partial class OverlayWindow : Window
         Show();
         Activate();
         Focus();
+
+        if (selectFullScreen)
+        {
+            SelectFullScreen(virtualBounds);
+        }
+    }
+
+    /// <summary>
+    /// Chọn sẵn toàn bộ màn hình ảo (toạ độ tương đối với overlay) cho chế độ "Chụp toàn màn hình".
+    /// </summary>
+    public void SelectFullScreen(Rect virtualBounds)
+    {
+        ViewModel.SelectedRegion = new CaptureRegion(0, 0, virtualBounds.Width, virtualBounds.Height);
     }
 
     public void EnterEyedropperMode()
@@ -674,6 +722,12 @@ public partial class OverlayWindow : Window
         if (key == Key.S && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             _ = ExecuteSaveAsync();
+            return true;
+        }
+
+        if (key == Key.O && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            _ = ExecuteOcrAsync();
             return true;
         }
 

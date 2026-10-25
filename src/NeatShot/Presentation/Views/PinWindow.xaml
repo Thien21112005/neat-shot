@@ -97,21 +97,29 @@
         </Border.Effect>
 
         <Grid x:Name="PinRootGrid">
-            <!-- Ảnh ghim -->
-            <Image x:Name="PinnedImageControl"
-                   Source="{Binding PinnedImage}"
-                   Width="{Binding ScaledWidth}"
-                   Height="{Binding ScaledHeight}"
-                   Stretch="Fill"
-                   RenderOptions.BitmapScalingMode="HighQuality" />
+            <!-- Ảnh ghim + lớp vẽ giữ kích thước gốc; zoom bằng LayoutTransform để nét vẽ luôn
+                 nằm trong hệ toạ độ của ảnh (không trôi khi phóng to/thu nhỏ). -->
+            <Grid x:Name="PinZoomHost">
+                <Grid.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
+                </Grid.LayoutTransform>
 
-            <!-- Lớp vẽ chú thích vector trên ảnh ghim -->
-            <controls:DrawingCanvas x:Name="DrawingControl"
-                                     Width="{Binding ScaledWidth}"
-                                     Height="{Binding ScaledHeight}"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"
-                                     Panel.ZIndex="5" />
+                <!-- Ảnh ghim -->
+                <Image x:Name="PinnedImageControl"
+                       Source="{Binding PinnedImage}"
+                       Width="{Binding OriginalWidth}"
+                       Height="{Binding OriginalHeight}"
+                       Stretch="Fill"
+                       RenderOptions.BitmapScalingMode="HighQuality" />
+
+                <!-- Lớp vẽ chú thích vector trên ảnh ghim -->
+                <controls:DrawingCanvas x:Name="DrawingControl"
+                                         Width="{Binding OriginalWidth}"
+                                         Height="{Binding OriginalHeight}"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         Panel.ZIndex="5" />
+            </Grid>
 
             <!-- Thanh điều khiển nút ghim ở góc trên bên phải (Mặc định ẩn, click vào ảnh để hiện) -->
             <Border x:Name="PinControlBar"

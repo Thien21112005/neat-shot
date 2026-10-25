@@ -121,13 +121,12 @@
     ```
   - `NativeMethods`: `BitBlt`, `GetDesktopWindow`, `SetForegroundWindow`, `ShowWindow`, `GetDC`, `ReleaseDC`.
 
-- [ ] **Step 1: Định nghĩa Structs và P/Invoke trong `NativeMethods.cs`**
 - [x] **Step 1: Định nghĩa Structs và P/Invoke trong `NativeMethods.cs`**
   - Đã định nghĩa `RECT`, `POINT`, `NativeConstants` (`SRCCOPY`, `CAPTUREBLT`, `SW_HIDE`, `WM_HOTKEY`) và các hàm P/Invoke `BitBlt`, `GetDC`, `ReleaseDC`, `SetForegroundWindow`, `RegisterHotKey`.
 - [x] **Step 2: Viết failing test cho `ScreenCaptureService.Crop`**
   - Đã viết unit test cho các kịch bản crop hợp lệ, crop vùng kéo ngược (Normalize), crop vùng vượt biên (clamp).
 - [x] **Step 3: Triển khai `ScreenCaptureService.cs`**
-  - Đã triển khai `IScreenCaptureService`, `GetVirtualScreenBounds()`, thuật toán Clean Shot `CaptureCleanScreenAsync` với độ trễ 120ms ẩn popup và `BitBlt` GDI, hàm `Crop()`.
+  - Đã triển khai `IScreenCaptureService`, `GetVirtualScreenBounds()`, thuật toán Clean Shot `CaptureCleanScreenAsync` với độ trễ ẩn popup (ban đầu 120ms, hiện tại 250ms để chờ animation đóng flyout của Windows 11) và `BitBlt` GDI, hàm `Crop()`.
 - [x] **Step 4: Chạy test kiểm tra crop và get virtual screen bounds**
   - Chạy `dotnet test --filter FullyQualifiedName~ScreenCaptureServiceTests` -> Passed 4/4 tests.
 - [x] **Step 5: Commit**

@@ -324,15 +324,16 @@ public class DrawingCanvas : Canvas
 
         _isDrawing = false;
 
+        // Click không kéo tạo ra nét vẽ rỗng: không hiển thị gì nhưng chiếm một bước Ctrl+Z -> bỏ qua
+        if (IsDegenerateStroke(_currentElement))
+        {
+            _currentElement = null;
+            InvalidateVisual();
+            return;
+        }
+
         if (_currentElement.ToolType == DrawingToolType.Pixelate || _currentElement.ToolType == DrawingToolType.Blur)
         {
-            if (_currentElement.Rect.Width < 2 || _currentElement.Rect.Height < 2)
-            {
-                _currentElement = null;
-                InvalidateVisual();
-                return;
-            }
-
             if (BackgroundImage != null)
             {
                 if (_currentElement.ToolType == DrawingToolType.Pixelate)
@@ -355,6 +356,31 @@ public class DrawingCanvas : Canvas
         UndoStack.Push(_currentElement);
         _currentElement = null;
         InvalidateVisual();
+    }
+
+    private static bool IsDegenerateStroke(DrawingElement element)
+    {
+        const double minSize = 2.0;
+
+        switch (element.ToolType)
+        {
+            case DrawingToolType.Pencil:
+            case DrawingToolType.Highlight:
+                return element.Points == null || element.Points.Count < 2;
+
+            case DrawingToolType.Rectangle:
+            case DrawingToolType.Ellipse:
+            case DrawingToolType.Pixelate:
+            case DrawingToolType.Blur:
+                return element.Rect.Width < minSize || element.Rect.Height < minSize;
+
+            case DrawingToolType.Line:
+            case DrawingToolType.Arrow:
+                return (element.EndPoint - element.StartPoint).Length < minSize;
+
+            default:
+                return false;
+        }
     }
 
     public void CommitText(string text, Point position, double? fontSize = null, string? fontFamily = null)

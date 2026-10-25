@@ -104,6 +104,9 @@ public static class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWindowVisible(IntPtr hWnd);
 
+    [DllImport(User32, SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern int RegisterWindowMessage(string lpString);
+
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);
