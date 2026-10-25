@@ -11,10 +11,19 @@ namespace NeatShot.Presentation.Tray;
 public class NativeTrayIcon : IDisposable
 {
     private const int TrayIconId = 1001;
+
+    // Explorer phát thông điệp này mỗi khi taskbar được tạo lại (ví dụ sau khi explorer.exe khởi động lại)
+    private static readonly int TaskbarCreatedMessage = NativeMethods.RegisterWindowMessage("TaskbarCreated");
+
     private HwndSource? _hwndSource;
     private NOTIFYICONDATA _notifyData;
     private bool _isCreated;
     private bool _disposed;
+
+    /// <summary>
+    /// Handle cửa sổ ngầm nhận thông điệp từ khay hệ thống.
+    /// </summary>
+    internal IntPtr Handle => _hwndSource?.Handle ?? IntPtr.Zero;
 
     public event EventHandler? Click;
     public event EventHandler? ContextMenuRequested;
@@ -49,6 +58,13 @@ public class NativeTrayIcon : IDisposable
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (TaskbarCreatedMessage != 0 && msg == TaskbarCreatedMessage && !_disposed)
+        {
+            // Icon cũ đã mất cùng taskbar cũ -> đăng ký lại để icon không biến mất
+            _isCreated = NativeMethods.Shell_NotifyIcon(NativeConstants.NIM_ADD, ref _notifyData);
+            return IntPtr.Zero;
+        }
+
         if (msg == NativeConstants.WM_TRAYICON && wParam.ToInt32() == TrayIconId)
         {
             var mouseMsg = lParam.ToInt32();
