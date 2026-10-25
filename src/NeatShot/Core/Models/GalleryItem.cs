@@ -14,7 +14,7 @@ public class GalleryItem
 
     public string FormattedSize => FileSizeBytes switch
     {
-        >= 1024 * 1024 => $"{(double)FileSizeBytes / (1024 * 1024):0.1} MB",
+        >= 1024 * 1024 => $"{(double)FileSizeBytes / (1024 * 1024):0.0} MB",
         >= 1024 => $"{FileSizeBytes / 1024} KB",
         _ => $"{FileSizeBytes} B"
     };
