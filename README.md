@@ -1,20 +1,16 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/microsoft/fluentui-system-icons/main/assets/Screenshot/SVG/ic_fluent_screenshot_32_filled.svg" width="96" height="96" alt="NeatShot Logo" />
-</p>
-
-<h1 align="center">NeatShot (NeatSnap)</h1>
+<h1 align="center">NeatShot</h1>
 
 <p align="center">
-  A modern, lightweight, and clean screenshot utility for Windows.<br>
-  Instant capture &bull; Clean desktop capture &bull; Pin to screen, offline OCR &bull; Vector annotations
+  A fast, lightweight screenshot tool for Windows, built for multi-monitor and mixed-DPI setups.<br>
+  Clean capture &bull; Vector annotations &bull; Pin to screen &bull; Offline text extraction &bull; Screenshot gallery
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-10.0-512BD4?style=flat&logo=dotnet&logoColor=white" alt=".NET 10" />
-  <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?style=flat&logo=windows&logoColor=white" alt="Windows 10/11" />
-  <img src="https://img.shields.io/badge/UI-WPF%20%7C%20WPF--UI-107C41?style=flat" alt="WPF / WPF-UI" />
-  <img src="https://img.shields.io/badge/Architecture-MVVM-informational?style=flat" alt="MVVM" />
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat" alt="License MIT" />
+  <img src="https://img.shields.io/badge/Platform-Windows%2010%20(2004%2B)%20%7C%2011-0078D6?style=flat&logo=windows&logoColor=white" alt="Windows 10 2004+ / 11" />
+  <img src="https://img.shields.io/badge/UI-WPF%20%2B%20WPF--UI-107C41?style=flat" alt="WPF + WPF-UI" />
+  <img src="https://img.shields.io/badge/Tests-xUnit-5E5E5E?style=flat" alt="xUnit" />
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat" alt="MIT License" />
 </p>
 
 <p align="center">
@@ -27,131 +23,150 @@
 
 ## English
 
-### Overview
+### Table of Contents
 
-**NeatShot** is an independent Windows desktop application built with C# and Windows Presentation Foundation (WPF). It addresses longstanding issues found in traditional screenshot tools on Windows 11:
-- Popup menus from the system tray getting captured in screenshots.
-- Global shortcut collisions.
-- Coordinate and rendering discrepancies caused by multi-monitor setups with mixed display scaling (100%, 125%, 150% Per-Monitor DPI).
+- [Why NeatShot](#why-neatshot)
+- [Features](#features)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Getting Started](#getting-started)
+- [Running Tests](#running-tests)
+- [Where Files Are Stored](#where-files-are-stored)
+- [Architecture](#architecture)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
----
+### Why NeatShot
+
+Built-in and classic screenshot tools on Windows 11 often:
+
+- capture the tray flyout or context menu that was used to start the capture;
+- lose their global shortcut to another app (for example, Snipping Tool taking over `PrtSc`);
+- select the wrong area on multi-monitor setups with mixed scaling (100% / 125% / 150%).
+
+NeatShot runs in the system tray. It freezes the whole virtual desktop into one overlay and lets you select, annotate and export a region in a few keystrokes.
 
 ### Features
 
-#### Phase 1: Core / MVP
-- **Clean Shot Algorithm:** Automatically dismisses active system popups and applies a precise 120ms delay before capturing to ensure pristine images.
-- **Global Hotkey:** Trigger capture instantly via configurable shortcuts (e.g., `PrtSc`) even when the app is minimized to the system tray.
-- **Freeze Overlay:** Freezes the screen state into a full-screen transparent canvas across all virtual displays.
-- **Vector Annotation Tools:**
-  - Freehand pencil
-  - Rectangle highlighter
-  - Directional arrows and lines
-  - Customizable color palette and stroke width
-  - Instant undo stack (`Ctrl + Z`)
-- **Flexible Export:** Instant copy to clipboard and save to PNG format.
-- **Lightweight Background Operation:** Runs quietly in the system tray with near-zero idle CPU and memory consumption.
+**Capture**
+- **Clean Shot:** dismisses tray flyouts and popups, then waits 250 ms for Windows animations to finish before capturing with GDI `BitBlt` (`CAPTUREBLT` included for layered windows).
+- **Freeze overlay** that spans every monitor, with a resizable and movable selection (8 handles plus a live `W × H` badge).
+- **Full-screen capture** from the tray menu, with the whole virtual screen already selected.
+- Per-Monitor V2 DPI awareness, so selections map exactly to physical pixels.
 
-#### Phase 2: Killer Features
-- **Pin to Screen:** Float captured regions in an Always-on-Top borderless window for side-by-side reference.
-- **Quick OCR:** Extract text from image regions directly into the clipboard using Windows Media OCR offline.
-- **Smart Blur / Pixelate:** Conceal sensitive information such as passwords, tokens, and credentials.
-- **Step Counter:** Auto-incrementing step indicators (1, 2, 3...) for generating technical guides and bug reports.
-- **Beautify:** Add customizable padding, rounded corners, soft shadows, and gradient backgrounds.
+**Annotate**
+- Pencil, highlighter, rectangle, ellipse, line, arrow and text (font family and size can be changed).
+- **Step counter** badges (1, 2, 3…) with adjustable size.
+- **Pixelate** and **blur** tools to hide sensitive data.
+- Select and move, delete, and unlimited undo/redo.
+- Color palette, screen **eyedropper** with a magnifier, and a recent-colors history that is saved between sessions.
+- **Beautify:** gradient background, padding, rounded corners and a soft shadow, shown in a live preview.
 
----
+**Export & reuse**
+- Copy to clipboard, save as PNG, or **pin** the capture as an always-on-top floating window.
+- Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
+- **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
+- **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
+- **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
 
-### Architecture & Tech Stack
+### Keyboard Shortcuts
 
-NeatShot adheres to **Clean Layered Architecture combined with the MVVM pattern**:
-
-```text
-NeatShot/
-├── src/
-│   └── NeatShot/                       # Main WPF Desktop Application
-│       ├── App.xaml / App.xaml.cs       # Application Entry Point & DI Container
-│       ├── app.manifest                 # PerMonitorV2 DPI Configuration
-│       ├── Common/                      # Helpers (DpiHelper, ColorHelper)
-│       ├── Core/                        # Business Logic & Native Interop
-│       │   ├── Interop/                 # NativeMethods, NativeStructs (P/Invoke)
-│       │   ├── Models/                  # CaptureRegion, DrawingElement
-│       │   └── Services/                # ScreenCaptureService, HotkeyService, ExportService
-│       ├── Presentation/                # UI Layer (WPF / MVVM)
-│       │   ├── ViewModels/              # OverlayViewModel, PinViewModel
-│       │   ├── Views/                   # OverlayWindow.xaml, PinWindow.xaml
-│       │   └── Controls/                # SelectionCanvas, AnnotationToolbar
-│       └── Assets/                      # Icons, Styles
-│
-├── tests/
-│   └── NeatShot.Tests/                  # Independent Unit Test Suite (xUnit)
-│
-└── docs/                                # Technical Documentation
-    ├── SRS-screenshot-app.md            # Software Requirements Specification
-    ├── TECH-STACK-AND-ARCHITECTURE.md   # Architectural & Tech Design Document
-    ├── SKILLS-WORKFLOW-GUIDE.md         # Engineering Workflow & Skills Playbook
-    └── superpowers/plans/               # Detailed Implementation Plans
-```
-
-#### Technologies:
-- **Language & Runtime:** C# 12 / .NET 10 (`net10.0-windows10.0.19041.0`)
-- **UI Framework:** WPF + [WPF-UI](https://github.com/lepoco/wpfui) (Fluent Design)
-- **MVVM Framework:** [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
-- **Tray Icon:** [H.NotifyIcon.Wpf](https://github.com/HavenDV/H.NotifyIcon)
-- **Dependency Injection:** `Microsoft.Extensions.DependencyInjection`
-- **Testing:** xUnit
-
----
+| Context | Shortcut | Action |
+|---|---|---|
+| Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture |
+| Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
+| Overlay | `Ctrl + S` | Save as PNG… |
+| Overlay | `Ctrl + O` | Extract text (OCR) |
+| Overlay | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
+| Overlay | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Select, Pencil, Rectangle, Ellipse, Line, Arrow, Highlight, Text, Pixelate, Step, Eyedropper |
+| Overlay | `Delete` | Delete the selected annotation |
+| Overlay | `Esc` / right-click | Leave the current tool; press again to cancel the capture |
+| Pin | Mouse wheel / `+` `-` / `Ctrl + 0` | Zoom in, zoom out, reset |
+| Pin | `Ctrl + wheel` | Change opacity |
+| Pin | `P` / `Ctrl + P` | Show or hide the annotation toolbar |
+| Pin | `Ctrl + C` | Copy the pinned image, including annotations |
+| Pin | `Esc` | Hide the controls; press again to close the pin |
+| Gallery | `F5` / `Esc` | Refresh / Close |
 
 ### Getting Started
 
-#### Prerequisites
-- Windows 10 (version 1809 or higher) or Windows 11.
-- [.NET 10 SDK](https://dotnet.microsoft.com/download) or Visual Studio 2022 / JetBrains Rider.
+**Prerequisites**
+- Windows 10 version 2004 (build 19041) or later, or Windows 11.
+- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+- An OCR language pack (installed with most Windows display languages) to use text extraction.
 
-#### Build & Run
+**Build & run**
 ```bash
-# Clone the repository
 git clone https://github.com/Thien21112005/neat-shot.git
 cd neat-shot
 
-# Restore dependencies
-dotnet restore
-
-# Build solution
 dotnet build
-
-# Run unit tests
-dotnet test
-
-# Launch application
 dotnet run --project src/NeatShot
 ```
 
----
+NeatShot starts in the system tray. Left-click the tray icon to capture, or right-click it to open the menu (full-screen capture, gallery, screenshots folder, exit). Only one instance can run at a time.
 
-### Documentation
+### Running Tests
 
-Technical documents are located in the [`docs/`](./docs/) directory:
-- [Software Requirements Specification (SRS)](./docs/SRS-screenshot-app.md)
-- [System Architecture & Tech Stack](./docs/TECH-STACK-AND-ARCHITECTURE.md)
-- [Skills & Workflow Guide](./docs/SKILLS-WORKFLOW-GUIDE.md)
-- [Phase 1 MVP Implementation Plan](./docs/superpowers/plans/2026-10-07-neatshot-phase1-mvp.md)
+```bash
+# Full suite
+dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj
 
----
+# Skip the tests that capture the real desktop
+dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Desktop"
+```
 
-### Commit Convention
+> Tests tagged `Category=Desktop` run the real Clean Shot routine, which sends a global `Esc` keystroke. Exclude them when running tests from an IDE or agent that `Esc` could interrupt.
 
-This project enforces Conventional Commits:
-- `feat:` New features
-- `fix:` Bug fixes
-- `test:` Adding or updating tests
-- `docs:` Documentation changes
-- `chore:` Build configuration and maintenance
+### Where Files Are Stored
 
----
+| Data | Location |
+|---|---|
+| Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (follows the last folder you chose in *Save as*) |
+| Settings & color history | `%AppData%\NeatShot\settings.json` |
+
+### Architecture
+
+NeatShot uses a layered design (Core / Presentation) with MVVM via CommunityToolkit.Mvvm and constructor injection via `Microsoft.Extensions.DependencyInjection`.
+
+```text
+src/NeatShot/
+├── App.xaml(.cs)          # Entry point, DI container, tray menu, single-instance mutex
+├── app.manifest           # Per-Monitor V2 DPI awareness
+├── Common/Helpers/        # DPI, color, cursor, hit-testing, image effects, OCR post-processing
+├── Core/
+│   ├── Interop/           # Win32 P/Invoke (GDI capture, hotkeys, Shell_NotifyIcon)
+│   ├── Models/            # CaptureRegion, DrawingElement, BeautifyOptions, GalleryItem, AppSettings
+│   └── Services/          # Capture, Hotkey, Export, Beautify, OCR, Settings, Gallery, UndoStack
+└── Presentation/
+    ├── Controls/          # SelectionCanvas, DrawingCanvas, AnnotationToolbar, PinAnnotationToolbar
+    ├── Tray/              # NativeTrayIcon (pure Win32, no third-party dependency)
+    ├── ViewModels/        # Overlay, Pin, Gallery
+    └── Views/             # OverlayWindow, PinWindow, GalleryWindow
+tests/NeatShot.Tests/      # xUnit suite (WPF tests run on dedicated STA threads)
+docs/                      # SRS, architecture, workflow guide, implementation plans
+```
+
+**Tech stack:** C# / .NET 10 (`net10.0-windows10.0.19041.0`), WPF + [WPF-UI](https://github.com/lepoco/wpfui), [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet), `Microsoft.Extensions.DependencyInjection`, `Windows.Media.Ocr`, xUnit.
+
+More detail: [SRS](./docs/SRS-screenshot-app.md) · [Architecture & tech stack](./docs/TECH-STACK-AND-ARCHITECTURE.md) · [Workflow guide](./docs/SKILLS-WORKFLOW-GUIDE.md) · [Implementation plans](./docs/superpowers/plans/)
+
+### Troubleshooting
+
+- **`PrtSc` does nothing.** Windows 11 may give `PrtSc` to Snipping Tool. Turn off *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, or use `Ctrl + Shift + A`. The console output at startup shows which hotkeys were registered.
+- **"No OCR language pack found."** Add a language that supports OCR under *Settings → Time & language → Language & region*.
+- **The tray icon disappeared.** NeatShot re-registers its icon when Explorer restarts. If it is still missing, the app may have exited; start it again.
+
+### Contributing
+
+1. Create a branch from `main` (`feat/...`, `fix/...`, `docs/...`).
+2. Follow TDD: write a failing test, make it pass, then refactor.
+3. Make sure `dotnet test` passes before you open a PR.
+4. Use [Conventional Commits](https://www.conventionalcommits.org/), for example `feat(pin): ...`, `fix(gallery): ...`, `docs(readme): ...`, `test(...)`, `chore(...)`.
 
 ### License
 
-Distributed under the **MIT License**. See [LICENSE](./LICENSE) for details.
+Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 
 ---
 
@@ -161,126 +176,107 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE) for details.
 
 ### Giới thiệu
 
-**NeatShot** là ứng dụng chụp màn hình độc lập dành cho Windows, được phát triển bằng C# và Windows Presentation Foundation (WPF). Dự án giải quyết các vấn đề cố hữu trên các công cụ chụp màn hình truyền thống khi hoạt động trên Windows 11:
-- Bị dính menu/popup của khay hệ thống vào ảnh chụp.
-- Phím tắt toàn cục hay bị xung đột hoặc bị chiếm dụng.
-- Lệch toạ độ và sai lệch độ phân giải khi sử dụng đa màn hình có tỉ lệ thu phóng khác nhau (100%, 125%, 150% Per-Monitor DPI).
+**NeatShot** là ứng dụng chụp màn hình gọn nhẹ cho Windows, viết bằng C# / WPF. Ứng dụng giải quyết các vấn đề quen thuộc trên Windows 11:
 
----
+- Ảnh chụp bị dính menu hoặc flyout của khay hệ thống.
+- Phím tắt toàn cục bị ứng dụng khác chiếm (ví dụ Snipping Tool chiếm `PrtSc`).
+- Lệch vùng chọn khi dùng nhiều màn hình có tỉ lệ thu phóng khác nhau (100% / 125% / 150%).
 
 ### Tính năng chính
 
-#### Giai đoạn 1: Cốt lõi (Core / MVP)
-- **Thuật toán Chụp sạch (Clean Shot):** Tự động gửi tín hiệu ẩn toàn bộ popup và đợi 120ms trước khi bắt đầu chụp, đảm bảo bức ảnh không dính giao diện thừa.
-- **Phím tắt toàn cục:** Gọi nhanh công cụ bằng phím tắt do người dùng cấu hình (mặc định `PrtSc`) kể cả khi ứng dụng đang chạy ẩn.
-- **Màn hình đóng băng (Freeze Overlay):** Giữ nguyên trạng thái toàn bộ màn hình để người dùng kéo thả chọn vùng cần lấy.
-- **Bộ công cụ chú thích Vector:**
-  - Bút vẽ tự do (Pencil)
-  - Khung chữ nhật (Rectangle)
-  - Mũi tên chỉ dẫn (Arrow)
-  - Bảng chọn màu sắc và độ dày nét vẽ
-  - Hoàn tác tức thì (`Undo / Ctrl + Z`)
-- **Xuất ảnh linh hoạt:** Lưu nhanh file PNG hoặc sao chép thẳng vào Clipboard.
-- **Chạy nền tối ưu:** Ẩn mình dưới khay hệ thống (System Tray), mức chiếm dụng CPU và RAM khi nhàn rỗi gần như bằng không.
+**Chụp ảnh**
+- **Chụp sạch (Clean Shot):** đóng flyout/popup, chờ 250 ms cho animation của Windows kết thúc rồi mới chụp bằng GDI `BitBlt`.
+- **Màn hình đóng băng** trải trên mọi màn hình. Vùng chọn kéo giãn và di chuyển được (8 tay nắm, hiển thị kích thước `W × H`).
+- **Chụp toàn màn hình** từ menu khay, toàn bộ màn hình được chọn sẵn.
+- Hỗ trợ Per-Monitor DPI V2, toạ độ khớp chính xác với pixel vật lý.
 
-#### Giai đoạn 2: Tính năng đột phá
-- **Ghim ảnh nổi (Pin to Screen):** Đưa vùng ảnh chụp thành cửa sổ nổi Always-on-Top để đối chiếu tài liệu và mã nguồn.
-- **Trích xuất chữ (Quick OCR):** Nhận diện văn bản offline và copy text vào Clipboard thông qua Windows Media OCR API.
-- **Bảo mật (Smart Blur / Pixelate):** Bôi mờ hoặc khảm hạt để che thông tin nhạy cảm như token, mật khẩu, thông tin cá nhân.
-- **Đánh số bước (Step Counter):** Đánh số tăng dần tự động (1, 2, 3...) phục vụ viết tài liệu hướng dẫn và báo cáo lỗi.
-- **Làm đẹp ảnh (Beautify):** Tự động bo tròn góc, đổ bóng mềm và thêm nền gradient nghệ thuật trước khi lưu.
+**Chú thích**
+- Bút vẽ, bút dạ quang, hình chữ nhật, oval, đường thẳng, mũi tên, chữ (chọn được phông và cỡ chữ).
+- **Đánh số bước** (1, 2, 3…), chỉnh được kích thước.
+- **Khảm ô vuông** và **làm mờ** để che thông tin nhạy cảm.
+- Chọn/di chuyển, xoá nét vẽ, hoàn tác và làm lại không giới hạn.
+- Bảng màu, **bút hút màu** có kính lúp, lịch sử màu gần đây được lưu lại giữa các lần dùng.
+- **Làm đẹp ảnh:** nền gradient, khoảng đệm, bo góc, đổ bóng mềm, có xem trước trực tiếp.
 
----
+**Xuất và tái sử dụng**
+- Sao chép vào Clipboard, lưu PNG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
+- Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
+- **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
+- **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
+- **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
 
-### Kiến trúc & Công nghệ
+### Phím tắt
 
-Hệ thống được thiết kế theo mô hình **Clean Layered Architecture kết hợp MVVM**:
+| Ngữ cảnh | Phím tắt | Chức năng |
+|---|---|---|
+| Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp |
+| Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
+| Màn hình chụp | `Ctrl + S` | Lưu file PNG… |
+| Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
+| Màn hình chụp | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
+| Màn hình chụp | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Chọn, Bút, Chữ nhật, Oval, Đường thẳng, Mũi tên, Dạ quang, Chữ, Khảm, Đánh số, Hút màu |
+| Màn hình chụp | `Delete` | Xoá nét vẽ đang chọn |
+| Màn hình chụp | `Esc` / chuột phải | Thoát công cụ hiện tại; bấm lần nữa để huỷ chụp |
+| Ảnh ghim | Lăn chuột / `+` `-` / `Ctrl + 0` | Phóng to, thu nhỏ, về 100% |
+| Ảnh ghim | `Ctrl + lăn chuột` | Chỉnh độ trong suốt |
+| Ảnh ghim | `P` / `Ctrl + P` | Bật/tắt thanh công cụ vẽ |
+| Ảnh ghim | `Ctrl + C` | Sao chép ảnh ghim (kèm chú thích) |
+| Ảnh ghim | `Esc` | Ẩn thanh điều khiển; bấm lần nữa để đóng ảnh ghim |
+| Thư viện | `F5` / `Esc` | Làm mới / Đóng |
 
-```text
-NeatShot/
-├── src/
-│   └── NeatShot/                       # Dự án ứng dụng WPF Desktop chính
-│       ├── App.xaml / App.xaml.cs       # Khởi động ứng dụng & Cấu hình DI
-│       ├── app.manifest                 # Bật Per-Monitor DPI v2
-│       ├── Common/                      # Helpers (DpiHelper, ColorHelper)
-│       ├── Core/                        # Tầng Nghiệp vụ & Interop Win32
-│       │   ├── Interop/                 # NativeMethods, NativeStructs (P/Invoke)
-│       │   ├── Models/                  # CaptureRegion, DrawingElement
-│       │   └── Services/                # ScreenCaptureService, HotkeyService, ExportService
-│       ├── Presentation/                # Tầng Giao diện (WPF / MVVM)
-│       │   ├── ViewModels/              # OverlayViewModel, PinViewModel
-│       │   ├── Views/                   # OverlayWindow.xaml, PinWindow.xaml
-│       │   └── Controls/                # SelectionCanvas, AnnotationToolbar
-│       └── Assets/                      # Icons, Styles
-│
-├── tests/
-│   └── NeatShot.Tests/                  # Dự án Unit Test độc lập (xUnit)
-│
-└── docs/                                # Tài liệu kỹ thuật dự án
-    ├── SRS-screenshot-app.md            # Đặc tả yêu cầu phần mềm
-    ├── TECH-STACK-AND-ARCHITECTURE.md   # Thiết kế kiến trúc & công nghệ
-    ├── SKILLS-WORKFLOW-GUIDE.md         # Sổ tay quy trình kỹ thuật & Skills
-    └── superpowers/plans/               # Kế hoạch triển khai chi tiết
-```
+### Cài đặt và chạy
 
-#### Công nghệ sử dụng:
-- **Ngôn ngữ & Nền tảng:** C# 12 / .NET 10 (`net10.0-windows10.0.19041.0`)
-- **Giao diện:** WPF + [WPF-UI](https://github.com/lepoco/wpfui) (Fluent Design)
-- **Mô hình MVVM:** [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
-- **Khay hệ thống:** [H.NotifyIcon.Wpf](https://github.com/HavenDV/H.NotifyIcon)
-- **Dependency Injection:** `Microsoft.Extensions.DependencyInjection`
-- **Kiểm thử tự động:** xUnit
+**Yêu cầu**
+- Windows 10 bản 2004 (build 19041) trở lên, hoặc Windows 11.
+- [.NET 10 SDK](https://dotnet.microsoft.com/download).
+- Gói ngôn ngữ có hỗ trợ OCR (đa số ngôn ngữ hiển thị của Windows đã có sẵn) để dùng tính năng trích xuất chữ.
 
----
-
-### Hướng dẫn chạy dự án
-
-#### Yêu cầu môi trường
-- Windows 10 (bản 1809 trở lên) hoặc Windows 11.
-- [.NET 10 SDK](https://dotnet.microsoft.com/download) hoặc Visual Studio 2022 / JetBrains Rider.
-
-#### Các bước thực hiện
 ```bash
-# Clone mã nguồn
 git clone https://github.com/Thien21112005/neat-shot.git
 cd neat-shot
 
-# Khôi phục dependencies
-dotnet restore
-
-# Build mã nguồn
 dotnet build
-
-# Chạy kiểm thử tự động
-dotnet test
-
-# Chạy ứng dụng
 dotnet run --project src/NeatShot
 ```
 
----
+Ứng dụng chạy ngầm dưới khay hệ thống. Click trái vào icon để chụp; click phải để mở menu (chụp toàn màn hình, thư viện ảnh, thư mục ảnh, thoát). Mỗi lúc chỉ chạy được một phiên bản.
 
-### Tài liệu tham khảo
+### Chạy kiểm thử
 
-Các tài liệu kỹ thuật chi tiết được lưu trữ trong thư mục [`docs/`](./docs/):
-- [Đặc tả yêu cầu phần mềm (SRS)](./docs/SRS-screenshot-app.md)
-- [Thiết kế kiến trúc & Công nghệ](./docs/TECH-STACK-AND-ARCHITECTURE.md)
-- [Sổ tay quy trình & Agent Skills](./docs/SKILLS-WORKFLOW-GUIDE.md)
-- [Kế hoạch triển khai Phase 1 MVP](./docs/superpowers/plans/2026-10-07-neatshot-phase1-mvp.md)
+```bash
+# Toàn bộ bộ test
+dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj
 
----
+# Bỏ qua các test chụp màn hình thật
+dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Desktop"
+```
 
-### Quy ước Commit
+> Các test gắn `Category=Desktop` chạy thuật toán Clean Shot thật nên sẽ gửi phím `Esc` toàn hệ thống. Hãy loại chúng ra khi chạy test trong IDE hoặc agent có thể bị phím `Esc` làm gián đoạn.
 
-Dự án áp dụng chuẩn Conventional Commits:
-- `feat:` Bổ sung tính năng mới
-- `fix:` Sửa lỗi
-- `test:` Bổ sung hoặc cập nhật bài kiểm thử
-- `docs:` Cập nhật tài liệu
-- `chore:` Công việc cấu hình hoặc bảo trì dự án
+### Nơi lưu dữ liệu
 
----
+| Dữ liệu | Vị trí |
+|---|---|
+| Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (theo thư mục bạn chọn gần nhất khi *Lưu file*) |
+| Cấu hình & lịch sử màu | `%AppData%\NeatShot\settings.json` |
+
+### Kiến trúc
+
+Dự án chia lớp Core / Presentation, dùng MVVM với CommunityToolkit.Mvvm và tiêm phụ thuộc bằng `Microsoft.Extensions.DependencyInjection`. Xem sơ đồ thư mục ở [phần tiếng Anh](#architecture) và tài liệu chi tiết trong [`docs/`](./docs/).
+
+### Xử lý sự cố
+
+- **Bấm `PrtSc` không có tác dụng:** Windows 11 có thể dành phím `PrtSc` cho Snipping Tool. Tắt tuỳ chọn *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, hoặc dùng `Ctrl + Shift + A`.
+- **Báo "Không tìm thấy gói ngôn ngữ OCR":** thêm một ngôn ngữ có hỗ trợ OCR trong *Settings → Time & language → Language & region*.
+- **Mất icon dưới khay hệ thống:** NeatShot tự gắn lại icon khi Explorer khởi động lại. Nếu vẫn không thấy, có thể ứng dụng đã thoát; hãy mở lại.
+
+### Đóng góp
+
+1. Tạo nhánh từ `main` (`feat/...`, `fix/...`, `docs/...`).
+2. Làm theo TDD: viết test fail trước, sửa cho pass, rồi refactor.
+3. Đảm bảo `dotnet test` pass trước khi mở PR.
+4. Viết commit theo chuẩn [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `docs`, `test`, `chore`, `refactor`…
 
 ### Giấy phép
 
-Mã nguồn được phân phối theo giấy phép **MIT License**. Chi tiết xem tại [LICENSE](./LICENSE).
+Phân phối theo giấy phép **MIT License**. Xem [LICENSE](./LICENSE).
