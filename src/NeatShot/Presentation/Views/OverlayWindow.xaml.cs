@@ -17,6 +17,7 @@ public partial class OverlayWindow : Window
     private readonly IExportService _exportService;
     private readonly IOcrService _ocrService;
     private readonly ISettingsService? _settingsService;
+    private readonly IScreenshotGalleryService? _galleryService;
     private DrawingToolType _previousTool = DrawingToolType.None;
     private bool _isToolbarManuallyPositioned;
     public OverlayViewModel ViewModel { get; }
@@ -25,7 +26,8 @@ public partial class OverlayWindow : Window
         OverlayViewModel viewModel,
         IExportService exportService,
         IOcrService? ocrService = null,
-        ISettingsService? settingsService = null)
+        ISettingsService? settingsService = null,
+        IScreenshotGalleryService? galleryService = null)
     {
         InitializeComponent();
 
@@ -33,6 +35,7 @@ public partial class OverlayWindow : Window
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         _ocrService = ocrService ?? new NeatShot.Core.Services.Implementations.WindowsOcrService();
         _settingsService = settingsService;
+        _galleryService = galleryService;
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
@@ -160,6 +163,7 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
+            await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
             Close();
         }
@@ -248,6 +252,8 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
+            await SaveToGalleryAsync(finalImage);
+
             var pinWindow = new PinWindow(new PinViewModel());
             var screenX = Left + ViewModel.SelectedRegion.X;
             var screenY = Top + ViewModel.SelectedRegion.Y;
@@ -259,6 +265,23 @@ public partial class OverlayWindow : Window
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi ghim ảnh: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Tự động lưu ảnh chụp vào thư viện Pictures\NeatShot. Lỗi lưu không được chặn thao tác Copy/Ghim.
+    /// </summary>
+    private async Task SaveToGalleryAsync(BitmapSource image)
+    {
+        if (_galleryService == null) return;
+
+        try
+        {
+            await _galleryService.SaveScreenshotAsync(image);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lỗi tự động lưu ảnh vào thư viện: {ex.Message}");
         }
     }
 
