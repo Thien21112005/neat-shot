@@ -677,6 +677,12 @@ public partial class OverlayWindow : Window
             return true;
         }
 
+        if (key == Key.O && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            _ = ExecuteOcrAsync();
+            return true;
+        }
+
         if (modifiers == ModifierKeys.None)
         {
             switch (key)
