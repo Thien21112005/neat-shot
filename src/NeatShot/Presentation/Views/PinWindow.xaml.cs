@@ -264,23 +264,11 @@ public partial class PinWindow : Window
         using (var dc = visual.RenderOpen())
         {
             dc.DrawImage(source, new Rect(0, 0, source.Width, source.Height));
-            var scaleX = source.Width / Math.Max(1.0, DrawingControl.ActualWidth);
-            var scaleY = source.Height / Math.Max(1.0, DrawingControl.ActualHeight);
-            if (DrawingControl.ActualWidth > 0 && (Math.Abs(scaleX - 1.0) > 0.001 || Math.Abs(scaleY - 1.0) > 0.001))
+
+            // Lớp vẽ luôn ở toạ độ ảnh gốc (zoom là LayoutTransform), nên không cần quy đổi tỉ lệ
+            foreach (var el in DrawingControl.UndoStack.Items)
             {
-                dc.PushTransform(new ScaleTransform(scaleX, scaleY));
-                foreach (var el in DrawingControl.UndoStack.Items)
-                {
-                    DrawingRenderer.RenderElement(dc, el);
-                }
-                dc.Pop();
-            }
-            else
-            {
-                foreach (var el in DrawingControl.UndoStack.Items)
-                {
-                    DrawingRenderer.RenderElement(dc, el);
-                }
+                DrawingRenderer.RenderElement(dc, el);
             }
         }
 
