@@ -89,7 +89,7 @@ public partial class App : Application
         _trayContextMenu.Items.Add(captureItem);
 
         var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
-        fullscreenItem.Click += (s, e) => TriggerCapture();
+        fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
 
         _trayContextMenu.Items.Add(new Separator());
@@ -191,7 +191,7 @@ public partial class App : Application
         }
     }
 
-    private async void TriggerCapture()
+    private async void TriggerCapture(bool selectFullScreen = false)
     {
         try
         {
@@ -213,7 +213,7 @@ public partial class App : Application
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
-            _activeOverlayWindow.Display(virtualBounds, capturedScreen);
+            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen);
         }
         catch (Exception ex)
         {

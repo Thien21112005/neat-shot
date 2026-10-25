@@ -527,7 +527,7 @@ public partial class OverlayWindow : Window
         }
     }
 
-    public void Display(Rect virtualBounds, BitmapSource frozenScreen)
+    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false)
     {
         Left = virtualBounds.Left;
         Top = virtualBounds.Top;
@@ -540,6 +540,19 @@ public partial class OverlayWindow : Window
         Show();
         Activate();
         Focus();
+
+        if (selectFullScreen)
+        {
+            SelectFullScreen(virtualBounds);
+        }
+    }
+
+    /// <summary>
+    /// Chọn sẵn toàn bộ màn hình ảo (toạ độ tương đối với overlay) cho chế độ "Chụp toàn màn hình".
+    /// </summary>
+    public void SelectFullScreen(Rect virtualBounds)
+    {
+        ViewModel.SelectedRegion = new CaptureRegion(0, 0, virtualBounds.Width, virtualBounds.Height);
     }
 
     public void EnterEyedropperMode()
