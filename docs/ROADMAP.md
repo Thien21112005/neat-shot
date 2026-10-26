@@ -20,7 +20,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 | 1 | ✅ Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
 | 2 | ✅ Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
 | 3 | ✅ Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
-| 4 | Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
+| 4 | ✅ Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
 | 5 | Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
 | 6 | Kính lúp + toạ độ pixel khi chọn vùng | Chụp | 🟡 | ⭐⭐ |
 | 7 | Công cụ chú thích mở rộng | Chú thích | 🟡 | ⭐⭐ |
@@ -93,17 +93,17 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ---
 
-### 4. Chụp hẹn giờ (3s / 5s) 🟢
+### 4. Chụp hẹn giờ (3s / 5s) 🟢 ✅ Đã xong
 
 **Vấn đề:** Menu xổ xuống và tooltip biến mất khi bấm phím tắt nên không chụp được.
 
 **Phạm vi:**
-- Mục "Chụp sau 3 giây / 5 giây" trong menu khay.
+- Mục "Chụp sau 3 giây / 5 giây" trong menu khay _(đã làm: menu con 3 / 5 / 10 giây)_.
 - Đếm ngược nhỏ ở góc màn hình (không bị chụp vào ảnh).
 
 **Tiêu chí hoàn thành:**
-- [ ] Bộ đếm tự ẩn trước thời điểm `BitBlt`.
-- [ ] Huỷ được bằng `Esc` trong lúc đếm.
+- [x] Bộ đếm tự ẩn trước thời điểm `BitBlt`.
+- [x] Huỷ được bằng `Esc` trong lúc đếm.
 
 **Liên quan:** `App.TriggerCapture()`, `ScreenCaptureService.CaptureCleanScreenAsync()`.
 

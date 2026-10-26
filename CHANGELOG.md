@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and "copy as soon as the selection is released".
 - **Window detection:** the capture overlay outlines the window or control under the cursor; one click selects it.
 - **Pin from the clipboard** (`F3`, configurable): pins images copied from browsers, chat apps, design tools or Explorer.
+- **Delayed capture** (3 / 5 / 10 s) from the tray menu; keeps open menus and tooltips in the shot, `Esc` cancels.
 - **Landing page** in `site/` (static HTML/CSS/JS with GSAP animations, EN/VI), ready for GitHub Pages.
 - Capture overlay shows a "drag to select" hint until a region is selected.
 - Copying a capture shows a toast confirming the copy and where the file was saved.

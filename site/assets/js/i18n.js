@@ -35,6 +35,7 @@ export const VI = {
   kWindow: 'Chọn một cửa sổ', kClick: 'Click',
   fClipT: 'Ghim thẳng từ Clipboard', fClipD: 'Vừa copy một ảnh trên web, Zalo hay Figma? Nhấn F3 là ảnh nổi lên trên mọi cửa sổ — không cần chụp.',
   pClip: 'Ghim ảnh từ Clipboard', kPinClip: 'Ghim ảnh trong Clipboard',
+  fDelayT: 'Chụp được cả menu và tooltip', fDelayD: 'Bắt đầu đếm ngược 3, 5 hoặc 10 giây, mở menu cần chụp, NeatShot chụp mà không làm menu biến mất.', fDelayM: 'Khay hệ thống → Chụp hẹn giờ · Esc để huỷ',
   eyPriv: 'Quyền riêng tư & mã nguồn mở', privTitle: 'Không gì rời khỏi máy bạn.', privLead: 'NeatShot không gửi bất kỳ yêu cầu mạng nào. Ảnh chụp, chữ và cài đặt của bạn ở yên trên máy này.',
   f1t: 'Hoàn toàn offline', f1d: 'OCR chạy bằng chính Windows. Không tải lên thứ gì.',
   f2t: 'Không cần tài khoản', f2d: 'Tải về, giải nén, nhấn Ctrl + Shift + A.',
