@@ -163,13 +163,8 @@ public partial class App : Application
         _trayIcon = new NativeTrayIcon(_iconHolder.Handle, "NeatShot - Chụp màn hình thông minh (Click để chụp)");
 
         _trayIcon.Click += (s, e) => TriggerCapture();
-        _trayIcon.ContextMenuRequested += (s, e) =>
-        {
-            if (_trayContextMenu != null)
-            {
-                _trayContextMenu.IsOpen = true;
-            }
-        };
+        var trayMenu = new TrayMenuController(_trayContextMenu);
+        _trayIcon.ContextMenuRequested += (s, e) => trayMenu.Open();
     }
 
     /// <summary>
