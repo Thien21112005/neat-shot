@@ -3,28 +3,161 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              Background="{x:Null}">
 
     <UserControl.Resources>
-        <!-- Style cho từng mục bên trong Popup Dropdown (Hiển thị icon + text đầy đủ, không bị cắt ngắn) -->
-        <Style x:Key="ToolComboBoxItemStyle" TargetType="ComboBoxItem">
+        <!-- ============ Bảng màu & kích thước (đồng bộ với landing page) ============ -->
+        <SolidColorBrush x:Key="BarBackgroundBrush" Color="#F716181D" />
+        <SolidColorBrush x:Key="BarBorderBrush" Color="#1AFFFFFF" />
+        <SolidColorBrush x:Key="IconBrush" Color="#C9CDD2" />
+        <SolidColorBrush x:Key="HoverOverlayBrush" Color="#1AFFFFFF" />
+        <SolidColorBrush x:Key="PressedOverlayBrush" Color="#2EFFFFFF" />
+        <SolidColorBrush x:Key="SeparatorBrush" Color="#1FFFFFFF" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#FF0078D4" />
+
+        <DropShadowEffect x:Key="BarShadow" BlurRadius="28" ShadowDepth="8" Direction="270" Opacity="0.45" Color="Black" />
+
+        <!-- ============ Bộ icon nét mảnh (lưới 24×24, giống bộ icon SVG của landing page) ============ -->
+        <Geometry x:Key="IconGrip">M6,9 h0.01 M12,9 h0.01 M18,9 h0.01 M6,15 h0.01 M12,15 h0.01 M18,15 h0.01</Geometry>
+        <Geometry x:Key="IconSelect">M5,4 L18,10.5 L12.4,12.1 L10,18 Z M12.4,12.1 L17,17</Geometry>
+        <Geometry x:Key="IconPencil">M4,20 L5,16 L16,5 L19,8 L8,19 Z M14,7 L17,10</Geometry>
+        <Geometry x:Key="IconHighlighter">M15,4 L20,9 L12,17 H8 V13 Z M4,20 H12</Geometry>
+        <Geometry x:Key="IconRect">M5.5,6 H18.5 A1.5,1.5 0 0 1 20,7.5 V16.5 A1.5,1.5 0 0 1 18.5,18 H5.5 A1.5,1.5 0 0 1 4,16.5 V7.5 A1.5,1.5 0 0 1 5.5,6 Z</Geometry>
+        <Geometry x:Key="IconEllipse">M3.5,12 A8.5,6.5 0 1 0 20.5,12 A8.5,6.5 0 1 0 3.5,12 Z</Geometry>
+        <Geometry x:Key="IconLine">M5,19 L19,5</Geometry>
+        <Geometry x:Key="IconArrow">M5,19 L19,5 M10,5 H19 V14</Geometry>
+        <Geometry x:Key="IconText">M5,6 H19 M12,6 V19 M9,19 H15</Geometry>
+        <Geometry x:Key="IconStep">M3.5,12 A8.5,8.5 0 1 0 20.5,12 A8.5,8.5 0 1 0 3.5,12 Z M10.5,9.5 L12.5,8 V16</Geometry>
+        <Geometry x:Key="IconPixelate">M4,4 h5 v5 H4 Z M15,4 h5 v5 h-5 Z M9.5,9.5 h5 v5 h-5 Z M4,15 h5 v5 H4 Z M15,15 h5 v5 h-5 Z</Geometry>
+        <Geometry x:Key="IconBlur">M12,3.5 C15.2,7.7 18,10.8 18,14 A6,6 0 0 1 6,14 C6,10.8 8.8,7.7 12,3.5 Z M9.5,14.5 A2.5,2.5 0 0 0 12,17</Geometry>
+        <Geometry x:Key="IconDropper">M16.5,4.5 A2.1,2.1 0 0 1 19.5,7.5 L17,10 L14,7 Z M14,7 L5.5,15.5 L5,19 L8.5,18.5 L17,10</Geometry>
+        <Geometry x:Key="IconUndo">M9,14 L4,9 L9,4 M4,9 H14.5 A5.5,5.5 0 0 1 14.5,20 H11</Geometry>
+        <Geometry x:Key="IconRedo">M15,14 L20,9 L15,4 M20,9 H9.5 A5.5,5.5 0 0 0 9.5,20 H13</Geometry>
+        <Geometry x:Key="IconPin">M9,3.5 H15 M10,3.5 V9 L7,13 H17 L14,9 V3.5 M12,13 V20.5</Geometry>
+        <Geometry x:Key="IconOcr">M8,4 H5 V20 H8 M16,4 H19 V20 H16 M9,8.5 H15 M12,8.5 V16</Geometry>
+        <Geometry x:Key="IconSparkle">M12,3.5 L13.9,8.6 L19,10.5 L13.9,12.4 L12,17.5 L10.1,12.4 L5,10.5 L10.1,8.6 Z M18.5,15.5 L19.3,17.7 L21.5,18.5 L19.3,19.3 L18.5,21.5 L17.7,19.3 L15.5,18.5 L17.7,17.7 Z</Geometry>
+        <Geometry x:Key="IconCopy">M10,8 H18 A2,2 0 0 1 20,10 V18 A2,2 0 0 1 18,20 H10 A2,2 0 0 1 8,18 V10 A2,2 0 0 1 10,8 Z M16,8 V6 A2,2 0 0 0 14,4 H6 A2,2 0 0 0 4,6 V14 A2,2 0 0 0 6,16 H8</Geometry>
+        <Geometry x:Key="IconSave">M12,4 V15 M7.5,10.5 L12,15 L16.5,10.5 M5,20 H19</Geometry>
+        <Geometry x:Key="IconClose">M6,6 L18,18 M18,6 L6,18</Geometry>
+        <Geometry x:Key="IconFont">M4,19 L9.5,5 L15,19 M6.2,14 H12.8 M16,19 V11 M16,13 A3,3 0 0 1 22,13 V19</Geometry>
+        <Geometry x:Key="IconCaret">M0,0 L5,0 L2.5,3 Z</Geometry>
+
+        <!-- Path vẽ icon: nét theo màu chữ (Foreground) của nút chứa nó -->
+        <Style x:Key="IconPathStyle" TargetType="Path">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Stretch" Value="None" />
+            <Setter Property="Fill" Value="{x:Null}" />
+            <Setter Property="StrokeThickness" Value="1.75" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
+            <Setter Property="Stroke" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+        </Style>
+
+        <Style x:Key="IconBoxStyle" TargetType="Viewbox">
+            <Setter Property="Width" Value="17" />
+            <Setter Property="Height" Value="17" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!-- ============ Nút công cụ: nền trong suốt, hover phủ sáng nhẹ, đang chọn = nền xanh đặc ============ -->
+        <Style x:Key="ToolButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="True" />
+                            <Border x:Name="Overlay" CornerRadius="5" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Overlay" Property="Background" Value="{StaticResource PressedOverlayBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Nút tác vụ chính (Sao chép): nền xanh, icon + chữ -->
+        <Style x:Key="PrimaryActionButtonStyle" TargetType="Button" BasedOn="{StaticResource ToolButtonStyle}">
+            <Setter Property="Width" Value="NaN" />
+            <Setter Property="Padding" Value="10,0,12,0" />
+            <Setter Property="Margin" Value="2,0" />
             <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <!-- Nút tác vụ có chữ (Trích xuất chữ) -->
+        <Style x:Key="TextActionButtonStyle" TargetType="Button" BasedOn="{StaticResource ToolButtonStyle}">
+            <Setter Property="Width" Value="NaN" />
+            <Setter Property="Padding" Value="8,0" />
+            <Setter Property="Margin" Value="1,0" />
+        </Style>
+
+        <!-- Vạch ngăn nhóm -->
+        <Style x:Key="BarSeparatorH" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Margin" Value="6,5" />
+            <Setter Property="Background" Value="{StaticResource SeparatorBrush}" />
+        </Style>
+        <Style x:Key="BarSeparatorV" TargetType="Border">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="5,0" />
+            <Setter Property="Background" Value="{StaticResource SeparatorBrush}" />
+        </Style>
+
+        <!-- Khung thanh công cụ -->
+        <Style x:Key="BarBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BarBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BarBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Effect" Value="{StaticResource BarShadow}" />
+        </Style>
+
+        <!-- ============ Dropdown Hình khối / Đường kẻ ============ -->
+        <Style x:Key="ToolComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Padding" Value="8,6" />
-            <Setter Property="Margin" Value="1,1" />
+            <Setter Property="Margin" Value="0,1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBoxItem">
                         <Border x:Name="ItemBorder"
-                                CornerRadius="4"
+                                CornerRadius="5"
                                 Background="Transparent"
-                                BorderBrush="Transparent"
-                                BorderThickness="1"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -32,11 +165,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ItemBorder" Property="Background" Value="#33FFFFFF" />
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource HoverOverlayBrush}" />
+                                <Setter Property="Foreground" Value="White" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="ItemBorder" Property="Background" Value="#FF0078D4" />
-                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#40FFFFFF" />
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="White" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -44,90 +178,59 @@
             </Setter>
         </Style>
 
-        <!-- Template cho ShapeComboBox: Nút 32x30 hiển thị hình ▭ hoặc ◯ màu trắng tinh -->
-        <ControlTemplate x:Key="ShapeComboBoxTemplate" TargetType="ComboBox">
+        <!-- Template chung: nút 32×30 hiển thị icon của lựa chọn hiện tại + mũi tên nhỏ ở góc -->
+        <ControlTemplate x:Key="ToolDropdownTemplate" TargetType="ComboBox">
             <Grid Width="32" Height="30" HorizontalAlignment="Center">
                 <ToggleButton x:Name="ToggleButton"
                               Width="32"
                               Height="30"
-                              Style="{x:Null}"
                               Focusable="False"
+                              Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
                               IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                               ClickMode="Press"
-                              Cursor="Hand"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center">
+                              Cursor="Hand">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
-                            <Border x:Name="Border"
-                                    Width="32"
-                                    Height="30"
-                                    CornerRadius="4"
-                                    Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    SnapsToDevicePixels="True">
-                                <Grid Width="32" Height="30">
-                                    <!-- Biểu tượng chữ nhật / oval căn giữa, luôn có màu trắng tinh khiết -->
-                                    <TextBlock x:Name="Glyph"
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               Foreground="White"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="▭" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, RelativeSource={RelativeSource AncestorType=ComboBox}}" Value="1">
-                                                        <Setter Property="Text" Value="◯" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-
-                                    <!-- Dấu tam giác nhỏ màu trắng ở góc dưới bên phải -->
-                                    <Path HorizontalAlignment="Right"
-                                          VerticalAlignment="Bottom"
-                                          Margin="0,0,2.5,2.5"
-                                          Fill="#D0FFFFFF"
-                                          Data="M 0 0 L 4 0 L 2 3 Z" />
-                                </Grid>
-                            </Border>
+                            <Grid Width="32" Height="30">
+                                <Border CornerRadius="5"
+                                        Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                        SnapsToDevicePixels="True" />
+                                <Border x:Name="Overlay" CornerRadius="5" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
+                                <Viewbox Style="{StaticResource IconBoxStyle}">
+                                    <Path x:Name="Glyph"
+                                          Style="{StaticResource IconPathStyle}"
+                                          Data="{Binding Tag, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                </Viewbox>
+                                <Path HorizontalAlignment="Right"
+                                      VerticalAlignment="Bottom"
+                                      Margin="0,0,3,3"
+                                      Data="{StaticResource IconCaret}"
+                                      Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}"
+                                      Opacity="0.7" />
+                            </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ControlStrokeColorSecondaryBrush}" />
+                                    <Setter TargetName="Overlay" Property="Opacity" Value="1" />
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#FF0078D4" />
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="#FFFFFFFF" />
-                                    <Setter TargetName="Border" Property="BorderThickness" Value="1.5" />
+                                    <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                    <Setter TargetName="Overlay" Property="Background" Value="{StaticResource PressedOverlayBrush}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </ToggleButton.Template>
                 </ToggleButton>
 
-                <!-- Popup danh sách xổ xuống -->
                 <Popup x:Name="PART_Popup"
                        IsOpen="{TemplateBinding IsDropDownOpen}"
                        StaysOpen="False"
                        Placement="Right"
+                       HorizontalOffset="6"
                        AllowsTransparency="True"
                        Focusable="False"
-                       PopupAnimation="Slide">
-                    <Border Background="#F01E1E1E"
-                            BorderBrush="#40FFFFFF"
-                            BorderThickness="1"
-                            CornerRadius="6"
-                            Padding="3"
-                            MinWidth="150"
-                            Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
-                        <ScrollViewer SnapsToDevicePixels="True">
-                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                        </ScrollViewer>
+                       PopupAnimation="Fade">
+                    <Border Style="{StaticResource BarBorderStyle}" Padding="4" MinWidth="160" Margin="0,0,12,12">
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
             </Grid>
@@ -138,156 +241,140 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <!-- Template cho LineComboBox: Nút 32x30 hiển thị đường ↗ hoặc ― màu trắng tinh -->
-        <ControlTemplate x:Key="LineComboBoxTemplate" TargetType="ComboBox">
-            <Grid Width="32" Height="30" HorizontalAlignment="Center">
-                <ToggleButton x:Name="ToggleButton"
-                              Width="32"
-                              Height="30"
-                              Style="{x:Null}"
-                              Focusable="False"
-                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                              ClickMode="Press"
-                              Cursor="Hand"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center">
-                    <ToggleButton.Template>
-                        <ControlTemplate TargetType="ToggleButton">
-                            <Border x:Name="Border"
-                                    Width="32"
-                                    Height="30"
-                                    CornerRadius="4"
-                                    Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                    SnapsToDevicePixels="True">
-                                <Grid Width="32" Height="30">
-                                    <!-- Biểu tượng mũi tên / đường thẳng căn giữa, luôn có màu trắng tinh khiết -->
-                                    <TextBlock x:Name="Glyph"
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               Foreground="White"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="↗" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, RelativeSource={RelativeSource AncestorType=ComboBox}}" Value="1">
-                                                        <Setter Property="Text" Value="―" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+        <Style x:Key="ToolDropdownStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
+            <Setter Property="Template" Value="{StaticResource ToolDropdownTemplate}" />
+        </Style>
 
-                                    <!-- Dấu tam giác nhỏ màu trắng ở góc dưới bên phải -->
-                                    <Path HorizontalAlignment="Right"
-                                          VerticalAlignment="Bottom"
-                                          Margin="0,0,2.5,2.5"
-                                          Fill="#D0FFFFFF"
-                                          Data="M 0 0 L 4 0 L 2 3 Z" />
-                                </Grid>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ControlStrokeColorSecondaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#FF0078D4" />
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="#FFFFFFFF" />
-                                    <Setter TargetName="Border" Property="BorderThickness" Value="1.5" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </ToggleButton.Template>
-                </ToggleButton>
-
-                <!-- Popup danh sách xổ xuống -->
-                <Popup x:Name="PART_Popup"
-                       IsOpen="{TemplateBinding IsDropDownOpen}"
-                       StaysOpen="False"
-                       Placement="Right"
-                       AllowsTransparency="True"
-                       Focusable="False"
-                       PopupAnimation="Slide">
-                    <Border Background="#F01E1E1E"
-                            BorderBrush="#40FFFFFF"
-                            BorderThickness="1"
-                            CornerRadius="6"
-                            Padding="3"
-                            MinWidth="150"
-                            Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
-                        <ScrollViewer SnapsToDevicePixels="True">
-                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                        </ScrollViewer>
-                    </Border>
-                </Popup>
-            </Grid>
-            <ControlTemplate.Triggers>
-                <Trigger Property="HasItems" Value="False">
-                    <Setter TargetName="PART_Popup" Property="Visibility" Value="Collapsed" />
+        <!-- Icon trong nút dropdown đổi theo lựa chọn (Tag mang Geometry của icon) -->
+        <Style x:Key="ShapeComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ToolDropdownStyle}">
+            <Setter Property="Tag" Value="{StaticResource IconRect}" />
+            <Style.Triggers>
+                <Trigger Property="SelectedIndex" Value="1">
+                    <Setter Property="Tag" Value="{StaticResource IconEllipse}" />
                 </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-
-        <Style x:Key="ShapeComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Width" Value="32" />
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Margin" Value="0,1.5" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
-            <Setter Property="Template" Value="{StaticResource ShapeComboBoxTemplate}" />
+            </Style.Triggers>
         </Style>
 
-        <Style x:Key="LineComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Width" Value="32" />
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Margin" Value="0,1.5" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
-            <Setter Property="Template" Value="{StaticResource LineComboBoxTemplate}" />
+        <Style x:Key="LineComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ToolDropdownStyle}">
+            <Setter Property="Tag" Value="{StaticResource IconArrow}" />
+            <Style.Triggers>
+                <Trigger Property="SelectedIndex" Value="1">
+                    <Setter Property="Tag" Value="{StaticResource IconLine}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <!-- Style cho các nút chọn màu: Đồng bộ kích thước 32x26, bo góc 4px viền chuẩn nét khi chọn -->
+        <!-- ============ Ô chọn dạng thanh (Beautify): nền tối, chữ + mũi tên xổ xuống ============ -->
+        <Style x:Key="BarComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="MinWidth" Value="104" />
+            <Setter Property="Padding" Value="10,0,8,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
+            <Setter Property="Background" Value="#0FFFFFFF" />
+            <Setter Property="BorderBrush" Value="{StaticResource BarBorderBrush}" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Focusable="False"
+                                          ClickMode="Press"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Border CornerRadius="5"
+                                                    Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                    BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                    BorderThickness="1"
+                                                    SnapsToDevicePixels="True" />
+                                            <Border x:Name="Overlay" CornerRadius="5" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <DockPanel Margin="{TemplateBinding Padding}" IsHitTestVisible="False">
+                                <Path DockPanel.Dock="Right"
+                                      Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Data="M0,0 L4,4 L8,0"
+                                      Stroke="{TemplateBinding Foreground}"
+                                      StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round" />
+                                <ContentPresenter VerticalAlignment="Center"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" />
+                            </DockPanel>
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   StaysOpen="False"
+                                   Placement="Top"
+                                   VerticalOffset="-6"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade">
+                                <Border Style="{StaticResource BarBorderStyle}" Padding="4" Margin="12,12,12,0"
+                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============ Nút chọn màu: chấm tròn, màu đang chọn có vòng trắng ============ -->
         <Style x:Key="ColorButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32" />
             <Setter Property="Height" Value="26" />
-            <Setter Property="Margin" Value="0,1.5" />
+            <Setter Property="Margin" Value="0,1" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1.5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Border"
-                                Width="32"
-                                Height="26"
-                                CornerRadius="4"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                SnapsToDevicePixels="True">
+                        <Grid Width="32" Height="26">
+                            <Border x:Name="Overlay" CornerRadius="5" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
+                            <Border Width="22" Height="22"
+                                    CornerRadius="11"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="True" />
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#33FFFFFF" />
+                                <Setter TargetName="Overlay" Property="Opacity" Value="1" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -295,23 +382,21 @@
             </Setter>
         </Style>
 
-        <!-- Style cho các nút tăng/giảm cỡ số và cỡ chữ (+ / -): Thiết kế nhỏ gọn, hiện đại chuẩn Fluent -->
+        <!-- ============ Nút tăng/giảm cỡ số & cỡ chữ ============ -->
         <Style x:Key="SpinButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="22" />
+            <Setter Property="Width" Value="24" />
             <Setter Property="Height" Value="26" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="#25FFFFFF" />
-            <Setter Property="BorderBrush" Value="#40FFFFFF" />
+            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
+            <Setter Property="Background" Value="#14FFFFFF" />
+            <Setter Property="BorderBrush" Value="{StaticResource BarBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="SpinBorder"
-                                CornerRadius="4"
+                                CornerRadius="5"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -320,12 +405,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="SpinBorder" Property="Background" Value="#40FFFFFF" />
-                                <Setter TargetName="SpinBorder" Property="BorderBrush" Value="#80FFFFFF" />
+                                <Setter TargetName="SpinBorder" Property="Background" Value="#2EFFFFFF" />
+                                <Setter Property="Foreground" Value="White" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="SpinBorder" Property="Background" Value="#FF0078D4" />
-                                <Setter TargetName="SpinBorder" Property="BorderBrush" Value="#FFFFFFFF" />
+                                <Setter TargetName="SpinBorder" Property="Background" Value="{StaticResource AccentBrush}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="SpinBorder" Property="Opacity" Value="0.4" />
@@ -335,110 +419,98 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="FlyoutLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#9AA0A6" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="4,0,6,0" />
+        </Style>
     </UserControl.Resources>
 
-    <!-- Canvas chứa 2 thanh công cụ tách biệt chuẩn phong cách Lightshot (Thanh dọc vẽ + Thanh ngang tác vụ) -->
+    <!-- Canvas chứa 2 thanh công cụ (thanh dọc: công cụ vẽ · thanh ngang: tác vụ) -->
     <Canvas x:Name="ToolbarCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-        <!-- 1. THANH DỌC CÔNG CỤ VẼ & CHÚ THÍCH (Vertical Drawing Toolbar - Cạnh phải vùng chọn) -->
+        <!-- 1. THANH DỌC CÔNG CỤ VẼ & CHÚ THÍCH -->
         <Border x:Name="VerticalBar"
                 Width="42"
-                Background="#F01E1E1E"
-                BorderBrush="#40FFFFFF"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="4,6"
-                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                Padding="4,4"
+                Style="{StaticResource BarBorderStyle}">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                <!-- Tay cầm kéo di chuyển thanh công cụ tự do (Drag Grip) -->
+                <!-- Tay cầm kéo di chuyển thanh công cụ -->
                 <Border x:Name="DragGrip"
                         Width="32"
                         Height="14"
                         Cursor="SizeAll"
                         Background="Transparent"
-                        Padding="0,1,0,3"
                         HorizontalAlignment="Center"
                         ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
                         MouseLeftButtonDown="OnDragGripMouseDown"
                         MouseMove="OnDragGripMouseMove"
                         MouseLeftButtonUp="OnDragGripMouseUp">
-                    <TextBlock Text="⋮⋮"
-                                FontSize="12"
-                                FontWeight="Bold"
-                                Foreground="#80FFFFFF"
-                                HorizontalAlignment="Center" />
+                    <Viewbox Width="18" Height="12" TextElement.Foreground="#66FFFFFF">
+                        <Path Style="{StaticResource IconPathStyle}" StrokeThickness="2.6" Data="{StaticResource IconGrip}" />
+                    </Viewbox>
                 </Border>
 
-                <!-- Nút Chọn & Di chuyển (Select) -->
-                <Button x:Name="SelectButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Chọn &amp; di chuyển hình vẽ (Click chuột phải để di chuyển khung chụp)"
+                <Button x:Name="SelectButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Chọn &amp; di chuyển hình vẽ (V) — Chuột phải để di chuyển khung chụp"
                         Click="OnSelectClick">
-                    <TextBlock Text="👆" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSelect}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Bút chì (Pencil) -->
-                <Button x:Name="PencilButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
+                <Button x:Name="PencilButton" Width="32" Style="{StaticResource ToolButtonStyle}"
                         ToolTip="Bút vẽ tự do (P)"
                         Click="OnPencilClick">
-                    <TextBlock Text="✏️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPencil}" /></Viewbox>
                 </Button>
 
-                <!-- Ô thả xuống Hình khối: Hiển thị biểu tượng ▭ / ◯ rõ ràng -->
+                <!-- Dropdown Hình khối: Chữ nhật / Oval (chuột phải để đổi) -->
                 <ComboBox x:Name="ShapeComboBox"
                           Width="32"
                           Height="30"
                           Style="{StaticResource ShapeComboBoxStyle}"
-                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O) - Chuột phải để đổi hình"
+                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O) — Chuột phải để đổi hình"
                           PreviewMouseDown="OnShapeComboBoxPreviewMouseDown"
                           SelectionChanged="OnShapeComboBoxSelectionChanged"
                           DropDownOpened="OnShapeComboBoxDropDownOpened">
                     <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)"
                                   PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="▭" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Text="Chữ nhật (R)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
+                            <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRect}" /></Viewbox>
+                            <TextBlock Text="Chữ nhật (R)" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem Tag="Ellipse" ToolTip="Hình tròn / Oval (O)"
                                   PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="◯" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Text="Oval / Tròn (O)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
+                            <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconEllipse}" /></Viewbox>
+                            <TextBlock Text="Oval / Tròn (O)" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                 </ComboBox>
 
-                <!-- Ô thả xuống Đường kẻ: Hiển thị biểu tượng ↗ / ― rõ ràng -->
+                <!-- Dropdown Đường kẻ: Mũi tên / Đường thẳng (chuột phải để đổi) -->
                 <ComboBox x:Name="LineComboBox"
                           Width="32"
                           Height="30"
                           Style="{StaticResource LineComboBoxStyle}"
-                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L) - Chuột phải để đổi đường kẻ"
+                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L) — Chuột phải để đổi đường kẻ"
                           PreviewMouseDown="OnLineComboBoxPreviewMouseDown"
                           SelectionChanged="OnLineComboBoxSelectionChanged"
                           DropDownOpened="OnLineComboBoxDropDownOpened">
                     <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)"
                                   PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="↗" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Text="Mũi tên (A)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
+                            <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconArrow}" /></Viewbox>
+                            <TextBlock Text="Mũi tên (A)" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem Tag="Line" ToolTip="Đường thẳng (L)"
                                   PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="―" FontSize="14" FontWeight="Bold" Foreground="White" Width="22" TextAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Text="Đường thẳng (L)" FontSize="12" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center" />
+                            <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconLine}" /></Viewbox>
+                            <TextBlock Text="Đường thẳng (L)" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                 </ComboBox>
@@ -449,163 +521,109 @@
                 <Button x:Name="LineButton" Visibility="Collapsed" Click="OnLineClick" />
                 <Button x:Name="ArrowButton" Visibility="Collapsed" Click="OnArrowClick" />
 
-                <!-- Nút Bút dạ quang (Highlight) -->
-                <Button x:Name="HighlightButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Bút dạ quang highlight (H)"
+                <Button x:Name="HighlightButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Bút dạ quang (H)"
                         Click="OnHighlightClick">
-                    <TextBlock Text="🖍️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconHighlighter}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Chèn văn bản (Text) -->
-                <Button x:Name="TextButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Chèn chữ văn bản (T)"
+                <Button x:Name="TextButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Chèn chữ (T)"
                         Click="OnTextClick">
-                    <TextBlock Text="T" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconText}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Khảm ô vuông (Pixelate / Mosaic) -->
-                <Button x:Name="PixelateButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
-                        Click="OnPixelateClick">
-                    <TextBlock Text="🧊" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Button>
-
-                <!-- Nút Làm mờ (Blur) -->
-                <Button x:Name="BlurButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Làm mờ che thông tin nhạy cảm (Blur)"
-                        Click="OnBlurClick">
-                    <TextBlock Text="🌫️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Button>
-
-                <!-- Nút Đánh số bước tự động (Step Counter) -->
-                <Button x:Name="StepCounterButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
+                <Button x:Name="StepCounterButton" Width="32" Style="{StaticResource ToolButtonStyle}"
                         ToolTip="Đánh số bước tự động (N)"
                         Click="OnStepCounterClick">
-                    <TextBlock Text="①" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" /></Viewbox>
                 </Button>
 
-                <!-- Nhóm công cụ chọn màu & lịch sử màu (Chỉ hiển thị khi đang bật công cụ vẽ dùng màu, ẩn khi cắt/kéo/none) -->
-                <StackPanel x:Name="ColorPalettePanel" Orientation="Vertical" HorizontalAlignment="Center" Visibility="Collapsed">
-                    <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button x:Name="PixelateButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
+                        Click="OnPixelateClick">
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPixelate}" /></Viewbox>
+                </Button>
 
-                    <!-- Nút Cây bút hút màu (Eyedropper) -->
-                    <Button x:Name="EyedropperButton"
-                            Width="32"
-                            Height="30"
-                            Margin="0,1.5"
-                            Padding="0"
-                            HorizontalAlignment="Center"
-                            ToolTip="Cây bút hút màu màn hình (I)"
+                <Button x:Name="BlurButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Làm mờ che thông tin nhạy cảm"
+                        Click="OnBlurClick">
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconBlur}" /></Viewbox>
+                </Button>
+
+                <!-- Nhóm màu & hút màu (chỉ hiện khi công cụ đang dùng màu) -->
+                <StackPanel x:Name="ColorPalettePanel" Orientation="Vertical" HorizontalAlignment="Center" Visibility="Collapsed">
+                    <Border Style="{StaticResource BarSeparatorH}" />
+
+                    <Button x:Name="EyedropperButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                            ToolTip="Hút màu trên màn hình (I)"
                             Click="OnEyedropperClick">
-                        <TextBlock Text="💉" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconDropper}" /></Viewbox>
                     </Button>
 
-                    <Separator Margin="2,3" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-                    <!-- Bảng màu mặc định (xếp dọc 1 cột đồng bộ kích thước chuẩn 32x26) -->
                     <Button x:Name="ColorRedButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu đỏ" Click="OnColorSelect" Tag="#FFE81123">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFE81123" />
+                        <Ellipse Width="14" Height="14" Fill="#FFE81123" />
                     </Button>
                     <Button x:Name="ColorYellowButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu vàng" Click="OnColorSelect" Tag="#FFFFB900">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFB900" />
+                        <Ellipse Width="14" Height="14" Fill="#FFFFB900" />
                     </Button>
                     <Button x:Name="ColorGreenButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh lá" Click="OnColorSelect" Tag="#FF107C41">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#FF107C41" />
+                        <Ellipse Width="14" Height="14" Fill="#FF107C41" />
                     </Button>
                     <Button x:Name="ColorBlueButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh dương" Click="OnColorSelect" Tag="#FF0078D4">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#FF0078D4" />
+                        <Ellipse Width="14" Height="14" Fill="#FF0078D4" />
                     </Button>
                     <Button x:Name="ColorWhiteButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu trắng" Click="OnColorSelect" Tag="#FFFFFFFF">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#FFFFFFFF" />
+                        <Ellipse Width="14" Height="14" Fill="#FFFFFFFF" />
                     </Button>
 
-                    <!-- Lịch sử các màu đã chọn/hút gần đây (Color History) -->
+                    <!-- Lịch sử màu gần đây -->
                     <StackPanel x:Name="HistoryColorsPanel" Orientation="Vertical" Margin="0,2" HorizontalAlignment="Center" />
                 </StackPanel>
 
-                <Separator Margin="2,4" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Border Style="{StaticResource BarSeparatorH}" />
 
-                <!-- Nút Hoàn tác (Undo) -->
-                <Button x:Name="UndoButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Hoàn tác nét vẽ (Ctrl + Z)"
+                <Button x:Name="UndoButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Hoàn tác (Ctrl + Z)"
                         Click="OnUndoClick">
-                    <TextBlock Text="↩" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconUndo}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Làm lại (Redo) -->
-                <Button x:Name="RedoButton"
-                        Width="32"
-                        Height="30"
-                        Margin="0,1.5"
-                        Padding="0"
-                        HorizontalAlignment="Center"
-                        ToolTip="Làm lại nét vẽ (Ctrl + Y)"
+                <Button x:Name="RedoButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Làm lại (Ctrl + Y)"
                         Click="OnRedoClick">
-                    <TextBlock Text="↪" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRedo}" /></Viewbox>
                 </Button>
             </StackPanel>
         </Border>
 
-        <!-- 2. THANH PHỤ TUỲ CHỌN NỔI (Secondary Flyout: Kích thước số bước & Cỡ chữ khi kích hoạt) -->
+        <!-- 2. FLYOUT TUỲ CHỌN (cỡ số bước / phông & cỡ chữ) -->
         <Border x:Name="FlyoutOptionsPanel"
                 Visibility="Collapsed"
-                Background="#F01E1E1E"
-                BorderBrush="#40FFFFFF"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="6,4"
-                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                Padding="6,5"
+                Style="{StaticResource BarBorderStyle}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Bảng tùy chọn kích thước đánh số bước (Step Counter Size: Nhập số, Tăng/Giảm + / -, Gợi ý dropdown) -->
+                <!-- Cỡ số bước -->
                 <StackPanel x:Name="StepSizeControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
-                    <TextBlock Text="Cỡ số:" FontSize="12" VerticalAlignment="Center" Margin="2,0,5,0" Foreground="#CCCCCC" ToolTip="Kích thước ô đánh số bước (Cuộn chuột để tăng/giảm)" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,0,0" TextElement.Foreground="#9AA0A6">
+                        <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" />
+                    </Viewbox>
+                    <TextBlock Text="Cỡ số" Style="{StaticResource FlyoutLabelStyle}" ToolTip="Kích thước ô đánh số bước (Cuộn chuột để tăng/giảm)" />
 
-                    <!-- Nút giảm cỡ số bước [-] -->
                     <Button x:Name="StepSizeDecreaseButton"
                             Style="{StaticResource SpinButtonStyle}"
                             Content="−"
                             FontSize="13"
-                            FontWeight="Bold"
+                            FontWeight="SemiBold"
                             ToolTip="Giảm cỡ số bước (Cuộn chuột xuống)"
                             Click="OnStepSizeDecreaseClick" />
 
-                    <!-- Ô nhập cỡ số bước kết hợp dropdown các mức gợi ý -->
                     <ComboBox x:Name="StepSizeComboBox"
                               IsEditable="True"
                               Width="60"
                               Height="26"
                               MaxDropDownHeight="180"
-                              Margin="2,0"
+                              Margin="3,0"
                               Padding="4,2"
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
@@ -618,21 +636,23 @@
                         <ComboBoxItem Content="24" Tag="24" TextSearch.Text="24" ToolTip="Rất lớn (24)" />
                     </ComboBox>
 
-                    <!-- Nút tăng cỡ số bước [+] -->
                     <Button x:Name="StepSizeIncreaseButton"
                             Style="{StaticResource SpinButtonStyle}"
                             Content="+"
                             FontSize="13"
-                            FontWeight="Bold"
+                            FontWeight="SemiBold"
                             ToolTip="Tăng cỡ số bước (Cuộn chuột lên)"
                             Click="OnStepSizeIncreaseClick" />
                 </StackPanel>
 
-                <!-- Bảng tùy chọn Phông chữ & Cỡ chữ khi kích hoạt Text -->
+                <!-- Phông & cỡ chữ -->
                 <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
-                    <TextBlock Text="🔤" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0" ToolTip="Tùy chọn phông chữ và cỡ chữ" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,6,0" TextElement.Foreground="#9AA0A6"
+                             ToolTip="Tùy chọn phông chữ và cỡ chữ">
+                        <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconFont}" />
+                    </Viewbox>
                     <ComboBox x:Name="FontFamilyComboBox"
-                              Width="105"
+                              Width="112"
                               Height="26"
                               MaxDropDownHeight="180"
                               Margin="2,0"
@@ -650,23 +670,21 @@
                         <ComboBoxItem Content="Courier New" />
                     </ComboBox>
 
-                    <!-- Nút giảm cỡ chữ [-] -->
                     <Button x:Name="FontSizeDecreaseButton"
                             Style="{StaticResource SpinButtonStyle}"
                             Content="−"
                             FontSize="13"
-                            FontWeight="Bold"
-                            Margin="4,0,0,0"
+                            FontWeight="SemiBold"
+                            Margin="6,0,0,0"
                             ToolTip="Giảm cỡ chữ (Cuộn chuột xuống)"
                             Click="OnFontSizeDecreaseClick" />
 
-                    <!-- Ô nhập cỡ chữ kết hợp dropdown các mức gợi ý -->
                     <ComboBox x:Name="FontSizeComboBox"
                               IsEditable="True"
                               Width="56"
                               Height="26"
                               MaxDropDownHeight="180"
-                              Margin="2,0"
+                              Margin="3,0"
                               Padding="4,2"
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
@@ -685,93 +703,78 @@
                         <ComboBoxItem Content="48" />
                     </ComboBox>
 
-                    <!-- Nút tăng cỡ chữ [+] -->
                     <Button x:Name="FontSizeIncreaseButton"
                             Style="{StaticResource SpinButtonStyle}"
                             Content="+"
                             FontSize="13"
-                            FontWeight="Bold"
+                            FontWeight="SemiBold"
                             ToolTip="Tăng cỡ chữ (Cuộn chuột lên)"
                             Click="OnFontSizeIncreaseClick" />
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <!-- 3. THANH NGANG TÁC VỤ KẾT QUẢ (Horizontal Action Toolbar - Cạnh dưới bên phải vùng chọn) -->
+        <!-- 3. THANH NGANG TÁC VỤ -->
         <Border x:Name="HorizontalBar"
-                Background="#F01E1E1E"
-                BorderBrush="#40FFFFFF"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="6,4"
-                Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                Padding="4"
+                Style="{StaticResource BarBorderStyle}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Nút Ghim lên màn hình (Pin to Screen) -->
-                <Button x:Name="PinButton"
-                        ToolTip="Ghim ảnh nổi trên màn hình (Pin)"
-                        Margin="2,0"
-                        Padding="6,4"
+                <Button x:Name="PinButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Ghim ảnh nổi trên màn hình"
                         Click="OnPinClick">
-                    <TextBlock Text="📌" FontSize="13" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPin}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Trích xuất chữ tức thì (Text Extraction) -->
-                <Button x:Name="OcrButton"
+                <!-- Trích xuất chữ: giữ nhãn chữ thân thiện theo yêu cầu UX -->
+                <Button x:Name="OcrButton" Style="{StaticResource TextActionButtonStyle}"
                         ToolTip="Trích xuất chữ từ ảnh vào Clipboard (Ctrl + O)"
-                        Margin="2,0"
-                        Padding="8,4"
                         Click="OnOcrClick">
-                    <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="11" />
+                    <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center" />
                 </Button>
 
-                <!-- Tùy chọn Làm đẹp ảnh (Beautify: Padding, Shadow & Gradient) -->
+                <Border Style="{StaticResource BarSeparatorV}" />
+
+                <!-- Làm đẹp ảnh -->
+                <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,2,0" TextElement.Foreground="#9AA0A6"
+                         ToolTip="Làm đẹp ảnh: đổ bóng, bo góc &amp; nền gradient">
+                    <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSparkle}" />
+                </Viewbox>
                 <ComboBox x:Name="BeautifyComboBox"
-                          ToolTip="Làm đẹp ảnh: Đổ bóng, bo góc &amp; nền Gradient"
+                          Style="{StaticResource BarComboBoxStyle}"
+                          ToolTip="Làm đẹp ảnh: đổ bóng, bo góc &amp; nền gradient"
                           Margin="2,0"
-                          Height="28"
-                          MaxDropDownHeight="240"
-                          Padding="6,2"
-                          VerticalContentAlignment="Center"
                           SelectionChanged="OnBeautifySelectionChanged">
-                    <ComboBoxItem Content="✨ Gốc" Tag="None" IsSelected="True" />
-                    <ComboBoxItem Content="🌅 Sunset" Tag="Sunset" />
-                    <ComboBoxItem Content="🌊 Ocean" Tag="Ocean" />
-                    <ComboBoxItem Content="🔮 Purple" Tag="Purple" />
-                    <ComboBoxItem Content="🌑 Dark Slate" Tag="DarkSlate" />
+                    <ComboBoxItem Content="Gốc" Tag="None" IsSelected="True" />
+                    <ComboBoxItem Content="Sunset" Tag="Sunset" />
+                    <ComboBoxItem Content="Ocean" Tag="Ocean" />
+                    <ComboBoxItem Content="Purple" Tag="Purple" />
+                    <ComboBoxItem Content="Dark Slate" Tag="DarkSlate" />
                 </ComboBox>
 
                 <!-- Nút ẩn BeautifyButton phục vụ API và kiểm thử -->
                 <Button x:Name="BeautifyButton" Visibility="Collapsed" Click="OnBeautifyButtonClick" />
 
-                <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Border Style="{StaticResource BarSeparatorV}" />
 
-                <!-- Nút Copy vào Clipboard -->
-                <Button x:Name="CopyButton"
-                        ToolTip="Sao chép vào Clipboard (Enter)"
-                        Background="#FF0078D4"
-                        Foreground="White"
-                        Margin="2,0"
-                        Padding="8,4"
-                        Click="OnCopyClick">
-                    <TextBlock Text="Sao chép" FontWeight="SemiBold" FontSize="12" />
-                </Button>
-
-                <!-- Nút Lưu file ảnh -->
-                <Button x:Name="SaveButton"
-                        ToolTip="Lưu file ảnh PNG (Ctrl + S)"
-                        Margin="2,0"
-                        Padding="8,4"
+                <Button x:Name="SaveButton" Width="32" Style="{StaticResource ToolButtonStyle}"
+                        ToolTip="Lưu file PNG (Ctrl + S)"
                         Click="OnSaveClick">
-                    <TextBlock Text="Lưu" FontSize="12" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSave}" /></Viewbox>
                 </Button>
 
-                <!-- Nút Hủy / Đóng -->
-                <Button x:Name="CloseButton"
+                <Button x:Name="CopyButton" Style="{StaticResource PrimaryActionButtonStyle}"
+                        ToolTip="Sao chép vào Clipboard (Enter)"
+                        Click="OnCopyClick">
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconCopy}" /></Viewbox>
+                        <TextBlock Text="Sao chép" FontWeight="SemiBold" FontSize="12" Margin="7,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="CloseButton" Width="32" Style="{StaticResource ToolButtonStyle}"
                         ToolTip="Đóng (Esc)"
-                        Margin="2,0"
-                        Padding="6,4"
                         Click="OnCloseClick">
-                    <TextBlock Text="✕" FontSize="12" />
+                    <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconClose}" /></Viewbox>
                 </Button>
             </StackPanel>
         </Border>
