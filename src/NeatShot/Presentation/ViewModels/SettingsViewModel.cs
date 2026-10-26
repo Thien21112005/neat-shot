@@ -49,6 +49,15 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private bool _autoCopyOnCapture;
 
+    /// <summary>
+    /// Giao diện: "system" / "light" / "dark" (xem <see cref="AppTheme"/>). Cửa sổ Cài đặt đổi màu ngay khi chọn.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSystemTheme))]
+    [NotifyPropertyChangedFor(nameof(IsLightTheme))]
+    [NotifyPropertyChangedFor(nameof(IsDarkTheme))]
+    private string _theme = AppTheme.System;
+
     [ObservableProperty]
     private string? _statusMessage;
 
@@ -67,6 +76,25 @@ public partial class SettingsViewModel : ObservableObject
     {
         get => ImageFormat != "jpg";
         set => ImageFormat = value ? "png" : "jpg";
+    }
+
+    // Ba lựa chọn dạng RadioButton: chỉ đổi khi một nút được chọn (bỏ qua sự kiện bỏ chọn của nút cũ)
+    public bool IsSystemTheme
+    {
+        get => Theme is not (AppTheme.Light or AppTheme.Dark);
+        set { if (value) Theme = AppTheme.System; }
+    }
+
+    public bool IsLightTheme
+    {
+        get => Theme == AppTheme.Light;
+        set { if (value) Theme = AppTheme.Light; }
+    }
+
+    public bool IsDarkTheme
+    {
+        get => Theme == AppTheme.Dark;
+        set { if (value) Theme = AppTheme.Dark; }
     }
 
     public SettingsViewModel(
@@ -106,6 +134,7 @@ public partial class SettingsViewModel : ObservableObject
         JpegQuality = Math.Clamp(settings.JpegQuality, 1, 100);
         LaunchAtStartup = SafeIsStartupEnabled();
         AutoCopyOnCapture = settings.AutoCopyOnCapture;
+        Theme = settings.Theme is AppTheme.Light or AppTheme.Dark ? settings.Theme : AppTheme.System;
     }
 
     private HotkeyGesture ActiveOrSaved(HotkeyAction action, AppSettings settings)
@@ -196,6 +225,7 @@ public partial class SettingsViewModel : ObservableObject
         settings.ImageFormat = ImageFormat;
         settings.JpegQuality = Math.Clamp(JpegQuality, 1, 100);
         settings.AutoCopyOnCapture = AutoCopyOnCapture;
+        settings.Theme = Theme;
         settings.LaunchAtStartup = LaunchAtStartup;
         ApplyStartup();
 

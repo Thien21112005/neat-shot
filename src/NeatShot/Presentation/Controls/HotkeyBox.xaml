@@ -6,11 +6,11 @@
              Cursor="Hand"
              MinWidth="190"
              Height="34">
-    <!-- Ô gán phím tắt: bấm vào rồi nhấn tổ hợp phím mới; Esc để huỷ -->
+    <!-- Ô gán phím tắt: bấm vào rồi nhấn tổ hợp phím mới; Esc để huỷ. Màu theo bảng màu sáng/tối của cửa sổ chứa. -->
     <Border x:Name="Frame"
             CornerRadius="6"
-            Background="#0E0F12"
-            BorderBrush="#29FFFFFF"
+            Background="{DynamicResource StInputBg}"
+            BorderBrush="{DynamicResource StControlBorder}"
             BorderThickness="1"
             Padding="10,0">
         <Grid>
@@ -20,17 +20,17 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="DisplayText"
                        VerticalAlignment="Center"
-                       FontFamily="Consolas"
+                       FontFamily="Cascadia Mono, Consolas"
                        FontSize="12.5"
                        FontWeight="SemiBold"
-                       Foreground="#E8EAED"
+                       Foreground="{DynamicResource StText}"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock x:Name="EditHint"
                        Grid.Column="1"
                        Margin="10,0,0,0"
                        VerticalAlignment="Center"
-                       FontSize="11"
-                       Foreground="#7D838B"
+                       FontSize="11.5"
+                       Foreground="{DynamicResource StMuted}"
                        Text="Bấm để đổi" />
         </Grid>
     </Border>
