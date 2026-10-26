@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifest gói MSIX của NeatShot cho Microsoft Store.
+  Identity/Publisher phải khớp đúng mục Product identity trong Partner Center.
+  $(Version) được scripts/package-msix.ps1 thay bằng <Version> trong NeatShot.csproj (dạng x.y.z.0).
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap desktop rescap">
+
+  <Identity
+    Name="NguynNgcThin.NeatShot"
+    Publisher="CN=D3D8DD28-934A-4BF3-A370-B46154D78B04"
+    Version="$(Version)"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>NeatShot</DisplayName>
+    <PublisherDisplayName>Nguyễn Ngọc Thiện</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Chụp màn hình nhanh, chú thích, ghim ảnh lên màn hình và trích xuất chữ (OCR) ngay trên máy.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="vi-VN" />
+  </Resources>
+
+  <Applications>
+    <Application Id="NeatShot" Executable="NeatShot.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="NeatShot"
+        Description="Chụp màn hình, chú thích, ghim ảnh và trích xuất chữ."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\Square71x71Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- Chạy nền ở khay hệ thống khi đăng nhập Windows. App tự bật ở lần mở đầu tiên;
+             người dùng tắt được trong menu khay, Cài đặt của NeatShot hoặc Settings → Apps → Startup. -->
+        <desktop:Extension Category="windows.startupTask" Executable="NeatShot.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="NeatShotStartup" Enabled="false" DisplayName="NeatShot" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- App desktop (WPF) cần quyền full trust để chụp màn hình, đăng ký phím tắt toàn cục và icon khay -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
