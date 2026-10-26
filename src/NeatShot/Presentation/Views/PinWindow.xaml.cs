@@ -4,6 +4,7 @@ using NeatShot.Presentation.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -54,6 +55,17 @@ public partial class PinWindow : Window
         {
             DrawingControl.Undo();
         };
+
+        AnnotationToolbar.RedoRequested += (s, e) => DrawingControl.Redo();
+
+        // Popup của thanh vẽ mở/đóng theo Visibility của thanh và luôn bám theo ảnh ghim khi kéo / phóng to
+        AnnotationPopup.CustomPopupPlacementCallback = PlaceAnnotationToolbar;
+        DependencyPropertyDescriptor.FromProperty(VisibilityProperty, typeof(UIElement))
+            .AddValueChanged(AnnotationToolbar, (s, e) => SyncAnnotationPopup());
+        IsVisibleChanged += (s, e) => SyncAnnotationPopup();
+        LocationChanged += (s, e) => RepositionAnnotationPopup();
+        SizeChanged += (s, e) => RepositionAnnotationPopup();
+        Closed += (s, e) => AnnotationPopup.IsOpen = false;
 
         AnnotationToolbar.CloseRequested += (s, e) =>
         {
@@ -256,6 +268,27 @@ public partial class PinWindow : Window
             return true;
         }
 
+        if (modifiers.HasFlag(ModifierKeys.Control) &&
+            (key == Key.Y || (key == Key.Z && modifiers.HasFlag(ModifierKeys.Shift))))
+        {
+            DrawingControl.Redo();
+            return true;
+        }
+
+        if (key == Key.Z && modifiers.HasFlag(ModifierKeys.Control))
+        {
+            DrawingControl.Undo();
+            return true;
+        }
+
+        // Phím chữ chọn công cụ (giống màn hình chụp) — chỉ khi thanh vẽ đang mở
+        if (modifiers == ModifierKeys.None && AnnotationToolbar.Visibility == Visibility.Visible &&
+            ToolForKey(key) is { } tool)
+        {
+            AnnotationToolbar.SelectTool(tool);
+            return true;
+        }
+
         if (key == Key.D0 && modifiers.HasFlag(ModifierKeys.Control))
         {
             ViewModel.ResetZoom();
@@ -275,6 +308,53 @@ public partial class PinWindow : Window
         }
 
         return false;
+    }
+
+    private static DrawingToolType? ToolForKey(Key key) => key switch
+    {
+        Key.V => DrawingToolType.Select,
+        Key.H => DrawingToolType.Highlight,
+        Key.R => DrawingToolType.Rectangle,
+        Key.E => DrawingToolType.Ellipse,
+        Key.L => DrawingToolType.Line,
+        Key.A => DrawingToolType.Arrow,
+        Key.T => DrawingToolType.Text,
+        Key.N => DrawingToolType.StepCounter,
+        Key.X => DrawingToolType.Pixelate,
+        Key.B => DrawingToolType.Blur,
+        _ => null
+    };
+
+    /// <summary>
+    /// Mở/đóng Popup của thanh vẽ theo Visibility của thanh (chỉ mở khi cửa sổ ghim đang hiển thị).
+    /// </summary>
+    private void SyncAnnotationPopup()
+    {
+        AnnotationPopup.IsOpen = IsVisible && AnnotationToolbar.Visibility == Visibility.Visible;
+    }
+
+    /// <summary>
+    /// WPF không tự dời Popup khi cửa sổ chủ di chuyển: đẩy nhẹ offset để buộc tính lại vị trí.
+    /// </summary>
+    private void RepositionAnnotationPopup()
+    {
+        if (!AnnotationPopup.IsOpen) return;
+        var offset = AnnotationPopup.HorizontalOffset;
+        AnnotationPopup.HorizontalOffset = offset + 0.01;
+        AnnotationPopup.HorizontalOffset = offset;
+    }
+
+    /// <summary>
+    /// Căn giữa thanh vẽ ngay dưới ảnh; nếu sát đáy màn hình thì đặt lên phía trên ảnh.
+    /// </summary>
+    private static CustomPopupPlacement[] PlaceAnnotationToolbar(Size popupSize, Size targetSize, Point offset)
+    {
+        var x = (targetSize.Width - popupSize.Width) / 2;
+        return
+        [
+            new CustomPopupPlacement(new Point(x, targetSize.Height), PopupPrimaryAxis.Horizontal),
+            new CustomPopupPlacement(new Point(x, -popupSize.Height), PopupPrimaryAxis.Horizontal)
+        ];
     }
 
     public BitmapSource GetAnnotatedImage()

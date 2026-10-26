@@ -177,13 +177,16 @@
                 </StackPanel>
             </Border>
 
-            <!-- Thanh công cụ vẽ chú thích mini nổi ở cạnh dưới ảnh ghim -->
-            <controls:PinAnnotationToolbar x:Name="AnnotationToolbar"
-                                            VerticalAlignment="Bottom"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,0,0,8"
-                                            Visibility="Collapsed"
-                                            Panel.ZIndex="12" />
+            <!-- Thanh vẽ chú thích nổi ngay dưới ảnh ghim (tự lật lên trên nếu sát đáy màn hình).
+                 Nằm trong Popup riêng để không nới rộng hay che ảnh nhỏ. -->
+            <Popup x:Name="AnnotationPopup"
+                   PlacementTarget="{Binding ElementName=PinRootGrid}"
+                   Placement="Custom"
+                   AllowsTransparency="True"
+                   StaysOpen="True"
+                   Focusable="False">
+                <controls:PinAnnotationToolbar x:Name="AnnotationToolbar" Visibility="Collapsed" />
+            </Popup>
         </Grid>
     </Border>
 </Window>

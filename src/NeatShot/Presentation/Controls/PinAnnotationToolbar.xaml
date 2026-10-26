@@ -3,177 +3,106 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:NeatShot.Presentation.Controls"
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!-- Style cho nút công cụ vẽ mini -->
-        <Style x:Key="MiniToolButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="26" />
-            <Setter Property="Height" Value="24" />
-            <Setter Property="Margin" Value="1,0" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#33FFFFFF" />
-                                <Setter TargetName="border" Property="BorderBrush" Value="#40FFFFFF" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#4DFFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Cùng bộ icon / style với thanh chú thích chính khi chụp -->
+                <ResourceDictionary Source="pack://application:,,,/NeatShot;component/Presentation/Themes/ToolbarStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <!-- Style cho nút màu tròn -->
-        <Style x:Key="MiniColorSwatchStyle" TargetType="Button">
-            <Setter Property="Width" Value="16" />
-            <Setter Property="Height" Value="16" />
-            <Setter Property="Margin" Value="2,0" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="swatchBorder"
-                                CornerRadius="8"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="#66FFFFFF"
-                                BorderThickness="1.5">
-                            <Ellipse x:Name="selectionIndicator"
-                                     Width="6"
-                                     Height="6"
-                                     Fill="White"
-                                     Visibility="Collapsed"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="swatchBorder" Property="BorderBrush" Value="White" />
-                                <Setter TargetName="swatchBorder" Property="BorderThickness" Value="2" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+            <!-- Ô màu tròn; màu đang dùng có vòng sáng bao quanh -->
+            <Style x:Key="SwatchStyle" TargetType="Button">
+                <Setter Property="Width" Value="24" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid Background="Transparent">
+                                <Ellipse x:Name="Ring" Width="22" Height="22" Stroke="Transparent" StrokeThickness="2" />
+                                <Ellipse Width="16" Height="16" Fill="{TemplateBinding Background}" Stroke="#40FFFFFF" StrokeThickness="1" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Ring" Property="Stroke" Value="#66FFFFFF" />
+                                </Trigger>
+                                <Trigger Property="local:PinAnnotationToolbar.IsCurrent" Value="True">
+                                    <Setter TargetName="Ring" Property="Stroke" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Background="#EB1E1E1E"
-            BorderBrush="#40FFFFFF"
-            BorderThickness="1"
-            CornerRadius="8"
-            Padding="6,3"
-            Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+    <!-- Margin chừa chỗ cho bóng đổ khi nằm trong Popup trong suốt -->
+    <Border Style="{StaticResource BarBorderStyle}" Padding="4" Margin="10,6,10,14">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <!-- Nút Chọn / Di chuyển (Select / Pan) -->
-            <Button x:Name="SelectButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Chọn &amp; Kéo di chuyển ảnh (V)"
-                    Click="OnSelectClick">
-                <TextBlock Text="✋" FontSize="11" />
+            <Button x:Name="SelectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Chọn / kéo di chuyển ảnh (V)" Click="OnSelectClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSelect}" /></Viewbox>
+            </Button>
+            <Button x:Name="PencilButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Bút vẽ" Click="OnPencilClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPencil}" /></Viewbox>
+            </Button>
+            <Button x:Name="HighlightButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Bút dạ quang (H)" Click="OnHighlightClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconHighlighter}" /></Viewbox>
             </Button>
 
-            <!-- Nút Bút vẽ (Pencil) -->
-            <Button x:Name="PencilButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Bút vẽ tự do (P)"
-                    Click="OnPencilClick">
-                <TextBlock Text="✏️" FontSize="11" />
+            <Border Style="{StaticResource BarSeparatorV}" />
+
+            <Button x:Name="RectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Khung chữ nhật (R)" Click="OnRectClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRect}" /></Viewbox>
+            </Button>
+            <Button x:Name="EllipseButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Hình elip (E)" Click="OnEllipseClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconEllipse}" /></Viewbox>
+            </Button>
+            <Button x:Name="LineButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Đường thẳng (L)" Click="OnLineClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconLine}" /></Viewbox>
+            </Button>
+            <Button x:Name="ArrowButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Mũi tên (A)" Click="OnArrowClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconArrow}" /></Viewbox>
+            </Button>
+            <Button x:Name="TextButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Chữ (T)" Click="OnTextClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconText}" /></Viewbox>
+            </Button>
+            <Button x:Name="StepButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Đánh số thứ tự (N)" Click="OnStepClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" /></Viewbox>
             </Button>
 
-            <!-- Nút Khung chữ nhật (Rectangle) -->
-            <Button x:Name="RectButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Vẽ khung chữ nhật (R)"
-                    Click="OnRectClick">
-                <TextBlock Text="▭" FontSize="12" FontWeight="Bold" />
+            <Border Style="{StaticResource BarSeparatorV}" />
+
+            <Button x:Name="PixelateButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm vỡ điểm ảnh để che thông tin (X)" Click="OnPixelateClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPixelate}" /></Viewbox>
+            </Button>
+            <Button x:Name="BlurButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm mờ (B)" Click="OnBlurClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconBlur}" /></Viewbox>
             </Button>
 
-            <!-- Nút Mũi tên (Arrow) -->
-            <Button x:Name="ArrowButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Vẽ mũi tên chỉ dẫn (A)"
-                    Click="OnArrowClick">
-                <TextBlock Text="↗" FontSize="12" FontWeight="Bold" />
+            <Border Style="{StaticResource BarSeparatorV}" />
+
+            <Button x:Name="ColorRedButton" Style="{StaticResource SwatchStyle}" Background="#FF3B30" ToolTip="Đỏ" Click="OnColorClick" />
+            <Button x:Name="ColorYellowButton" Style="{StaticResource SwatchStyle}" Background="#FFCC00" ToolTip="Vàng" Click="OnColorClick" />
+            <Button x:Name="ColorGreenButton" Style="{StaticResource SwatchStyle}" Background="#34C759" ToolTip="Xanh lá" Click="OnColorClick" />
+            <Button x:Name="ColorBlueButton" Style="{StaticResource SwatchStyle}" Background="#0078D4" ToolTip="Xanh dương" Click="OnColorClick" />
+            <Button x:Name="ColorWhiteButton" Style="{StaticResource SwatchStyle}" Background="#FFFFFF" ToolTip="Trắng" Click="OnColorClick" />
+            <Button x:Name="ColorBlackButton" Style="{StaticResource SwatchStyle}" Background="#1B1F24" ToolTip="Đen" Click="OnColorClick" />
+
+            <Border Style="{StaticResource BarSeparatorV}" />
+
+            <Button x:Name="UndoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Hoàn tác (Ctrl + Z)" Click="OnUndoClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconUndo}" /></Viewbox>
             </Button>
-
-            <!-- Nút Văn bản (Text) -->
-            <Button x:Name="TextButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Chèn chữ ghi chú (T)"
-                    Click="OnTextClick">
-                <TextBlock Text="T" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI" />
+            <Button x:Name="RedoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm lại (Ctrl + Y)" Click="OnRedoClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRedo}" /></Viewbox>
             </Button>
-
-            <!-- Nút Bước số (StepCounter) -->
-            <Button x:Name="StepButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Đánh số thứ tự bước (N)"
-                    Click="OnStepClick">
-                <TextBlock Text="①" FontSize="12" FontWeight="Bold" />
-            </Button>
-
-            <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-            <!-- Bảng màu sắc nhanh -->
-            <Button x:Name="ColorRedButton"
-                    Background="#FF3B30"
-                    Style="{StaticResource MiniColorSwatchStyle}"
-                    ToolTip="Màu đỏ"
-                    Click="OnColorRedClick" />
-            <Button x:Name="ColorYellowButton"
-                    Background="#FFCC00"
-                    Style="{StaticResource MiniColorSwatchStyle}"
-                    ToolTip="Màu vàng"
-                    Click="OnColorYellowClick" />
-            <Button x:Name="ColorGreenButton"
-                    Background="#34C759"
-                    Style="{StaticResource MiniColorSwatchStyle}"
-                    ToolTip="Màu xanh lá"
-                    Click="OnColorGreenClick" />
-            <Button x:Name="ColorBlueButton"
-                    Background="#0078D4"
-                    Style="{StaticResource MiniColorSwatchStyle}"
-                    ToolTip="Màu xanh dương"
-                    Click="OnColorBlueClick" />
-            <Button x:Name="ColorWhiteButton"
-                    Background="#FFFFFF"
-                    Style="{StaticResource MiniColorSwatchStyle}"
-                    ToolTip="Màu trắng"
-                    Click="OnColorWhiteClick" />
-
-            <Separator Margin="4,2" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-            <!-- Nút Hoàn tác (Undo) -->
-            <Button x:Name="UndoButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Hoàn tác nét vẽ (Ctrl + Z)"
-                    Click="OnUndoClick">
-                <TextBlock Text="↩" FontSize="12" FontWeight="Bold" />
-            </Button>
-
-            <!-- Nút Ẩn thanh công cụ -->
-            <Button x:Name="HideToolbarButton"
-                    Style="{StaticResource MiniToolButtonStyle}"
-                    ToolTip="Ẩn thanh công cụ vẽ"
-                    Click="OnHideClick">
-                <TextBlock Text="✕" FontSize="11" Foreground="#A0FFFFFF" />
+            <Button x:Name="HideToolbarButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Ẩn thanh vẽ (Esc)" Click="OnHideClick">
+                <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconClose}" /></Viewbox>
             </Button>
         </StackPanel>
     </Border>
