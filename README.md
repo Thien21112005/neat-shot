@@ -124,6 +124,8 @@ NeatShot starts in the system tray. Left-click the tray icon to capture, or righ
 
 **Package a release build:** `./scripts/publish.ps1` runs the tests and produces `artifacts/NeatShot-v<version>-win-x64.zip`. See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 
+**Microsoft Store package (MSIX):** `./scripts/package-msix.ps1` runs the tests and produces `artifacts/msix/NeatShot-<version>.0-x64.msix` from the manifest and logos in `packaging/msix/`. The package is unsigned on purpose: the Store signs it on release. Add `-Register` to install the build locally first (requires Windows *Developer Mode*). In the Store version, start-with-Windows is a Windows startup task you can also manage in *Settings → Apps → Startup*. Store listing copy lives in [docs/store/store-listing.md](./docs/store/store-listing.md) and the privacy policy in [site/privacy.html](./site/privacy.html).
+
 ### Running Tests
 
 ```bash
@@ -141,7 +143,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 | Data | Location |
 |---|---|
 | Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (follows the last folder you chose in *Save as*) |
-| Settings & color history | `%AppData%\NeatShot\settings.json` |
+| Settings & color history | `%AppData%\NeatShot\settings.json` (Store version: kept by Windows in the app's private storage) |
 
 ### Architecture
 
@@ -280,6 +282,8 @@ dotnet run --project src/NeatShot
 
 **Đóng gói bản phát hành:** `./scripts/publish.ps1` sẽ chạy test rồi tạo `artifacts/NeatShot-v<version>-win-x64.zip`. Ghi chú các phiên bản xem tại [CHANGELOG.md](./CHANGELOG.md).
 
+**Gói Microsoft Store (MSIX):** `./scripts/package-msix.ps1` chạy test rồi tạo `artifacts/msix/NeatShot-<version>.0-x64.msix` từ manifest và logo trong `packaging/msix/`. Gói cố ý không ký vì Store sẽ tự ký khi phát hành. Thêm `-Register` để cài thử lên máy trước (cần bật *Developer Mode* của Windows). Ở bản Store, "khởi động cùng Windows" là startup task của Windows, quản lý được cả trong *Settings → Apps → Startup*. Nội dung trang Store nằm ở [docs/store/store-listing.md](./docs/store/store-listing.md), chính sách quyền riêng tư ở [site/privacy.html](./site/privacy.html).
+
 ### Chạy kiểm thử
 
 ```bash
@@ -297,7 +301,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 | Dữ liệu | Vị trí |
 |---|---|
 | Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (theo thư mục bạn chọn gần nhất khi *Lưu file*) |
-| Cấu hình & lịch sử màu | `%AppData%\NeatShot\settings.json` |
+| Cấu hình & lịch sử màu | `%AppData%\NeatShot\settings.json` (bản Store: Windows lưu trong vùng riêng của app) |
 
 ### Kiến trúc
 

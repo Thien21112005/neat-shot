@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-26
+
 ### Added
+- **Microsoft Store package:** MSIX manifest, Store logos and `scripts/package-msix.ps1`; when installed from the Store,
+  start-with-Windows uses a Windows startup task (manageable in *Settings → Apps → Startup*).
+- **Privacy policy** page (`site/privacy.html`, EN/VI) and a GitHub Pages workflow that publishes the site.
+- **App icon:** the exe, tray and Store package now use the NeatShot logo instead of a generic camera.
 - **Settings window** (tray → *Cài đặt…*): configurable capture hotkeys that apply instantly (keeps the old key and warns
   when another app owns the new one), save folder, PNG/JPG with quality, auto-save to the gallery, start with Windows,
   and "copy as soon as the selection is released".
@@ -52,4 +58,6 @@ First public release.
 - Tray icon is restored after Windows Explorer restarts.
 - A click without dragging no longer adds an invisible stroke to the undo history.
 
+[Unreleased]: https://github.com/Thien21112005/neat-shot/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Thien21112005/neat-shot/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Thien21112005/neat-shot/releases/tag/v1.0.0
