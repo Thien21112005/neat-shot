@@ -213,6 +213,7 @@ public partial class App : Application
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
+            _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
             _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen);
         }
         catch (Exception ex)

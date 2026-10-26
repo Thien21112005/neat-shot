@@ -22,6 +22,11 @@ public partial class OverlayWindow : Window
     private bool _isToolbarManuallyPositioned;
     public OverlayViewModel ViewModel { get; }
 
+    /// <summary>
+    /// Phát ra sau khi ảnh đã được sao chép vào Clipboard; tham số là đường dẫn file đã lưu (null nếu không lưu được).
+    /// </summary>
+    public event EventHandler<string?>? CaptureCopied;
+
     public OverlayWindow(
         OverlayViewModel viewModel,
         IExportService exportService,
@@ -163,8 +168,9 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
-            await SaveToGalleryAsync(finalImage);
+            var savedPath = await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
+            CaptureCopied?.Invoke(this, savedPath);
             Close();
         }
         catch (Exception ex)
@@ -283,17 +289,19 @@ public partial class OverlayWindow : Window
     /// <summary>
     /// Tự động lưu ảnh chụp vào thư viện Pictures\NeatShot. Lỗi lưu không được chặn thao tác Copy/Ghim.
     /// </summary>
-    private async Task SaveToGalleryAsync(BitmapSource image)
+    /// <returns>Đường dẫn file đã lưu, hoặc null nếu không lưu được.</returns>
+    private async Task<string?> SaveToGalleryAsync(BitmapSource image)
     {
-        if (_galleryService == null) return;
+        if (_galleryService == null) return null;
 
         try
         {
-            await _galleryService.SaveScreenshotAsync(image);
+            return await _galleryService.SaveScreenshotAsync(image);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi tự động lưu ảnh vào thư viện: {ex.Message}");
+            return null;
         }
     }
 

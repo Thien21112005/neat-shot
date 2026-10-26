@@ -94,6 +94,44 @@ public class OverlayWindowGalleryAutoSaveTests
     }
 
     [Fact]
+    public void OverlayWindow_Copy_RaisesCaptureCopied_WithSavedPath_OnStaThread()
+    {
+        RunOnSta(() =>
+        {
+            var vm = new OverlayViewModel();
+            var window = new OverlayWindow(vm, new FakeExportService(), galleryService: new FakeGalleryService());
+            string? copiedPath = "not raised";
+            window.CaptureCopied += (s, path) => copiedPath = path;
+
+            vm.BackgroundImage = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+            vm.SelectedRegion = new CaptureRegion(10, 10, 100, 80);
+
+            window.ProcessShortcut(Key.Enter, ModifierKeys.None);
+
+            Assert.Equal(@"C:\fake\shot.png", copiedPath);
+        });
+    }
+
+    [Fact]
+    public void OverlayWindow_Copy_RaisesCaptureCopied_WithNullPath_WhenGallerySaveFails_OnStaThread()
+    {
+        RunOnSta(() =>
+        {
+            var vm = new OverlayViewModel();
+            var window = new OverlayWindow(vm, new FakeExportService(), galleryService: new FakeGalleryService { ThrowOnSave = true });
+            string? copiedPath = "not raised";
+            window.CaptureCopied += (s, path) => copiedPath = path;
+
+            vm.BackgroundImage = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+            vm.SelectedRegion = new CaptureRegion(10, 10, 100, 80);
+
+            window.ProcessShortcut(Key.Enter, ModifierKeys.None);
+
+            Assert.Null(copiedPath);
+        });
+    }
+
+    [Fact]
     public void OverlayWindow_Copy_StillCopies_WhenGallerySaveFails_OnStaThread()
     {
         RunOnSta(() =>
