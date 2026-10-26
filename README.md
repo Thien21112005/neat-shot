@@ -53,6 +53,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - **Freeze overlay** that spans every monitor, with a resizable and movable selection (8 handles plus a live `W × H` badge).
 - **Window detection:** hover to outline the window (or the panel/button) under the cursor, then click once to select exactly that area — no more dragging edge to edge.
 - **Full-screen capture** from the tray menu, with the whole virtual screen already selected.
+- **Repeat the last region** (`Ctrl + Shift + R`): reopens the capture screen with the region you used last time already selected — handy for before/after comparisons. If a monitor was unplugged, the region is trimmed to the current screen.
 - **Delayed capture** (tray → *Chụp hẹn giờ*: 3, 5 or 10 s): open the menu or tooltip you need, and NeatShot captures it without closing it. Press `Esc` to cancel the countdown.
 - Per-Monitor V2 DPI awareness, so selections map exactly to physical pixels.
 
@@ -81,6 +82,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 |---|---|---|
 | Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture (both keys can be changed in Settings) |
 | Global | `F3` | Pin the image in the clipboard |
+| Global | `Ctrl + Shift + R` | Capture the last region again |
 | Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
 | Overlay | `Ctrl + S` | Save as PNG / JPG… |
@@ -206,6 +208,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - **Màn hình đóng băng** trải trên mọi màn hình. Vùng chọn kéo giãn và di chuyển được (8 tay nắm, hiển thị kích thước `W × H`).
 - **Tự nhận diện cửa sổ:** rê chuột để viền sẵn cửa sổ (hoặc panel/nút) dưới con trỏ, click một lần là chọn đúng vùng đó — không cần kéo từng mép.
 - **Chụp toàn màn hình** từ menu khay, toàn bộ màn hình được chọn sẵn.
+- **Chụp lại vùng vừa chụp** (`Ctrl + Shift + R`): mở màn hình chụp với đúng vùng lần trước được chọn sẵn — tiện so sánh trước/sau. Nếu đã rút màn hình phụ, vùng được tự cắt gọn trong màn hình hiện tại.
 - **Chụp hẹn giờ** (menu khay → *Chụp hẹn giờ*: 3, 5 hoặc 10 giây): mở sẵn menu hay tooltip cần chụp, NeatShot chụp mà không làm chúng biến mất. Nhấn `Esc` để huỷ đếm ngược.
 - Hỗ trợ Per-Monitor DPI V2, toạ độ khớp chính xác với pixel vật lý.
 
@@ -234,6 +237,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 |---|---|---|
 | Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp (đổi được cả hai phím trong Cài đặt) |
 | Toàn cục | `F3` | Ghim ảnh đang có trong Clipboard |
+| Toàn cục | `Ctrl + Shift + R` | Chụp lại vùng vừa chụp |
 | Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
 | Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |

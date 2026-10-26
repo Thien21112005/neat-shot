@@ -21,7 +21,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 | 2 | ✅ Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
 | 3 | ✅ Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
 | 4 | ✅ Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
-| 5 | Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
+| 5 | ✅ Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
 | 6 | Kính lúp + toạ độ pixel khi chọn vùng | Chụp | 🟡 | ⭐⭐ |
 | 7 | Công cụ chú thích mở rộng | Chú thích | 🟡 | ⭐⭐ |
 | 8 | Đọc mã QR offline | Trích xuất | 🟡 | ⭐ |
@@ -109,7 +109,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ---
 
-### 5. Chụp lại vùng vừa chụp 🟢
+### 5. Chụp lại vùng vừa chụp 🟢 ✅ Đã xong
 
 **Vấn đề:** Khi so sánh trước/sau (ví dụ sửa lỗi UI), phải kéo lại đúng vùng cũ nhiều lần.
 
@@ -118,8 +118,8 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Phím tắt `Ctrl + Shift + R`: mở overlay với vùng cũ được chọn sẵn (tương tự "Chụp toàn màn hình" hiện tại).
 
 **Tiêu chí hoàn thành:**
-- [ ] Nếu bố cục màn hình thay đổi, vùng cũ được giới hạn lại trong màn hình ảo.
-- [ ] Unit test cho việc clamp vùng chọn.
+- [x] Nếu bố cục màn hình thay đổi, vùng cũ được giới hạn lại trong màn hình ảo.
+- [x] Unit test cho việc clamp vùng chọn.
 
 **Liên quan:** `OverlayWindow.SelectFullScreen()`, `AppSettings`, `CaptureRegion`.
 
