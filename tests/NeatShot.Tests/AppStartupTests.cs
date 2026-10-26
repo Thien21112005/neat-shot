@@ -73,6 +73,19 @@ public class AppStartupTests
     }
 
     [Fact]
+    public void TrayIcon_UsesTheNeatShotLogo()
+    {
+        using var icon = NeatShot.Common.Helpers.TrayIconHelper.CreateTrayIcon();
+        using var bitmap = icon.ToBitmap();
+
+        // Logo: ô sáng (#E8EAED) ở giữa, góc khung xanh (#0078D4) ở góc trên trái
+        var center = bitmap.GetPixel(16, 16);
+        Assert.True(center.R > 200 && center.G > 200 && center.B > 200, $"Tâm icon phải sáng, thực tế {center}");
+        var corner = bitmap.GetPixel(7, 9); // giữa nét dọc của góc trên trái (x = 7, y từ 7 tới 12)
+        Assert.True(corner.B > 150 && corner.R < 80, $"Góc khung phải xanh, thực tế {corner}");
+    }
+
+    [Fact]
     public void NativeTrayIcon_CreationAndDisposal_ShouldSucceedOnStaThread()
     {
         using var icon = NeatShot.Common.Helpers.TrayIconHelper.CreateTrayIcon();
