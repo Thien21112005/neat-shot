@@ -24,18 +24,33 @@
             <DropShadowEffect BlurRadius="24" ShadowDepth="8" Direction="270" Opacity="0.5" Color="Black" />
         </Border.Effect>
         <StackPanel Orientation="Horizontal">
-            <Border Width="22" Height="22" CornerRadius="11" Background="#0078D4" VerticalAlignment="Center">
-                <Viewbox Width="13" Height="13">
-                    <Path Width="24" Height="24"
-                          Stretch="None"
-                          Data="M5,12.5 L9.5,17 L19,7.5"
-                          Stroke="White"
-                          StrokeThickness="3"
-                          StrokeStartLineCap="Round"
-                          StrokeEndLineCap="Round"
-                          StrokeLineJoin="Round" />
-                </Viewbox>
-            </Border>
+            <Grid VerticalAlignment="Center">
+                <!-- Thành công: dấu ✓ trên nền xanh -->
+                <Border x:Name="SuccessIcon" Width="22" Height="22" CornerRadius="11" Background="#0078D4">
+                    <Viewbox Width="13" Height="13">
+                        <Path Width="24" Height="24"
+                              Stretch="None"
+                              Data="M5,12.5 L9.5,17 L19,7.5"
+                              Stroke="White"
+                              StrokeThickness="3"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round" />
+                    </Viewbox>
+                </Border>
+                <!-- Cảnh báo: dấu ! trên nền vàng -->
+                <Border x:Name="WarningIcon" Width="22" Height="22" CornerRadius="11" Background="#F59E0B" Visibility="Collapsed">
+                    <Viewbox Width="13" Height="13">
+                        <Path Width="24" Height="24"
+                              Stretch="None"
+                              Data="M12,6 V13.5 M12,18 V18.01"
+                              Stroke="#16181D"
+                              StrokeThickness="3.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round" />
+                    </Viewbox>
+                </Border>
+            </Grid>
             <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                 <TextBlock x:Name="MessageText" FontSize="13" FontWeight="SemiBold" Foreground="#E8EAED" />
                 <TextBlock x:Name="DetailText" FontFamily="Consolas" FontSize="12" Foreground="#9AA0A6" Margin="0,2,0,0" />

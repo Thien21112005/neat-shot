@@ -6,6 +6,15 @@ using System.Windows.Threading;
 namespace NeatShot.Presentation.Views;
 
 /// <summary>
+/// Kiểu thông báo: thành công (dấu ✓ xanh) hoặc cảnh báo (dấu ! vàng).
+/// </summary>
+public enum ToastKind
+{
+    Success,
+    Warning
+}
+
+/// <summary>
 /// Thông báo nhỏ ở góc phải dưới màn hình (không lấy focus), tự ẩn sau vài giây.
 /// </summary>
 public partial class ToastWindow : Window
@@ -13,9 +22,12 @@ public partial class ToastWindow : Window
     private static readonly TimeSpan VisibleDuration = TimeSpan.FromSeconds(2.4);
     private static readonly TimeSpan FadeDuration = TimeSpan.FromMilliseconds(220);
 
-    public ToastWindow(string message, string? detail)
+    public ToastWindow(string message, string? detail, ToastKind kind = ToastKind.Success)
     {
         InitializeComponent();
+
+        SuccessIcon.Visibility = kind == ToastKind.Success ? Visibility.Visible : Visibility.Collapsed;
+        WarningIcon.Visibility = kind == ToastKind.Warning ? Visibility.Visible : Visibility.Collapsed;
 
         MessageText.Text = message;
         DetailText.Text = detail ?? string.Empty;
@@ -28,6 +40,14 @@ public partial class ToastWindow : Window
     public static void ShowCopied(string? savedPath)
     {
         new ToastWindow("Đã sao chép vào Clipboard", DescribeSavedLocation(savedPath)).ShowNearTaskbar();
+    }
+
+    /// <summary>
+    /// Hiển thị một thông báo nhanh ở góc màn hình.
+    /// </summary>
+    public static void Show(string message, string? detail = null, ToastKind kind = ToastKind.Success)
+    {
+        new ToastWindow(message, detail, kind).ShowNearTaskbar();
     }
 
     /// <summary>

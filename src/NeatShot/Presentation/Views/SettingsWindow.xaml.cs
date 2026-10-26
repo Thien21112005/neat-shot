@@ -22,7 +22,7 @@ public partial class SettingsWindow : Window
         ViewModel.RequestClose += (s, e) => Close();
 
         // Đang gán phím mới: tạm nhả phím tắt toàn cục để Windows không "nuốt" tổ hợp đó
-        foreach (var box in new[] { CaptureHotkeyBox, CaptureAlternateHotkeyBox })
+        foreach (var box in HotkeyBoxes)
         {
             box.RecordingStarted += (s, e) => ViewModel.BeginHotkeyRecording();
             box.RecordingEnded += (s, e) => ViewModel.EndHotkeyRecording();
@@ -32,9 +32,12 @@ public partial class SettingsWindow : Window
         PreviewKeyDown += OnWindowPreviewKeyDown;
     }
 
+    private IEnumerable<Controls.HotkeyBox> HotkeyBoxes =>
+        new[] { CaptureHotkeyBox, CaptureAlternateHotkeyBox, PinClipboardHotkeyBox };
+
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        var recording = CaptureHotkeyBox.IsRecording || CaptureAlternateHotkeyBox.IsRecording;
+        var recording = HotkeyBoxes.Any(box => box.IsRecording);
         if (e.Key == Key.Escape && !recording)
         {
             Close();

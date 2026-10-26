@@ -24,6 +24,9 @@ public partial class SettingsViewModel : ObservableObject
     private HotkeyGesture _captureAlternateHotkey;
 
     [ObservableProperty]
+    private HotkeyGesture _pinClipboardHotkey;
+
+    [ObservableProperty]
     private string _saveDirectory = string.Empty;
 
     [ObservableProperty]
@@ -77,10 +80,22 @@ public partial class SettingsViewModel : ObservableObject
         LoadFrom(_settingsService.CurrentSettings);
     }
 
+    /// <summary>
+    /// Các phím tắt có thể chỉnh trong cửa sổ Cài đặt, kèm cách đọc/ghi vào ViewModel và AppSettings.
+    /// </summary>
+    private IEnumerable<(HotkeyAction Action, Func<HotkeyGesture> Get, Action<HotkeyGesture> Set, Action<AppSettings, string> Store)> Hotkeys()
+    {
+        yield return (HotkeyAction.Capture, () => CaptureHotkey, g => CaptureHotkey = g, (s, v) => s.HotkeyCapture = v);
+        yield return (HotkeyAction.CaptureAlternate, () => CaptureAlternateHotkey, g => CaptureAlternateHotkey = g, (s, v) => s.HotkeyCaptureAlternate = v);
+        yield return (HotkeyAction.PinFromClipboard, () => PinClipboardHotkey, g => PinClipboardHotkey = g, (s, v) => s.HotkeyPinClipboard = v);
+    }
+
     private void LoadFrom(AppSettings settings)
     {
-        CaptureHotkey = ActiveOrSaved(HotkeyAction.Capture, settings);
-        CaptureAlternateHotkey = ActiveOrSaved(HotkeyAction.CaptureAlternate, settings);
+        foreach (var hotkey in Hotkeys())
+        {
+            hotkey.Set(ActiveOrSaved(hotkey.Action, settings));
+        }
         SaveDirectory = settings.DefaultSaveDirectory;
         AutoSaveToGallery = settings.AutoSaveToGallery;
         ImageFormat = ImageEncoderFactory.ExtensionFor(settings.ImageFormat) == ".jpg" ? "jpg" : "png";
@@ -122,10 +137,11 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void ResetHotkeys()
     {
-        HotkeyGesture.TryParse(AppHotkeyManager.DefaultGestureText(HotkeyAction.Capture), out var capture);
-        HotkeyGesture.TryParse(AppHotkeyManager.DefaultGestureText(HotkeyAction.CaptureAlternate), out var alternate);
-        CaptureHotkey = capture;
-        CaptureAlternateHotkey = alternate;
+        foreach (var hotkey in Hotkeys())
+        {
+            HotkeyGesture.TryParse(AppHotkeyManager.DefaultGestureText(hotkey.Action), out var gesture);
+            hotkey.Set(gesture);
+        }
     }
 
     [RelayCommand]
@@ -146,35 +162,29 @@ public partial class SettingsViewModel : ObservableObject
     /// <returns>false nếu có phím tắt không áp dụng được (phím cũ được giữ lại).</returns>
     public bool Save()
     {
-        if (CaptureHotkey == CaptureAlternateHotkey)
+        var hotkeys = Hotkeys().ToList();
+        var duplicate = hotkeys.GroupBy(h => h.Get()).FirstOrDefault(g => g.Count() > 1);
+        if (duplicate != null)
         {
-            ShowError("Phím chụp chính và phím chụp phụ đang trùng nhau.");
+            ShowError($"Phím {duplicate.Key.DisplayText} đang được gán cho nhiều thao tác — mỗi thao tác cần một phím riêng.");
             return false;
         }
 
         var settings = _settingsService.CurrentSettings;
-        settings.HotkeyCapture = CaptureHotkey.ToString();
-        settings.HotkeyCaptureAlternate = CaptureAlternateHotkey.ToString();
+        foreach (var hotkey in hotkeys)
+        {
+            hotkey.Store(settings, hotkey.Get().ToString());
+        }
 
         var failed = _hotkeyManager.Apply(settings);
         var failedNames = new List<string>();
-        foreach (var action in failed)
+        foreach (var hotkey in hotkeys.Where(h => failed.Contains(h.Action)))
         {
-            var attempted = action == HotkeyAction.Capture ? CaptureHotkey : CaptureAlternateHotkey;
-            failedNames.Add(attempted.DisplayText);
+            failedNames.Add(hotkey.Get().DisplayText);
 
             // Giữ phím cũ đang hoạt động trong cả settings lẫn giao diện
-            var active = _hotkeyManager.GetActiveGesture(action);
-            if (action == HotkeyAction.Capture)
-            {
-                if (active is { } a) CaptureHotkey = a;
-                settings.HotkeyCapture = CaptureHotkey.ToString();
-            }
-            else
-            {
-                if (active is { } a) CaptureAlternateHotkey = a;
-                settings.HotkeyCaptureAlternate = CaptureAlternateHotkey.ToString();
-            }
+            if (_hotkeyManager.GetActiveGesture(hotkey.Action) is { } active) hotkey.Set(active);
+            hotkey.Store(settings, hotkey.Get().ToString());
         }
 
         settings.DefaultSaveDirectory = SaveDirectory;

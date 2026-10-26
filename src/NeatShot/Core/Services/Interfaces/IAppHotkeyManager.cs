@@ -11,7 +11,10 @@ public enum HotkeyAction
     Capture,
 
     /// <summary>Phím chụp phụ (mặc định PrtSc).</summary>
-    CaptureAlternate
+    CaptureAlternate,
+
+    /// <summary>Ghim ảnh đang có trong Clipboard lên màn hình (mặc định F3).</summary>
+    PinFromClipboard
 }
 
 /// <summary>

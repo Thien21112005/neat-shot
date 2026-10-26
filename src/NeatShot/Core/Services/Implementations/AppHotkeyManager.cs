@@ -25,6 +25,7 @@ public class AppHotkeyManager : IAppHotkeyManager
     {
         HotkeyAction.Capture => "Ctrl+Shift+A",
         HotkeyAction.CaptureAlternate => "PrintScreen",
+        HotkeyAction.PinFromClipboard => "F3",
         _ => throw new ArgumentOutOfRangeException(nameof(action))
     };
 
@@ -35,6 +36,7 @@ public class AppHotkeyManager : IAppHotkeyManager
     {
         HotkeyAction.Capture => settings.HotkeyCapture,
         HotkeyAction.CaptureAlternate => settings.HotkeyCaptureAlternate,
+        HotkeyAction.PinFromClipboard => settings.HotkeyPinClipboard,
         _ => null
     };
 

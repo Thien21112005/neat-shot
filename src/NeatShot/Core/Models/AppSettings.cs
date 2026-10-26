@@ -29,6 +29,11 @@ public class AppSettings
     public string HotkeyCaptureAlternate { get; set; } = "PrintScreen";
 
     /// <summary>
+    /// Phím tắt ghim ảnh từ Clipboard lên màn hình (mặc định: F3).
+    /// </summary>
+    public string HotkeyPinClipboard { get; set; } = "F3";
+
+    /// <summary>
     /// Tự động copy ảnh vào Clipboard sau khi hoàn tất khoanh vùng.
     /// </summary>
     public bool AutoCopyOnCapture { get; set; } = false;

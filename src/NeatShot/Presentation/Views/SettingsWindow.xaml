@@ -101,6 +101,19 @@
                             <controls:HotkeyBox x:Name="CaptureAlternateHotkeyBox" Grid.Column="1" Width="240"
                                                 Gesture="{Binding CaptureAlternateHotkey}" />
                         </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Ghim ảnh từ Clipboard" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Ghim ảnh vừa copy (từ web, Zalo, Figma…) thành cửa sổ nổi." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="PinClipboardHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding PinClipboardHotkey}" />
+                        </Grid>
                     </StackPanel>
                 </Border>
 

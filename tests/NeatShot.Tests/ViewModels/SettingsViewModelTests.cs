@@ -128,4 +128,29 @@ public class SettingsViewModelTests : IDisposable
         Assert.Equal(CtrlShiftA, vm.CaptureHotkey);
         Assert.Equal(new HotkeyGesture(Key.PrintScreen, ModifierKeys.None), vm.CaptureAlternateHotkey);
     }
+
+    [Fact]
+    public void PinFromClipboardHotkey_DefaultsToF3_AndCanBeChanged()
+    {
+        _manager.SetHandler(Core.Services.Interfaces.HotkeyAction.PinFromClipboard, () => { });
+        _manager.Apply(_settings.CurrentSettings);
+        var vm = CreateViewModel();
+        Assert.Equal(new HotkeyGesture(Key.F3, ModifierKeys.None), vm.PinClipboardHotkey);
+
+        vm.PinClipboardHotkey = new HotkeyGesture(Key.V, ModifierKeys.Control | ModifierKeys.Alt);
+
+        Assert.True(vm.Save());
+        Assert.Equal("Ctrl+Alt+V", new SettingsService(_settingsPath).LoadSettings().HotkeyPinClipboard);
+        Assert.Contains(_hotkeys.Registered.Values, r => r.Gesture == new HotkeyGesture(Key.V, ModifierKeys.Control | ModifierKeys.Alt));
+    }
+
+    [Fact]
+    public void Save_RejectsAnyTwoActionsSharingAGesture()
+    {
+        var vm = CreateViewModel();
+        vm.PinClipboardHotkey = CtrlShiftA;
+
+        Assert.False(vm.Save());
+        Assert.True(vm.HasError);
+    }
 }

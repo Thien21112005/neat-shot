@@ -99,6 +99,10 @@ public partial class App : Application
         fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
 
+        var pinClipboardItem = new MenuItem { Header = "📌 Ghim ảnh từ Clipboard" };
+        pinClipboardItem.Click += (s, e) => PinFromClipboard();
+        _trayContextMenu.Items.Add(pinClipboardItem);
+
         _trayContextMenu.Items.Add(new Separator());
 
         var galleryItem = new MenuItem { Header = "🖼️ Thư viện ảnh chụp" };
@@ -131,6 +135,7 @@ public partial class App : Application
         {
             var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
             captureItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.Capture)?.DisplayText ?? string.Empty;
+            pinClipboardItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.PinFromClipboard)?.DisplayText ?? string.Empty;
             startupItem.IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled();
         };
 
@@ -159,6 +164,7 @@ public partial class App : Application
         var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
         hotkeys.SetHandler(HotkeyAction.Capture, () => TriggerCapture());
         hotkeys.SetHandler(HotkeyAction.CaptureAlternate, () => TriggerCapture());
+        hotkeys.SetHandler(HotkeyAction.PinFromClipboard, PinFromClipboard);
         hotkeys.Apply(Services.GetRequiredService<ISettingsService>().CurrentSettings);
 
         var activeKeys = new[] { HotkeyAction.Capture, HotkeyAction.CaptureAlternate }
@@ -167,6 +173,32 @@ public partial class App : Application
             .ToList();
 
         return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
+    }
+
+    /// <summary>
+    /// Ghim ảnh đang có trong Clipboard (copy từ web, Zalo, Figma, Explorer…) thành cửa sổ nổi.
+    /// </summary>
+    private static void PinFromClipboard()
+    {
+        try
+        {
+            var image = ClipboardImageReader.ReadFromClipboard();
+            if (image == null)
+            {
+                ToastWindow.Show("Clipboard không có ảnh", "Sao chép một ảnh rồi thử lại", ToastKind.Warning);
+                return;
+            }
+
+            var screen = new System.Windows.Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
+            var pinWindow = new PinWindow(new PinViewModel());
+            pinWindow.SetImage(image, GalleryWindow.CalculatePinPosition(image, screen));
+            pinWindow.Show();
+            pinWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi ghim ảnh từ Clipboard: {ex.Message}");
+        }
     }
 
     private SettingsWindow? _activeSettingsWindow;
