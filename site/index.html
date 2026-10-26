@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NeatShot — Clean screenshots for Windows</title>
+  <meta name="description" content="Free, open-source screenshot tool for Windows 10 and 11. Clean Shot across every monitor, annotate, beautify, pin to screen and extract text offline.">
+  <meta name="theme-color" content="#0E0F12">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NeatShot — Clean screenshots for Windows">
+  <meta property="og:description" content="Capture, mark up, pin and extract text without leaving the keyboard. Free, MIT, fully offline.">
+  <meta property="og:url" content="https://thien21112005.github.io/neat-shot/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NeatShot — Clean screenshots for Windows">
+  <meta name="twitter:description" content="Free, open-source screenshot tool for Windows. Fully offline.">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/sections.css">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
+</head>
+<body>
+<div id="ns-root">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <nav class="nav container" aria-label="Primary">
+    <a class="brand" href="#top" aria-label="NeatShot home">
+      <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><use href="assets/icons/sprite.svg#i-mark"/><rect x="9.5" y="9.5" width="5" height="5"/></svg>
+      <span>NeatShot</span>
+    </a>
+    <div class="nav-links" data-hide-sm>
+      <a href="#features" data-i18n="navFeat">Features</a>
+      <a href="#shortcuts" data-i18n="navKeys">Shortcuts</a>
+      <a href="#privacy" data-i18n="navPriv">Privacy</a>
+      <a href="https://github.com/Thien21112005/neat-shot">GitHub</a>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <span class="lang-switch__ind" id="lang-ind" aria-hidden="true"></span>
+        <button class="lang-switch__btn" type="button" data-lang-btn="en" aria-pressed="true">EN</button>
+        <button class="lang-switch__btn" type="button" data-lang-btn="vi" aria-pressed="false">VI</button>
+      </div>
+      <a class="btn btn--primary btn--sm" href="https://github.com/Thien21112005/neat-shot/releases/latest">
+        <svg class="icon icon--bold" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-save"/></svg><span data-i18n="navDl">Download</span>
+      </a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ============ 01 · HERO ============ -->
+<section class="hero container" id="top" aria-labelledby="hero-title">
+  <div class="hero__grid">
+    <div>
+      <p class="hero__eyebrow"><span data-i18n="heroEyebrow">v1.0.0 · Free &amp; open source · Windows 10 / 11</span></p>
+      <h1 class="hero__title" id="hero-title"><span data-split data-i18n="h1a">Clean screenshots on every monitor.</span><span data-split data-i18n="h1b">Annotated in seconds.</span></h1>
+    </div>
+    <div class="hero__copy">
+      <p class="hero__sub" data-i18n="heroSub">A free, open-source screenshot tool for Windows that stays out of your way — capture, mark up, pin and extract text without leaving the keyboard.</p>
+      <div class="hero__ctas">
+        <div class="hero__cta-main">
+          <a class="btn btn--primary btn--md" data-magnetic href="https://github.com/Thien21112005/neat-shot/releases/latest">
+            <svg class="icon icon--bold" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-save"/></svg><span data-i18n="ctaDl">Download for Windows</span>
+          </a>
+          <span class="hero__cta-meta" data-i18n="ctaMeta">v1.0.0 · 64 MB · no install</span>
+        </div>
+        <a class="btn btn--ghost btn--md" href="https://github.com/Thien21112005/neat-shot">
+          <svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-code"/></svg><span data-i18n="ctaSrc">View source on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__demo">
+    <div class="stage-frame hero__stage-frame" id="hero-fit" style="--w:1200;--h:640" role="img" aria-label="Animated demo: a selection is dragged over a bug report, an arrow and step badges are added, an email is pixelated, and the shot is copied to the clipboard.">
+      <div class="stage hero__stage">
+
+        <!-- Cửa sổ chat phía sau -->
+        <div style="position:absolute;left:770px;top:92px;width:380px;height:360px;background:#1E2128;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;z-index:1">
+          <div style="height:40px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:600;color:#E8EAED;border-bottom:1px solid rgba(255,255,255,.06)"># release-v1</div>
+          <div style="display:flex;flex-direction:column;gap:16px;padding:16px 16px 0 50px;font-size:13px;line-height:1.5;color:#C9CDD2">
+            <div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#5A7A9E;color:#fff;font:600 11px/26px var(--sans);text-align:center">HM</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Hà My</div>Checkout breaks on the 150% screen again.</div>
+            <div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#7E6A4F;color:#fff;font:600 11px/26px var(--sans);text-align:center">Q</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Quang</div>Grab it with Ctrl + Shift + A and mark the button?</div>
+            <div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#5A7A9E;color:#fff;font:600 11px/26px var(--sans);text-align:center">HM</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Hà My</div>Sending in a sec.</div>
+          </div>
+          <div style="position:absolute;left:12px;right:12px;bottom:12px;height:36px;background:#16181D;border-radius:6px;padding:0 12px;font:12px/36px var(--sans);color:#7A8089">Message #release-v1</div>
+        </div>
+
+        <!-- Cửa sổ bug tracker -->
+        <div style="position:absolute;left:96px;top:44px;width:700px;height:536px;background:#F6F7F9;border-radius:8px;overflow:hidden;z-index:2;box-shadow:0 24px 60px rgba(0,0,0,.45);color:#1B1F24">
+          <div style="height:34px;background:#E9ECEF;border-bottom:1px solid #D9DDE2;display:flex;align-items:center;padding-left:14px;font-size:12px;color:#4A525C">
+            <span>Tracker — Issue #482</span>
+            <span style="margin-left:auto;display:flex;color:#4A525C">
+              <span style="width:44px;display:grid;place-items:center"><svg class="icon" width="12" height="12" style="stroke-width:1.5" aria-hidden="true"><use href="assets/icons/sprite.svg#i-min"/></svg></span>
+              <span style="width:44px;display:grid;place-items:center"><svg class="icon" width="12" height="12" style="stroke-width:1.5" aria-hidden="true"><use href="assets/icons/sprite.svg#i-max"/></svg></span>
+              <span style="width:44px;display:grid;place-items:center"><svg class="icon" width="12" height="12" style="stroke-width:1.5" aria-hidden="true"><use href="assets/icons/sprite.svg#i-x"/></svg></span>
+            </span>
+          </div>
+          <div style="position:absolute;left:0;top:34px;width:150px;bottom:0;background:#EEF0F3;border-right:1px solid #E1E4E8;padding:16px 8px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#4A525C">
+            <span style="padding:7px 10px">Inbox</span><span style="padding:7px 10px;background:#DFE4EA;border-radius:5px;font-weight:600;color:#1B1F24">Issues</span><span style="padding:7px 10px">Releases</span><span style="padding:7px 10px">Settings</span>
+          </div>
+          <div style="position:absolute;left:186px;top:50px;font-size:17px;font-weight:700;letter-spacing:-.01em">Checkout button unresponsive at 150%</div>
+          <div style="position:absolute;left:186px;top:76px;font-size:12px;color:#6B7480">#482 · opened by qa-bot · 2 min ago</div>
+          <div style="position:absolute;left:186px;top:112px;width:380px;height:204px;background:#fff;border:1px solid #E1E4E8;border-radius:8px">
+            <div style="position:absolute;left:18px;top:16px;font-size:11px;font-weight:600;color:#5B6470">Reporter</div>
+            <div style="position:absolute;left:18px;top:36px;width:344px;height:34px;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font-size:13px;line-height:32px">linh.tran@acme.dev</div>
+            <div style="position:absolute;left:18px;top:82px;font-size:11px;font-weight:600;color:#5B6470">Severity</div>
+            <div style="position:absolute;left:18px;top:102px;display:flex;gap:6px;font-size:12px">
+              <span style="width:44px;height:26px;border:1px solid #D5D9DF;border-radius:13px;text-align:center;line-height:24px">Low</span>
+              <span style="width:64px;height:26px;border:1px solid #D5D9DF;border-radius:13px;text-align:center;line-height:24px">Medium</span>
+              <span style="width:48px;height:26px;background:#1B1F24;color:#fff;border-radius:13px;text-align:center;line-height:26px">High</span>
+            </div>
+            <div style="position:absolute;left:18px;top:162px;font-size:11px;color:#8A929C">Draft saved</div>
+            <div style="position:absolute;left:232px;top:152px;width:130px;height:34px;background:#0078D4;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-align:center;line-height:34px">Submit report</div>
+          </div>
+          <div style="position:absolute;left:590px;top:112px;font-size:11px;font-weight:600;color:#5B6470">Labels</div>
+          <div style="position:absolute;left:590px;top:132px;display:flex;flex-direction:column;gap:6px;font-size:11px">
+            <span style="padding:3px 8px;background:#FDE7E7;color:#9B1C1C;border-radius:4px">bug</span><span style="padding:3px 8px;background:#E3EEFA;color:#0B4A85;border-radius:4px">dpi</span>
+          </div>
+          <div style="position:absolute;left:186px;top:418px;font-size:13px;font-weight:600">Steps to reproduce</div>
+          <div style="position:absolute;left:186px;top:442px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#3D454F">
+            <span>1. Set display scale to 150%</span><span>2. Open the cart and click Checkout</span><span>3. Nothing happens, no error shown</span>
+          </div>
+        </div>
+
+        <!-- Taskbar -->
+        <div style="position:absolute;left:0;right:0;top:596px;height:44px;background:#101216;border-top:1px solid rgba(255,255,255,.06)">
+          <div style="position:absolute;left:50%;top:7px;transform:translateX(-50%);display:flex;gap:6px">
+            <span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.14);box-shadow:inset 0 -2px 0 #3B9BEB"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span>
+          </div>
+          <div style="position:absolute;right:14px;top:0;height:44px;display:flex;align-items:center;gap:14px;font:11px/1.25 var(--sans);color:#C9CDD2">
+            <svg class="brand-mark" width="16" height="16" style="stroke:#3B9BEB;stroke-width:2.2" aria-hidden="true"><use href="assets/icons/sprite.svg#i-mark"/></svg>
+            <span style="color:#9AA0A6">ENG</span>
+            <span style="text-align:right">14:32<br>25/10/2026</span>
+          </div>
+        </div>
+
+        <div class="hero__hint" id="hero-hint">Desktop frozen · drag to select</div>
+
+        <!-- Vùng chọn + chú thích -->
+        <div class="hero__selection" id="hero-sel">
+          <span class="handles"><span class="h-tl"></span><span class="h-tc"></span><span class="h-tr"></span><span class="h-ml"></span><span class="h-mr"></span><span class="h-bl"></span><span class="h-bc"></span><span class="h-br"></span></span>
+          <div class="pixel-cells" data-cells="28" data-cell-attr="hcell"></div>
+          <svg class="annot-svg" viewBox="0 0 412 236" width="412" height="236" style="stroke-width:3.5" aria-hidden="true">
+            <path id="hero-arrow" d="M112 214 C 150 222, 200 206, 242 188"/>
+            <path id="hero-head" d="M228.2 186.3 L242 188 L233.8 199.1"/>
+          </svg>
+          <span class="step-badge" data-hstep style="left:367px;top:41px">1</span>
+          <span class="step-badge" data-hstep style="left:191px;top:107px">2</span>
+        </div>
+
+        <div class="hero__badge size-badge" id="hero-badge"><span id="hero-w">412</span> × <span id="hero-h">236</span></div>
+
+        <div class="hero__toolbar tb" id="hero-toolbar">
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pencil"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-highlighter"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-rect"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-ellipse"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-line"/></svg></span>
+          <span class="tb__btn is-active"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-arrow"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-text"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-step"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pixel"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-blur"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-dropper"/></svg></span>
+          <span class="tb__sep"></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-undo"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-redo"/></svg></span>
+          <span class="tb__sep"></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pin"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-ocr"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-copy"/></svg></span>
+          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-save"/></svg></span>
+        </div>
+
+        <div class="hero__toast toast" id="hero-toast">
+          <span class="toast__check"><svg class="icon" width="13" height="13" style="stroke-width:3"><use href="assets/icons/sprite.svg#i-check"/></svg></span>
+          <span>Copied to clipboard · saved to <span class="mono" style="font-size:12px;color:#C9CDD2">Pictures\NeatShot</span></span>
+        </div>
+
+        <div class="hero__cursor" id="hero-cursor" style="transform:translate(678px,376px)">
+          <svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke-linecap:square;overflow:visible"><path d="M12 0v9M12 15v9M0 12h9M15 12h9" style="stroke:#000;stroke-width:3.5"/><path d="M12 0v9M12 15v9M0 12h9M15 12h9" style="stroke:#fff;stroke-width:1.5"/></svg>
+        </div>
+
+      </div>
+    </div>
+    <div class="hero__footer">
+      <span class="hero__keys">
+        <kbd class="kbd kbd--sm" data-key="control">Ctrl</kbd><span>+</span>
+        <kbd class="kbd kbd--sm" data-key="shift">Shift</kbd><span>+</span>
+        <kbd class="kbd kbd--sm" data-key="a">A</kbd>
+        <span data-i18n="or" style="margin:0 4px">or</span>
+        <kbd class="kbd kbd--sm" data-key="printscreen">PrtSc</kbd>
+      </span>
+      <span data-i18n="heroHint">Hover the desktop to replay</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 · BEFORE / AFTER ============ -->
+<section class="section container" id="features" aria-labelledby="annoy-title">
+  <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">02</span><span data-i18n="eyAnnoy">Before / after</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
+  <div class="section-head" style="margin-bottom:clamp(40px,5vw,72px)">
+    <h2 class="title title--xl" id="annoy-title" data-i18n="annoyTitle" data-reveal style="max-width:14ch">The three things that annoy you</h2>
+    <p class="lead" data-i18n="annoyLead" data-reveal>Most screenshot tools capture pixels and call it done. These are the small failures that make you take the shot again.</p>
+  </div>
+
+  <div>
+    <!-- 01 · Tray menu -->
+    <div class="compare" data-annoy="tray">
+      <div class="compare__text">
+        <span class="compare__num">01</span>
+        <h3 class="compare__title" data-i18n="a1t">The tray menu ends up in the shot</h3>
+        <p class="compare__desc" data-i18n="a1d">Clean Shot closes tray flyouts and popups before capturing, so they never end up in the screenshot.</p>
+      </div>
+      <figure class="shot-card" data-side="before">
+        <figcaption><span data-i18n="lblBefore">Before</span><span>372 × 190</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="Capture that still contains an open tray menu">
+          <div class="stage">
+            <div style="position:absolute;left:26px;top:22px;width:250px;height:168px;background:#F4F5F7;border-radius:6px;overflow:hidden"><div style="height:20px;background:#E3E6EA"></div><div style="margin:16px;display:flex;flex-direction:column;gap:9px"><span style="width:70%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="width:90%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:55%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:40%;height:22px;background:#0078D4;border-radius:4px;margin-top:10px"></span></div></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;height:26px;background:#101216"><span style="position:absolute;right:56px;top:9px;width:9px;height:9px;background:#5F6670;border-radius:2px"></span><span style="position:absolute;right:42px;top:9px;width:9px;height:9px;background:#3B9BEB;border-radius:2px"></span><span style="position:absolute;right:10px;top:8px;font:9px/1 var(--mono);color:#9AA0A6">14:32</span></div>
+            <div data-menu style="position:absolute;left:236px;top:88px;width:148px;height:112px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px;display:flex;flex-direction:column;font-size:11px;color:#D7DAE0;box-shadow:0 10px 24px rgba(0,0,0,.5)"><span style="padding:5px 8px">Sync now</span><span style="padding:5px 8px;background:rgba(255,255,255,.08);border-radius:4px">Pause syncing</span><span style="padding:5px 8px">Settings</span><span style="padding:5px 8px">Quit</span></div>
+            <div style="position:absolute;left:14px;top:12px;width:372px;height:190px;border:1px dashed #3B9BEB"></div>
+            <div class="flash" data-flash></div>
+          </div>
+        </div>
+      </figure>
+      <figure class="shot-card shot-card--after" data-side="after">
+        <figcaption><span>NeatShot · Clean Shot</span><span>372 × 190</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="The same capture with the tray menu closed before capture">
+          <div class="stage">
+            <div style="position:absolute;left:26px;top:22px;width:250px;height:168px;background:#F4F5F7;border-radius:6px;overflow:hidden"><div style="height:20px;background:#E3E6EA"></div><div style="margin:16px;display:flex;flex-direction:column;gap:9px"><span style="width:70%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="width:90%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:55%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:40%;height:22px;background:#0078D4;border-radius:4px;margin-top:10px"></span></div></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;height:26px;background:#101216"><span style="position:absolute;right:56px;top:9px;width:9px;height:9px;background:#5F6670;border-radius:2px"></span><span style="position:absolute;right:42px;top:9px;width:9px;height:9px;background:#3B9BEB;border-radius:2px"></span><span style="position:absolute;right:10px;top:8px;font:9px/1 var(--mono);color:#9AA0A6">14:32</span></div>
+            <div data-menu style="position:absolute;left:236px;top:88px;width:148px;height:112px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px;display:flex;flex-direction:column;font-size:11px;color:#D7DAE0;opacity:0"><span style="padding:5px 8px">Sync now</span><span style="padding:5px 8px">Pause syncing</span><span style="padding:5px 8px">Settings</span><span style="padding:5px 8px">Quit</span></div>
+            <div style="position:absolute;left:14px;top:12px;width:372px;height:190px;border:1px solid #0078D4"></div>
+            <div class="flash" data-flash></div>
+            <span class="size-badge size-badge--xs" data-ok style="position:absolute;left:290px;top:24px;display:flex;align-items:center;gap:5px"><svg class="icon" width="10" height="10" style="stroke-width:3.5"><use href="assets/icons/sprite.svg#i-check"/></svg>popups closed</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 02 · Hotkey -->
+    <div class="compare" data-annoy="keys">
+      <div class="compare__text">
+        <span class="compare__num">02</span>
+        <h3 class="compare__title" data-i18n="a2t">Another app hijacked PrtSc</h3>
+        <p class="compare__desc" data-i18n="a2d">NeatShot listens to PrtSc, and Ctrl + Shift + A always works — even when something else grabs the key first.</p>
+      </div>
+      <figure class="shot-card" data-side="before">
+        <figcaption><span data-i18n="lblBefore">Before</span><span>PrtSc</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="Pressing PrtSc opens a different app">
+          <div class="stage">
+            <span data-press style="position:absolute;left:150px;top:34px;width:100px;height:56px;display:grid;place-items:center;font:500 18px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">PrtSc</span>
+            <div data-pop style="position:absolute;left:86px;top:122px;width:228px;padding:14px 16px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,.5)">
+              <div style="display:flex;justify-content:space-between;font:500 10px/1 var(--mono);color:#9AA0A6"><span>some-other-app.exe</span><svg class="icon" width="10" height="10" style="stroke-width:2.5"><use href="assets/icons/sprite.svg#i-x"/></svg></div>
+              <div style="margin-top:10px;font-size:13px;color:#E8EAED">Took over Print Screen.</div>
+              <div style="margin-top:4px;font-size:11px;color:#9AA0A6">Your capture didn't start.</div>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <figure class="shot-card shot-card--after" data-side="after">
+        <figcaption><span>NeatShot</span><span>Ctrl + Shift + A</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="Ctrl + Shift + A starts a NeatShot selection">
+          <div class="stage">
+            <div style="position:absolute;left:0;top:34px;width:400px;display:flex;justify-content:center;align-items:center;gap:8px;font:500 14px/1 var(--mono);color:#9AA0A6">
+              <span data-press style="width:76px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">Ctrl</span><span>+</span>
+              <span data-press style="width:82px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">Shift</span><span>+</span>
+              <span data-press style="width:50px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">A</span>
+            </div>
+            <div data-pop style="position:absolute;left:96px;top:116px;width:208px;height:96px;border:1px solid #0078D4;box-shadow:0 0 0 400px rgba(5,6,8,.5)">
+              <span class="handles handles--sm"><span class="h-tl"></span><span class="h-tr"></span><span class="h-bl"></span><span class="h-br"></span></span>
+              <span class="size-badge size-badge--xs" data-ok style="position:absolute;left:-1px;top:-24px">208 × 96</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 03 · DPI -->
+    <div class="compare" data-annoy="dpi">
+      <div class="compare__text">
+        <span class="compare__num">03</span>
+        <h3 class="compare__title" data-i18n="a3t">The selection drifts on a 150% monitor</h3>
+        <p class="compare__desc" data-i18n="a3d">Per-Monitor DPI aware across mixed scaling — 100%, 125%, 150% — so what you select is exactly what you get.</p>
+      </div>
+      <figure class="shot-card" data-side="before">
+        <figcaption><span data-i18n="lblBefore">Before</span><span>Display 2 · 150%</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="On a 150% display the captured area is offset from the selection">
+          <div class="stage">
+            <div style="position:absolute;left:100px;top:64px;width:200px;height:110px;background:#F4F5F7;border-radius:6px;padding:16px"><span style="display:block;width:60%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="display:block;width:80%;height:8px;background:#DDE1E6;border-radius:2px;margin-top:9px"></span><span style="display:block;width:76px;height:26px;background:#0078D4;border-radius:4px;margin-top:20px"></span></div>
+            <div style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px dashed #3B9BEB"></div>
+            <div data-shift style="position:absolute;left:120px;top:74px;width:216px;height:126px;border:2px solid #9AA0A6"></div>
+            <div style="position:absolute;left:14px;bottom:12px;display:flex;gap:14px;font:500 10px/1 var(--mono);color:#9AA0A6"><span style="display:flex;align-items:center;gap:5px"><span style="width:14px;border-top:1px dashed #3B9BEB"></span>selected</span><span style="display:flex;align-items:center;gap:5px"><span style="width:14px;border-top:2px solid #9AA0A6"></span>captured</span></div>
+          </div>
+        </div>
+      </figure>
+      <figure class="shot-card shot-card--after" data-side="after">
+        <figcaption><span>NeatShot · Per-Monitor DPI</span><span>150%</span></figcaption>
+        <div class="stage-frame" style="--w:400;--h:240" role="img" aria-label="With NeatShot the captured area matches the selection exactly">
+          <div class="stage">
+            <div style="position:absolute;left:100px;top:64px;width:200px;height:110px;background:#F4F5F7;border-radius:6px;padding:16px"><span style="display:block;width:60%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="display:block;width:80%;height:8px;background:#DDE1E6;border-radius:2px;margin-top:9px"></span><span style="display:block;width:76px;height:26px;background:#0078D4;border-radius:4px;margin-top:20px"></span></div>
+            <div style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px dashed #3B9BEB"></div>
+            <div data-shift style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px solid #0078D4"></div>
+            <span class="size-badge size-badge--xs" data-ok style="position:absolute;left:92px;top:190px">324 × 189 px · pixel-exact</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · ANNOTATE ============ -->
+<section class="section--surface" id="annotate" aria-labelledby="ann-title">
+  <div class="annotate__pin" id="annotate-pin">
+    <div class="annotate__inner container">
+      <div class="annotate__copy">
+        <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">03</span><span data-i18n="eyAnn">Annotate</span></div>
+        <h2 class="title title--md" id="ann-title" data-i18n="annTitle">Mark it up before you paste it.</h2>
+        <p class="lead lead--sm" data-i18n="annLead">Every tool you need to explain a screenshot, and two for hiding what shouldn't be in it.</p>
+        <ol class="tool-list">
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tArrow">Arrow</span><span class="tool__desc" data-i18n="dArrow">Point at the exact button.</span></span></li>
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-rect"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tRect">Rectangle</span><span class="tool__desc" data-i18n="dRect">Frame the field that matters.</span></span></li>
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-text"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tText">Text</span><span class="tool__desc" data-i18n="dText">Type a note right on the capture.</span></span></li>
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-step"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tStep">Step badges</span><span class="tool__desc" data-i18n="dStep">Click to drop 1, 2, 3… in order.</span></span></li>
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pixel"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tPix">Pixelate</span><span class="tool__desc" data-i18n="dPix">Hide tokens, keys and emails.</span></span></li>
+          <li class="tool" data-tool><span class="tool__corner tool__corner--tl"></span><span class="tool__corner tool__corner--br"></span><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-blur"/></svg><span class="tool__text"><span class="tool__name" data-tname data-i18n="tBlur">Blur</span><span class="tool__desc" data-i18n="dBlur">Soften faces and avatars.</span></span></li>
+        </ol>
+        <div class="tool-extras">
+          <span class="tool-extras__icons">
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pencil"/></svg>
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-highlighter"/></svg>
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-ellipse"/></svg>
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-line"/></svg>
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-dropper"/></svg>
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-undo"/></svg>
+          </span>
+          <span class="tool-extras__text" data-i18n="annAlso">Also: pencil, highlighter, ellipse, line, eyedropper, undo / redo.</span>
+        </div>
+      </div>
+
+      <div class="annotate__visual">
+        <div class="annotate__canvas-wrap">
+          <div class="stage-frame annotate__canvas" id="ann-canvas" style="--w:720;--h:460" role="img" aria-label="A webhook settings page annotated with an arrow, a rectangle, a text label, numbered steps, a pixelated secret and a blurred avatar">
+            <div class="stage" style="color:#1B1F24">
+              <div style="height:34px;background:#ECEEF1;border-bottom:1px solid #DDE1E6;padding-left:14px;font-size:12px;line-height:34px;color:#5B6470">Acme Console — Settings</div>
+              <div style="position:absolute;left:32px;top:50px;font-size:20px;font-weight:700;letter-spacing:-.01em">Webhooks</div>
+              <div style="position:absolute;left:32px;top:96px;font-size:12px;font-weight:600;color:#5B6470">Webhook URL</div>
+              <div style="position:absolute;left:32px;top:116px;width:420px;height:38px;background:#fff;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font:13px/36px var(--mono)">https://hooks.acme.dev/v1/orders</div>
+              <div style="position:absolute;left:32px;top:172px;font-size:12px;font-weight:600;color:#5B6470">Signing secret</div>
+              <div style="position:absolute;left:32px;top:192px;width:420px;height:38px;background:#fff;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font:13px/36px var(--mono)">whsec_4f9b2c71e0a8d3</div>
+              <div class="pixel-cells" data-cells="32" data-cell-attr="acell" style="left:42px;top:201px;width:160px"></div>
+              <div style="position:absolute;left:32px;top:248px;font-size:12px;font-weight:600;color:#5B6470">Events</div>
+              <div style="position:absolute;left:32px;top:270px;display:flex;flex-direction:column;gap:10px;font:13px/16px var(--mono);color:#3D454F">
+                <span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;background:#0078D4;display:grid;place-items:center;color:#fff"><svg class="icon" width="11" height="11" style="stroke-width:3.5"><use href="assets/icons/sprite.svg#i-check"/></svg></span>order.created</span>
+                <span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;background:#0078D4;display:grid;place-items:center;color:#fff"><svg class="icon" width="11" height="11" style="stroke-width:3.5"><use href="assets/icons/sprite.svg#i-check"/></svg></span>order.paid</span>
+                <span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;border:1px solid #B9BFC7;background:#fff"></span>order.refunded</span>
+              </div>
+              <div style="position:absolute;left:32px;top:368px;width:140px;height:38px;background:#0078D4;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-align:center;line-height:38px">Save changes</div>
+              <div style="position:absolute;left:184px;top:368px;width:96px;height:38px;border:1px solid #D5D9DF;border-radius:6px;font-size:13px;text-align:center;line-height:36px;color:#3D454F">Cancel</div>
+              <div style="position:absolute;left:500px;top:96px;width:196px;height:164px;background:#fff;border:1px solid #E1E4E8;border-radius:8px">
+                <span style="position:absolute;left:16px;top:16px;width:36px;height:36px;border-radius:50%;background:#C98A3E;color:#fff;font:600 13px/36px var(--sans);text-align:center">MA</span>
+                <span style="position:absolute;left:62px;top:18px;font-size:13px;font-weight:600">Minh Anh</span>
+                <span style="position:absolute;left:62px;top:36px;font-size:11px;color:#6B7480">2 min ago</span>
+                <span style="position:absolute;left:16px;top:66px;width:166px;font-size:13px;line-height:1.45;color:#3D454F">Staging webhook keeps failing. Switch to the v2 URL before release.</span>
+              </div>
+              <div id="ann-blur" style="position:absolute;left:508px;top:104px;width:150px;height:56px;border-radius:8px;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);background:rgba(240,241,243,.35)"></div>
+              <div id="ann-label" style="position:absolute;left:250px;top:58px;font-size:19px;font-weight:700;color:#FF3B30;letter-spacing:-.01em">Use the v2 URL</div>
+              <svg class="annot-svg" viewBox="0 0 720 460" width="720" height="460" style="stroke-width:3" aria-hidden="true">
+                <path id="ann-rect" d="M28 106 H456 Q460 106 460 110 V160 Q460 164 456 164 H28 Q24 164 24 160 V110 Q24 106 28 106 Z"/>
+                <path id="ann-arrow" d="M352 438 C 300 440, 230 424, 180 394"/>
+                <path id="ann-head" d="M193.9 394.2 L180 394 L186.7 406.2"/>
+              </svg>
+              <span class="step-badge" data-astep style="left:466px;top:124px;box-shadow:none">1</span>
+              <span class="step-badge" data-astep style="left:466px;top:200px;box-shadow:none">2</span>
+              <span class="step-badge" data-astep style="left:292px;top:376px;box-shadow:none">3</span>
+            </div>
+          </div>
+          <div class="stage-meta"><span id="ann-step">6 / 6 · Blur</span><span>720 × 460</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · BEAUTIFY ============ -->
+<section class="section container" id="beautify" aria-labelledby="bf-title">
+  <div class="beautify__layout">
+    <div class="beautify__copy">
+      <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">04</span><span data-i18n="eyBf">Beautify</span></div>
+      <h2 class="title title--lg" id="bf-title" data-i18n="bfTitle" data-reveal>Ready for the slide, the README, the post.</h2>
+      <p class="lead" data-i18n="bfLead" data-reveal>Add a gradient background, padding, rounded corners and a soft shadow in one step. Pick a preset:</p>
+      <div class="presets" role="group" aria-label="Background presets">
+        <button class="preset" type="button" data-preset="pink" aria-pressed="true"><span class="preset__swatch grad-pink"></span><span data-i18n="pPink">Pink</span></button>
+        <button class="preset" type="button" data-preset="ocean" aria-pressed="false"><span class="preset__swatch grad-ocean"></span><span data-i18n="pOcean">Ocean</span></button>
+        <button class="preset" type="button" data-preset="mint" aria-pressed="false"><span class="preset__swatch grad-mint"></span><span data-i18n="pMint">Mint</span></button>
+        <button class="preset" type="button" data-preset="graphite" aria-pressed="false"><span class="preset__swatch grad-graphite"></span><span data-i18n="pGraph">Graphite</span></button>
+      </div>
+      <dl class="stats">
+        <div><dt data-i18n="lPad">Padding</dt><dd id="bf-pad">64px</dd></div>
+        <div><dt data-i18n="lRad">Corners</dt><dd id="bf-rad">14px</dd></div>
+        <div><dt data-i18n="lShadow">Shadow</dt><dd id="bf-shv">soft</dd></div>
+      </dl>
+    </div>
+    <div class="beautify__visual">
+      <div class="stage-frame beautify__frame" id="bf-fit" style="--w:760;--h:500" role="img" aria-label="A chat screenshot gains padding, rounded corners, a soft shadow and a gradient background">
+        <div class="stage">
+          <div id="bf-grads" style="position:absolute;inset:0">
+            <div class="grad-pink" data-grad="pink" style="position:absolute;inset:0;opacity:1"></div>
+            <div class="grad-ocean" data-grad="ocean" style="position:absolute;inset:0;opacity:0"></div>
+            <div class="grad-mint" data-grad="mint" style="position:absolute;inset:0;opacity:0"></div>
+            <div class="grad-graphite" data-grad="graphite" style="position:absolute;inset:0;opacity:0"></div>
+          </div>
+          <div id="bf-shot" style="position:absolute;inset:0;transform:scale(.8)">
+            <div id="bf-shadow-l" style="position:absolute;inset:0;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,.32),0 8px 18px rgba(0,0,0,.18)"></div>
+            <div id="bf-card" style="position:absolute;inset:0;border-radius:14px;overflow:hidden;background:#FAFBFC;color:#1B1F24">
+              <div style="height:52px;background:#fff;border-bottom:1px solid #E6E8EB;display:flex;align-items:center;gap:10px;padding:0 22px;font-size:16px;font-weight:600"># design-review<span style="margin-left:auto;font-size:12px;font-weight:400;color:#6B7480">4 members</span></div>
+              <div style="padding:24px 22px;display:flex;flex-direction:column;gap:22px">
+                <div style="display:flex;gap:14px"><span style="flex:none;width:38px;height:38px;border-radius:50%;background:#4F7CAC;color:#fff;font:600 13px/38px var(--sans);text-align:center">L</span><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:600">Linh <span style="font-weight:400;font-size:12px;color:#6B7480">10:42</span></span><span style="font-size:15px;color:#3D454F">Here's the new empty state for the Gallery.</span>
+                  <div style="width:330px;height:150px;border:1px solid #E1E4E8;border-radius:8px;background:#fff;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><span style="background:#EEF0F3;border-radius:4px"></span><span style="background:#EEF0F3;border-radius:4px"></span><span style="background:#EEF0F3;border-radius:4px"></span><span style="grid-column:span 3;height:10px;width:60%;background:#DDE1E6;border-radius:2px;align-self:end"></span></div></div></div>
+                <div style="display:flex;gap:14px"><span style="flex:none;width:38px;height:38px;border-radius:50%;background:#8A6D47;color:#fff;font:600 13px/38px var(--sans);text-align:center">B</span><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:600">Bảo <span style="font-weight:400;font-size:12px;color:#6B7480">10:44</span></span><span style="font-size:15px;color:#3D454F">Looks right. Ship it after the copy pass.</span></div></div>
+              </div>
+              <div style="position:absolute;left:22px;right:22px;bottom:20px;height:42px;border:1px solid #DDE1E6;border-radius:8px;background:#fff;padding:0 14px;font:14px/40px var(--sans);color:#8A929C">Message #design-review</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-meta"><span>preset · <span id="bf-name">pink</span></span><span>760 × 500</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 · PIN ============ -->
+<section class="section section--deep" id="pin" aria-labelledby="pin-title">
+  <div class="container">
+    <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">05</span><span data-i18n="eyPin">Pin to screen</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
+    <div class="section-head" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))">
+      <div>
+        <h2 class="title title--xl" id="pin-title" data-i18n="pinTitle" data-reveal>Pin it. Keep working.</h2>
+        <p class="lead" data-i18n="pinLead" data-reveal style="margin-top:16px;max-width:50ch">The capture floats above every window. Keep an error message, a spec or a reference in view while you code.</p>
+      </div>
+      <ul class="pin-facts">
+        <li><span data-i18n="pZoom">Zoom</span><kbd class="kbd kbd--md" data-i18n="kWheel">Wheel</kbd></li>
+        <li><span data-i18n="pOpac">Opacity</span><span class="kbd-combo"><kbd class="kbd kbd--md">Ctrl</kbd>+<kbd class="kbd kbd--md" data-i18n="kWheel">Wheel</kbd></span></li>
+        <li><span data-i18n="pDraw">Draw directly on the pin</span><svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pencil"/></svg></li>
+        <li><span data-i18n="pMany">Many pins at once</span><svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pin"/></svg></li>
+      </ul>
+    </div>
+
+    <div class="stage-frame pin__frame" id="pin-fit" style="--w:1200;--h:600" role="img" aria-label="Three pinned captures float over a code editor; the main pin zooms in, turns semi-transparent and gets a pen circle drawn on it">
+      <div class="stage pin__stage">
+        <div style="position:absolute;left:0;top:0;bottom:24px;width:44px;background:#0F1114;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px"><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.18)"></span><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.08)"></span><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.08)"></span></div>
+        <div style="position:absolute;left:44px;top:0;bottom:24px;width:200px;background:#15171B;border-right:1px solid rgba(255,255,255,.05);padding:14px 0;font-size:12px;line-height:26px;color:#9AA0A6">
+          <div style="padding:0 16px;font-size:10px;letter-spacing:.08em">EXPLORER</div>
+          <div style="padding:0 16px">src/</div><div style="padding:0 28px">cart/</div><div style="padding:0 40px;background:#1E2128;color:#E8EAED">checkout.ts</div><div style="padding:0 40px">totals.ts</div><div style="padding:0 28px">api/</div><div style="padding:0 40px">client.ts</div><div style="padding:0 28px">tests/</div>
+        </div>
+        <div style="position:absolute;left:244px;right:0;top:0;height:36px;background:#15171B;display:flex;font-size:12px"><span style="padding:0 18px;line-height:36px;background:#121418;color:#E8EAED;box-shadow:inset 0 1px 0 #0078D4">checkout.ts</span><span style="padding:0 18px;line-height:36px;color:#7D838B">totals.ts</span></div>
+        <div style="position:absolute;left:244px;top:50px;width:52px;text-align:right;font-size:13px;line-height:24px;color:#4B5260">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19</div>
+        <div style="position:absolute;left:244px;right:0;top:290px;height:24px;background:rgba(255,255,255,.04)"></div>
+<div style="position:absolute;left:316px;top:50px;font-size:13.5px;line-height:24px;color:#C9CDD2;white-space:pre"><span style="color:#7FB4E6">import</span> { getCart } <span style="color:#7FB4E6">from</span> <span style="color:#B5D19A">"../api/client"</span>;
+<span style="color:#7FB4E6">import</span> { formatPrice } <span style="color:#7FB4E6">from</span> <span style="color:#B5D19A">"./totals"</span>;
+
+<span style="color:#7FB4E6">export async function</span> <span style="color:#E6C07B">checkout</span>(userId: <span style="color:#7FB4E6">string</span>) {
+  <span style="color:#7FB4E6">const</span> cart = <span style="color:#7FB4E6">await</span> <span style="color:#E6C07B">getCart</span>(userId);
+  <span style="color:#7FB4E6">if</span> (!cart.items.length) {
+    <span style="color:#7FB4E6">throw new</span> <span style="color:#E6C07B">Error</span>(<span style="color:#B5D19A">"Cart is empty"</span>);
+  }
+
+  <span style="color:#6B7280">// totals can be missing on 150% layout</span>
+  <span style="color:#7FB4E6">const</span> label = <span style="color:#E6C07B">formatPrice</span>(cart.totals.total);
+
+  <span style="color:#7FB4E6">return</span> {
+    id: cart.id,
+    label,
+    items: cart.items.<span style="color:#E6C07B">map</span>((i) =&gt; i.sku),
+  };
+}
+</div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:24px;background:#0F1114;padding:0 14px;font-size:11px;line-height:24px;color:#7D838B">TypeScript · UTF-8 · Ln 11, Col 31</div>
+
+        <div class="pinned" data-pin-other style="left:560px;top:404px;width:220px;height:130px;background:#0B0C0E;padding:12px 14px;font-size:11.5px;line-height:20px;color:#C9CDD2">$ npm test<br><span style="color:#7BC47F">PASS</span> totals.spec.ts<br><span style="color:#E5484D">FAIL</span> checkout.spec.ts<br><span style="color:#7D838B">Tests: 1 failed, 11 passed</span></div>
+        <div class="pinned" data-pin-other style="left:760px;top:376px;width:300px;height:150px;background:#fff;padding:16px;display:flex;gap:16px;color:#1B1F24;font-size:12px">
+          <span style="width:64px;height:64px;border-radius:6px;background:#0078D4;flex:none"></span>
+          <span style="display:flex;flex-direction:column;gap:6px;line-height:1.3"><b style="font-family:var(--sans);font-size:13px">Button / primary</b><span>fill #0078D4</span><span>radius 6 · height 36</span><span>label 13 / 600</span></span>
+        </div>
+        <div class="size-badge" id="pin-hud" style="position:absolute;left:648px;top:50px;z-index:3;font-weight:400">Zoom 120% · Opacity 75%</div>
+        <div class="pinned" id="pin-main" style="left:690px;top:110px;width:420px;height:210px;background:#fff;border-color:rgba(255,255,255,.25);box-shadow:0 24px 60px rgba(0,0,0,.6);overflow:hidden;transform:scale(1.2);opacity:.75;z-index:2;color:#1B1F24">
+          <div style="height:28px;background:#F1F3F5;border-bottom:1px solid #E1E4E8;padding:0 12px;font:600 11px/28px var(--sans);color:#4A525C">Console</div>
+          <div style="padding:10px 12px 0 30px;font-size:12px;line-height:20px;position:relative;white-space:nowrap">
+            <span style="position:absolute;left:12px;top:15px;width:10px;height:10px;border-radius:50%;background:#D93025"></span>
+            <div style="color:#B3261E">Uncaught TypeError: Cannot read properties of</div>
+            <div style="color:#B3261E">undefined (reading 'total')</div>
+            <div style="color:#5B6470;margin-top:4px">at checkout (checkout.ts:11:31)</div>
+            <div style="color:#5B6470">at async onClick (CartButton.tsx:24:5)</div>
+            <div style="border-top:1px solid #EEF0F3;margin:10px 0 0 -18px;padding:8px 0 0 18px;color:#1B1F24">&gt; cart.totals</div>
+            <div style="color:#9AA0A6">undefined</div>
+          </div>
+          <svg class="annot-svg" viewBox="0 0 420 210" width="420" height="210" style="stroke-width:3" aria-hidden="true">
+            <path id="pin-pen" d="M92 68 C 92 48, 236 46, 238 64 C 240 84, 98 88, 89 72 C 86 65, 96 58, 110 56"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 · TEXT EXTRACTION ============ -->
+<section class="section container" id="ocr" aria-labelledby="ocr-title">
+  <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">06</span><span data-i18n="eyOcr">Text extraction</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
+  <div class="section-head">
+    <h2 class="title title--xl" id="ocr-title" data-i18n="ocrTitle" data-reveal style="max-width:15ch">Copy the text, not the picture of it.</h2>
+    <p class="lead" data-i18n="ocrLead" data-reveal>Windows OCR reads the selection on your machine, 100% offline. Line breaks stay where they were, and Vietnamese diacritics come through intact.</p>
+  </div>
+  <div class="ocr__layout">
+    <div class="ocr__visual">
+      <div class="stage-frame ocr__frame" id="ocr-fit" style="--w:620;--h:400" role="img" aria-label="A scan line passes over a captured release checklist, including a Vietnamese line">
+        <div class="stage" style="color:#1B1F24">
+          <div style="position:absolute;left:36px;top:36px;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:34px">Release checklist — v1.0.0<span class="ocr-box" data-obox data-y="36"></span></div>
+          <div style="position:absolute;left:36px;top:100px;font-size:18px;line-height:26px;color:#3D454F">1. Build the x64 zip and check the hash<span class="ocr-box" data-obox data-y="100"></span></div>
+          <div style="position:absolute;left:36px;top:142px;font-size:18px;line-height:26px;color:#3D454F">2. Test at 100%, 125% and 150% scaling<span class="ocr-box" data-obox data-y="142"></span></div>
+          <div style="position:absolute;left:36px;top:184px;font-size:18px;line-height:26px;color:#3D454F">3. Confirm zero network requests<span class="ocr-box" data-obox data-y="184"></span></div>
+          <div style="position:absolute;left:36px;top:244px;font-size:24px;font-weight:600;line-height:32px;letter-spacing:-.01em">Trích xuất chữ hoàn toàn offline<span class="ocr-box" data-obox data-y="244"></span></div>
+          <div style="position:absolute;left:36px;top:290px;font-size:18px;line-height:26px;color:#3D454F">Giữ nguyên dấu và xuống dòng.<span class="ocr-box" data-obox data-y="290"></span></div>
+          <div style="position:absolute;left:36px;bottom:22px;font:11px/1 var(--mono);color:#8A929C">docs/release.md · page 1</div>
+          <div class="ocr__scan" id="ocr-scan"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel__head">
+        <svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-ocr"/></svg>
+        <span class="panel__title" data-i18n="ocrPanel">Extracted text</span>
+        <span class="panel__tag">Windows OCR · offline</span>
+      </div>
+      <div class="panel__body" lang="vi">
+        <div data-oline>Release checklist — v1.0.0</div>
+        <div class="is-dim" data-oline>1. Build the x64 zip and check the hash</div>
+        <div class="is-dim" data-oline>2. Test at 100%, 125% and 150% scaling</div>
+        <div class="is-dim" data-oline>3. Confirm zero network requests</div>
+        <div data-oline style="margin-top:8px">Trích xuất chữ hoàn toàn offline</div>
+        <div class="is-dim" data-oline>Giữ nguyên dấu và xuống dòng.</div>
+      </div>
+      <div class="panel__foot">
+        <span data-i18n="ocrFoot">6 lines · line breaks kept</span>
+        <span class="panel__action"><svg class="icon" width="15" height="15" aria-hidden="true"><use href="assets/icons/sprite.svg#i-copy"/></svg><span data-i18n="ocrCopy">Copy</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 · GALLERY ============ -->
+<section class="section section--surface" id="gallery" aria-labelledby="gal-title">
+  <div class="container">
+    <div class="gallery__head">
+      <div class="gallery__intro">
+        <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">07</span><span data-i18n="eyGal">Gallery</span></div>
+        <h2 class="title title--lg" id="gal-title" data-i18n="galTitle" data-reveal>Every copy and pin is already saved.</h2>
+        <p class="lead" data-i18n="galLead" data-reveal>Copied and pinned shots auto-save to your Pictures folder. Browse them, re-pin, copy or delete.</p>
+      </div>
+      <div class="folder-chip">
+        <svg class="icon" width="16" height="16" aria-hidden="true"><use href="assets/icons/sprite.svg#i-gallery"/></svg>Pictures\NeatShot<span class="folder-chip__count" id="gal-count">· 8</span>
+      </div>
+    </div>
+    <!-- Thumbnail được dựng từ assets/js/data.js -->
+    <div class="gallery__grid" id="gal-grid"></div>
+  </div>
+</section>
+
+<!-- ============ 08 · SHORTCUTS ============ -->
+<section class="section container" id="shortcuts" aria-labelledby="keys-title">
+  <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">08</span><span data-i18n="eyKeys">Shortcuts</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
+  <div class="section-head">
+    <h2 class="title title--xl" id="keys-title" data-i18n="keysTitle" data-reveal style="max-width:14ch">Keep your hands on the keys.</h2>
+    <p class="lead" data-i18n="keysLead" data-reveal>Try it: press Ctrl, Shift, A or PrtSc and watch the keys light up.</p>
+  </div>
+  <div class="key-groups">
+    <div>
+      <h3 class="key-group__title"><span data-i18n="gGlobal">Global</span><span class="key-group__count">02</span></h3>
+      <div class="key-row"><span data-i18n="kCapture">Capture a region</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="shift">Shift</kbd>+<kbd class="kbd kbd--interactive" data-key="a">A</kbd></span></div>
+      <div class="key-row"><span data-i18n="kCaptureAlt">Capture a region (alternative)</span><kbd class="kbd kbd--interactive" data-key="printscreen">PrtSc</kbd></div>
+    </div>
+    <div>
+      <h3 class="key-group__title"><span data-i18n="gCapture">Capture</span><span class="key-group__count">05</span></h3>
+      <div class="key-row"><span data-i18n="kSelect">Select an area</span><kbd class="kbd kbd--interactive" data-i18n="kDrag" style="cursor:crosshair">Drag</kbd></div>
+      <div class="key-row"><span data-i18n="kResize">Resize with 8 handles</span><kbd class="kbd kbd--interactive" data-i18n="kDragHandle" style="cursor:nwse-resize">Drag a handle</kbd></div>
+      <div class="key-row"><span data-i18n="kUndo">Undo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="z">Z</kbd></span></div>
+      <div class="key-row"><span data-i18n="kRedo">Redo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="y">Y</kbd></span></div>
+      <div class="key-row"><span data-i18n="kCancel">Cancel</span><kbd class="kbd kbd--interactive" data-key="escape">Esc</kbd></div>
+    </div>
+    <div>
+      <h3 class="key-group__title"><span data-i18n="gPin">Pin</span><span class="key-group__count">02</span></h3>
+      <div class="key-row"><span data-i18n="kZoom">Zoom the pin</span><kbd class="kbd kbd--interactive" data-i18n="kWheel">Wheel</kbd></div>
+      <div class="key-row"><span data-i18n="kOpac">Change opacity</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-i18n="kWheel">Wheel</kbd></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 · PRIVACY ============ -->
+<section class="section" id="privacy" aria-labelledby="priv-title" style="border-top:1px solid var(--line)">
+  <div class="privacy__layout container">
+    <div class="privacy__copy">
+      <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">09</span><span data-i18n="eyPriv">Privacy &amp; open source</span></div>
+      <h2 class="privacy__title" id="priv-title" data-i18n="privTitle" data-reveal>Nothing leaves your machine.</h2>
+      <p class="lead privacy__lead" data-i18n="privLead" data-reveal>NeatShot makes no network calls. Your captures, your text and your settings stay on this PC.</p>
+      <dl class="facts">
+        <div><dt data-i18n="f1t">Fully offline</dt><dd data-i18n="f1d">OCR runs on Windows itself. Nothing is uploaded.</dd></div>
+        <div><dt data-i18n="f2t">No account</dt><dd data-i18n="f2d">Download, unzip, press Ctrl + Shift + A.</dd></div>
+        <div><dt data-i18n="f3t">No telemetry</dt><dd data-i18n="f3d">No analytics, no usage pings, nothing sent home.</dd></div>
+        <div><dt data-i18n="f4t">MIT licensed</dt><dd data-i18n="f4d">Read the code, fork it, build on it.</dd></div>
+      </dl>
+    </div>
+    <div class="readout" role="group" aria-label="Session readout: network requests 0, no account, no telemetry, MIT license">
+      <div class="readout__head"><span>SESSION READOUT</span><span class="readout__live">local</span></div>
+      <div class="readout__big"><div class="readout__label">network requests</div><div class="readout__value">0</div></div>
+      <div class="readout__rows">
+        <div class="readout__row"><span>account</span><span class="readout__dots"></span><span>none</span></div>
+        <div class="readout__row"><span>telemetry</span><span class="readout__dots"></span><span>none</span></div>
+        <div class="readout__row"><span>ocr</span><span class="readout__dots"></span><span>Windows OCR, local</span></div>
+        <div class="readout__row"><span>saves to</span><span class="readout__dots"></span><span>Pictures\NeatShot</span></div>
+        <div class="readout__row"><span>license</span><span class="readout__dots"></span><a href="https://github.com/Thien21112005/neat-shot">MIT</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · DOWNLOAD ============ -->
+<section class="download container" id="download" aria-labelledby="dl-title">
+  <div class="dl-box" id="dl-box">
+    <svg class="dl-box__ants" width="100%" height="100%" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%"/></svg>
+    <span class="dl-box__size size-badge" id="dl-size" aria-hidden="true">1328 × 420</span>
+    <span class="handles handles--hollow" aria-hidden="true"><span class="h-tl"></span><span class="h-tc"></span><span class="h-tr"></span><span class="h-ml"></span><span class="h-mr"></span><span class="h-bl"></span><span class="h-bc"></span><span class="h-br"></span></span>
+    <div class="dl-box__grid">
+      <div>
+        <h2 class="title title--md" id="dl-title" data-i18n="dlTitle">Get NeatShot for Windows</h2>
+        <h3 class="dl-label" data-i18n="reqTitle">Requirements</h3>
+        <ul class="req-list">
+          <li data-i18n="r1">Windows 10 (2004+) or Windows 11</li>
+          <li>x64</li>
+          <li data-i18n="r3">~64 MB zip · no installer</li>
+          <li data-i18n="r4">No .NET runtime needed</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="dl-label" data-i18n="stepsTitle" style="margin:6px 0 14px">Install in three steps</h3>
+        <ol class="install-steps">
+          <li><span class="install-steps__num">1</span><span data-i18n="s1">Download the zip from GitHub Releases.</span></li>
+          <li><span class="install-steps__num">2</span><span data-i18n="s2">Extract it anywhere and run NeatShot.</span></li>
+          <li><span class="install-steps__num">3</span><span data-i18n="s3">It sits in the system tray. Press Ctrl + Shift + A.</span></li>
+        </ol>
+        <div class="note">
+          <div class="note__title" data-i18n="ssTitle">About SmartScreen</div>
+          <p class="note__body" data-i18n="ssBody">This build isn't code-signed yet, so Windows may show a SmartScreen prompt the first time. Choose More info → Run anyway. The source is public if you'd like to read it first.</p>
+        </div>
+      </div>
+      <div class="dl-cta">
+        <a class="btn btn--primary btn--xl" href="https://github.com/Thien21112005/neat-shot/releases/latest"><svg class="icon icon--bold" width="22" height="22" aria-hidden="true"><use href="assets/icons/sprite.svg#i-save"/></svg><span data-i18n="dlBtn">Download v1.0.0</span></a>
+        <span class="dl-cta__meta">zip · 64 MB · x64</span>
+        <a href="https://github.com/Thien21112005/neat-shot" style="font-size:14px" data-i18n="ctaSrc">View source on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="site-footer__inner container">
+    <span class="site-footer__brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-mark"/><rect x="9.5" y="9.5" width="5" height="5"/></svg>NeatShot <span class="site-footer__version">v1.0.0</span>
+    </span>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="https://github.com/Thien21112005/neat-shot">GitHub</a>
+      <a href="https://github.com/Thien21112005/neat-shot/blob/main/LICENSE" data-i18n="fLic">MIT License</a>
+      <a href="https://github.com/Thien21112005/neat-shot/releases" data-i18n="fLog">Changelog</a>
+    </nav>
+    <span class="site-footer__made" data-i18n="fMade">Made for Windows</span>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

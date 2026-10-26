@@ -1,0 +1,400 @@
+/* Các thành phần tái sử dụng: layout, nút, phím, icon, nhãn, khung minh hoạ */
+
+/* ---------- Layout ---------- */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-y);
+}
+
+.section--surface {
+  background: var(--surface);
+  border-block: 1px solid var(--line);
+}
+
+.section--deep {
+  background: var(--bg-deep);
+  border-block: 1px solid var(--line);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 24px clamp(28px, 4vw, 72px);
+  align-items: end;
+  margin-bottom: clamp(36px, 4vw, 56px);
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+}
+
+.skip-link:focus {
+  top: 12px;
+  color: #fff;
+}
+
+/* ---------- Icon ---------- */
+.icon {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon--bold {
+  stroke-width: 2;
+}
+
+.brand-mark {
+  flex: none;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.brand-mark rect {
+  fill: var(--text);
+  stroke: none;
+}
+
+/* ---------- Typography ---------- */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 36px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.eyebrow--tight {
+  margin-bottom: 22px;
+}
+
+.eyebrow__box {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--accent);
+}
+
+.eyebrow__num {
+  color: var(--accent-hi);
+}
+
+.eyebrow__ants {
+  flex: 1;
+  height: 1px;
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, .22) 0 4px, transparent 4px 8px);
+  background-size: 8px 1px;
+  animation: ants 1.2s linear infinite;
+}
+
+.title {
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.title--xl { font-size: clamp(32px, 4.2vw, 60px); }
+.title--lg { font-size: clamp(30px, 3.6vw, 50px); line-height: 1.06; }
+.title--md { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.06; }
+
+.lead {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+.lead--sm {
+  font-size: 16px;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color .2s, border-color .2s, color .2s;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+  color: #fff;
+}
+
+.btn--ghost {
+  color: var(--text);
+  font-weight: 500;
+  border: 1px solid var(--line-2);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn--sm {
+  gap: 8px;
+  width: 124px;
+  padding: 9px 0;
+  font-size: 14px;
+  border-radius: 7px;
+}
+
+.btn--md {
+  font-size: 16px;
+  padding: 15px 22px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+}
+
+.btn--ghost.btn--md {
+  padding: 14px 20px;
+  box-shadow: none;
+}
+
+.btn--xl {
+  gap: 12px;
+  font-size: 20px;
+  padding: 20px 28px;
+}
+
+/* ---------- Keycaps ---------- */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 34px;
+  padding: 0 10px;
+  font: 500 13px/1 var(--mono);
+  color: var(--text);
+  background: var(--surface-3);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 #07080A, inset 0 1px 0 rgba(255, 255, 255, .06);
+  transition: transform .08s, box-shadow .08s;
+  cursor: default;
+}
+
+.kbd--interactive:hover {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #07080A, inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.kbd--sm {
+  min-width: 30px;
+  height: 26px;
+  padding: 0 7px;
+  font-size: 11.5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 0 #07080A;
+}
+
+.kbd--md {
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  font-size: 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 0 #07080A;
+}
+
+.kbd[data-on] {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #07080A, 0 0 0 1px var(--accent);
+  background: #0D2A45;
+  color: #fff;
+}
+
+.kbd-combo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  color: var(--muted-2);
+  font: 12px var(--mono);
+}
+
+/* ---------- Capture motifs: badges, handles, step markers ---------- */
+.size-badge {
+  font: 500 12px/1 var(--mono);
+  color: #fff;
+  background: var(--accent);
+  padding: 6px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.size-badge--xs {
+  font-size: 10px;
+  padding: 5px 7px;
+  border-radius: 3px;
+}
+
+.handles > span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: #fff;
+  border: 1px solid var(--accent);
+}
+
+.handles--sm > span {
+  width: 7px;
+  height: 7px;
+}
+
+.handles--hollow > span {
+  background: var(--bg);
+}
+
+.handles .h-tl { left: 0; top: 0; }
+.handles .h-tc { left: 50%; top: 0; }
+.handles .h-tr { left: 100%; top: 0; }
+.handles .h-ml { left: 0; top: 50%; }
+.handles .h-mr { left: 100%; top: 50%; }
+.handles .h-bl { left: 0; top: 100%; }
+.handles .h-bc { left: 50%; top: 100%; }
+.handles .h-br { left: 100%; top: 100%; }
+
+.step-badge {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--mark-red);
+  color: #fff;
+  font: 700 12px/22px var(--sans);
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+
+.pixel-cells {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pixel-cells > span {
+  width: 10px;
+  height: 10px;
+}
+
+/* ---------- Scaled illustration frames ---------- */
+/* Khung giữ tỉ lệ: --w/--h là kích thước gốc của cảnh; JS scale .stage cho vừa khung. */
+.stage-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--w) / var(--h);
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * 1px);
+  height: calc(var(--h) * 1px);
+  transform-origin: 0 0;
+}
+
+.stage-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font: 500 12px/1 var(--mono);
+  color: var(--muted);
+}
+
+/* ---------- Mock app toolbar (giống toolbar thật của NeatShot) ---------- */
+.tb {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 8px;
+  color: var(--text-2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+}
+
+.tb__btn {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+}
+
+.tb__btn.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tb__sep {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: rgba(255, 255, 255, .12);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 12px 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .5);
+}
+
+.toast__check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
