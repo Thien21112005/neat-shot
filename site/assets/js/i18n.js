@@ -28,7 +28,7 @@ export const VI = {
   gGlobal: 'Toàn cục', gCapture: 'Khi chụp', gPin: 'Ảnh ghim',
   kCapture: 'Chụp một vùng', kCaptureAlt: 'Chụp một vùng (phím thay thế)', kSelect: 'Chọn vùng', kDrag: 'Kéo', kResize: 'Đổi kích thước bằng 8 tay nắm', kDragHandle: 'Kéo tay nắm',
   kUndo: 'Hoàn tác', kRedo: 'Làm lại', kCancel: 'Huỷ', kZoom: 'Phóng to ảnh ghim', kOpac: 'Đổi độ trong suốt',
-  kCopy: 'Sao chép & đóng', kSave: 'Lưu file PNG', kOcr: 'Trích xuất chữ', kPinClose: 'Đóng ảnh ghim',
+  kCopy: 'Sao chép & đóng', kSave: 'Lưu vào thư mục ảnh', kOcr: 'Trích xuất chữ', kPinClose: 'Đóng ảnh ghim',
   eyEvery: 'Mỗi ngày', everyTitle: 'Những điều nhỏ giúp bạn tiết kiệm thời gian.', everyLead: 'Những chi tiết bạn chỉ nhận ra khi công cụ khác không có.',
   fSetT: 'Cài đặt có hiệu lực ngay', fSetD: 'Đổi phím tắt ngay lập tức — NeatShot cảnh báo nếu phím đã bị ứng dụng khác dùng. Chọn thư mục lưu, PNG hoặc JPG, tự lưu và khởi động cùng Windows.', fSetM: 'Khay hệ thống → Cài đặt…',
   fWinT: 'Click để chọn cửa sổ', fWinD: 'Rê chuột là NeatShot viền sẵn cửa sổ — hoặc panel, nút bên trong — dưới con trỏ. Một cú click chọn đúng vùng đó, không dính bóng đổ.', fWinM: 'Rê chuột · Click',

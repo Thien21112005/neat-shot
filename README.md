@@ -74,7 +74,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
 
 **Everyday**
-- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, and "copy as soon as I release the mouse" for one-step captures.
+- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, "copy as soon as I release the mouse" for one-step captures, and a light, dark or system theme.
 
 ### Keyboard Shortcuts
 
@@ -85,7 +85,8 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Global | `Ctrl + Shift + R` | Capture the last region again |
 | Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
-| Overlay | `Ctrl + S` | Save as PNG / JPG… |
+| Overlay | `Ctrl + S` | Save to the screenshots folder |
+| Overlay | `Ctrl + Shift + S` (or Shift + click Save) | Save as… (choose folder and name) |
 | Overlay | `Ctrl + O` | Extract text (OCR) |
 | Overlay | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Overlay | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Select, Pencil, Rectangle, Ellipse, Line, Arrow, Highlight, Text, Pixelate, Step, Eyedropper |
@@ -142,7 +143,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 
 | Data | Location |
 |---|---|
-| Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (follows the last folder you chose in *Save as*) |
+| Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (or the folder chosen in Settings / *Save as*); `%USERPROFILE%\NeatShot` if Windows blocks writing there |
 | Settings & color history | `%AppData%\NeatShot\settings.json` (Store version: kept by Windows in the app's private storage) |
 
 ### Architecture
@@ -175,6 +176,7 @@ More detail: [SRS](./docs/SRS-screenshot-app.md) · [Architecture & tech stack](
 ### Troubleshooting
 
 - **`PrtSc` does nothing.** Windows 11 may give `PrtSc` to Snipping Tool. Turn off *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, or use `Ctrl + Shift + A`. The console output at startup shows which hotkeys were registered.
+- **"Windows is blocking saves to the screenshots folder."** *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) stops unknown apps from writing to Pictures, Documents or Desktop. NeatShot then saves to `%USERPROFILE%\NeatShot` and tells you so. To use Pictures again, choose *Allow an app through Controlled folder access* and add `NeatShot.exe`, or pick another folder in Settings.
 - **"No OCR language pack found."** Add a language that supports OCR under *Settings → Time & language → Language & region*.
 - **The tray icon disappeared.** NeatShot re-registers its icon when Explorer restarts. If it is still missing, the app may have exited; start it again.
 
@@ -231,7 +233,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
 
 **Dùng hằng ngày**
-- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, và "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác.
+- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác, và giao diện sáng, tối hoặc theo hệ thống.
 
 ### Phím tắt
 
@@ -242,7 +244,8 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Toàn cục | `Ctrl + Shift + R` | Chụp lại vùng vừa chụp |
 | Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
-| Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
+| Màn hình chụp | `Ctrl + S` | Lưu thẳng vào thư mục ảnh |
+| Màn hình chụp | `Ctrl + Shift + S` (hoặc Shift + click nút Lưu) | Lưu thành… (chọn thư mục và tên file) |
 | Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
 | Màn hình chụp | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Màn hình chụp | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Chọn, Bút, Chữ nhật, Oval, Đường thẳng, Mũi tên, Dạ quang, Chữ, Khảm, Đánh số, Hút màu |
@@ -300,7 +303,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 
 | Dữ liệu | Vị trí |
 |---|---|
-| Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (theo thư mục bạn chọn gần nhất khi *Lưu file*) |
+| Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (hoặc thư mục chọn trong Cài đặt / *Lưu thành…*); `%USERPROFILE%\NeatShot` nếu Windows chặn ghi vào đó |
 | Cấu hình & lịch sử màu | `%AppData%\NeatShot\settings.json` (bản Store: Windows lưu trong vùng riêng của app) |
 
 ### Kiến trúc
@@ -309,6 +312,7 @@ Dự án chia lớp Core / Presentation, dùng MVVM với CommunityToolkit.Mvvm 
 
 ### Xử lý sự cố
 
+- **"Windows đang chặn lưu vào thư mục ảnh":** tính năng *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) chặn app lạ ghi vào Pictures, Documents, Desktop. Khi đó NeatShot lưu vào `%USERPROFILE%\NeatShot` và báo cho bạn. Muốn lưu lại vào Pictures, chọn *Allow an app through Controlled folder access* rồi thêm `NeatShot.exe`, hoặc đổi thư mục trong Cài đặt.
 - **Bấm `PrtSc` không có tác dụng:** Windows 11 có thể dành phím `PrtSc` cho Snipping Tool. Tắt tuỳ chọn *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, hoặc dùng `Ctrl + Shift + A`.
 - **Báo "Không tìm thấy gói ngôn ngữ OCR":** thêm một ngôn ngữ có hỗ trợ OCR trong *Settings → Time & language → Language & region*.
 - **Mất icon dưới khay hệ thống:** NeatShot tự gắn lại icon khi Explorer khởi động lại. Nếu vẫn không thấy, có thể ứng dụng đã thoát; hãy mở lại.

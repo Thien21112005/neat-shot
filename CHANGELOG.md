@@ -31,9 +31,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Annotation toolbar redesigned to match the website: thin-line vector icons instead of emoji,
   solid accent highlight for the active tool, dark rounded bars and an icon-based action bar.
 - Redesigned the text extraction result card and the Beautify preset selector.
+- **Save** (button / `Ctrl + S`) writes straight to the screenshots folder and shows a toast; `Ctrl + Shift + S`
+  or Shift + click opens *Save as…*.
+- Settings window: light, dark or system theme, higher contrast, and a scrolling body so it always fits the screen.
+- "Trích xuất chữ" is now an outlined button with an icon, clearly separate from Pin.
+- Pinned captures no longer show a pencil button (clicking the image already toggles annotation).
 
 ### Fixed
 - The Beautify selector could not be clicked (the WPF-UI theme shrank its hit area to ~2px).
+- Saving failed with "File not found" and the gallery / "open folder" items did nothing when Windows
+  *Controlled folder access* blocked `Pictures`; NeatShot now falls back to `%USERPROFILE%\NeatShot` and explains how to allow it.
+- The tray menu stayed on screen after clicking elsewhere.
 
 ## [1.0.0] - 2026-10-25
 
