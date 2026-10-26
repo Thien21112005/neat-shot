@@ -45,7 +45,7 @@ export const VI = {
   dlTitle: 'Tải NeatShot cho Windows', reqTitle: 'Yêu cầu', r1: 'Windows 10 (2004 trở lên) hoặc Windows 11', r3: 'File zip ~64 MB · không cần trình cài đặt', r4: 'Không cần cài .NET runtime',
   stepsTitle: 'Cài đặt trong ba bước', s1: 'Tải file zip từ GitHub Releases.', s2: 'Giải nén vào bất kỳ đâu và chạy NeatShot.', s3: 'Biểu tượng nằm ở khay hệ thống. Nhấn Ctrl + Shift + A.',
   ssTitle: 'Về SmartScreen', ssBody: 'Bản này chưa được ký số, nên lần đầu Windows có thể hiện cảnh báo SmartScreen. Chọn More info → Run anyway. Mã nguồn công khai nếu bạn muốn xem trước.',
-  dlBtn: 'Tải v1.0.0', fLic: 'Giấy phép MIT', fLog: 'Nhật ký thay đổi', fMade: 'Làm cho Windows'
+  dlBtn: 'Tải v1.0.0', fLic: 'Giấy phép MIT', fLog: 'Nhật ký thay đổi', fPriv: 'Chính sách quyền riêng tư', fMade: 'Làm cho Windows'
 };
 
 const STORAGE_KEY = 'neatshot-lang';

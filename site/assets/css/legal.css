@@ -1,0 +1,88 @@
+/* Trang văn bản (chính sách quyền riêng tư) — dùng chung token với trang chủ */
+.legal {
+  padding-block: clamp(48px, 8vw, 96px);
+}
+
+.legal__doc {
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--text-2);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.legal__doc + .legal__doc {
+  margin-top: clamp(64px, 10vw, 120px);
+  padding-top: clamp(48px, 8vw, 96px);
+  border-top: 1px solid var(--line);
+}
+
+.legal__doc h1 {
+  margin: 8px 0 12px;
+  color: var(--text);
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+.legal__doc h2 {
+  margin: 40px 0 12px;
+  color: var(--text);
+  font-size: 20px;
+  letter-spacing: -.01em;
+}
+
+.legal__doc p {
+  margin: 0 0 16px;
+}
+
+.legal__doc ul {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.legal__doc li::marker {
+  color: var(--accent-hi);
+}
+
+.legal__doc strong {
+  color: var(--text);
+}
+
+.legal__doc code,
+.legal__doc kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: .85em;
+}
+
+.legal__doc a {
+  color: var(--accent-hi);
+}
+
+.legal__meta {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.legal-nav {
+  display: flex;
+  gap: 20px;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.legal-nav a {
+  color: var(--muted);
+}
+
+.legal-nav a:hover {
+  color: var(--text);
+}
