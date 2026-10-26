@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NeatShot.Common.Helpers;
 using NeatShot.Core.Interop;
+using NeatShot.Core.Models;
 using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.Tray;
@@ -98,6 +99,15 @@ public partial class App : Application
         var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
         fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
+
+        var delayItem = new MenuItem { Header = "⏱️ Chụp hẹn giờ" };
+        foreach (var seconds in new[] { 3, 5, 10 })
+        {
+            var item = new MenuItem { Header = $"Sau {seconds} giây" };
+            item.Click += (s, e) => StartDelayedCapture(seconds);
+            delayItem.Items.Add(item);
+        }
+        _trayContextMenu.Items.Add(delayItem);
 
         var pinClipboardItem = new MenuItem { Header = "📌 Ghim ảnh từ Clipboard" };
         pinClipboardItem.Click += (s, e) => PinFromClipboard();
@@ -335,7 +345,43 @@ public partial class App : Application
         }
     }
 
-    private async void TriggerCapture(bool selectFullScreen = false)
+    private CountdownWindow? _activeCountdown;
+
+    /// <summary>
+    /// Chụp hẹn giờ: đếm ngược để người dùng kịp mở menu/tooltip, rồi chụp mà KHÔNG đóng popup.
+    /// </summary>
+    private void StartDelayedCapture(int seconds)
+    {
+        if (_activeCountdown != null || (_activeOverlayWindow != null && _activeOverlayWindow.IsLoaded)) return;
+
+        if (_trayContextMenu != null && _trayContextMenu.IsOpen)
+        {
+            _trayContextMenu.IsOpen = false;
+        }
+
+        var countdown = new CaptureCountdown(seconds);
+        var window = new CountdownWindow(countdown);
+        _activeCountdown = window;
+
+        countdown.Cancelled += (s, e) =>
+        {
+            window.Close();
+            _activeCountdown = null;
+        };
+        countdown.Completed += async (s, e) =>
+        {
+            window.Close();
+            _activeCountdown = null;
+
+            // Chờ cửa sổ đếm ngược biến mất hẳn khỏi màn hình trước khi chụp
+            await Task.Delay(150);
+            TriggerCapture(dismissPopups: false);
+        };
+
+        window.ShowAndStart();
+    }
+
+    private async void TriggerCapture(bool selectFullScreen = false, bool dismissPopups = true)
     {
         try
         {
@@ -345,14 +391,14 @@ public partial class App : Application
                 return;
             }
 
-            // Đóng context menu khay hệ thống nếu đang mở
-            if (_trayContextMenu != null && _trayContextMenu.IsOpen)
+            // Đóng context menu khay hệ thống nếu đang mở (trừ khi chụp hẹn giờ: người dùng muốn giữ menu của họ)
+            if (dismissPopups && _trayContextMenu != null && _trayContextMenu.IsOpen)
             {
                 _trayContextMenu.IsOpen = false;
             }
 
             var captureService = Services.GetRequiredService<IScreenCaptureService>();
-            var capturedScreen = await captureService.CaptureCleanScreenAsync();
+            var capturedScreen = await captureService.CaptureScreenAsync(dismissPopups);
             var virtualBounds = captureService.GetVirtualScreenBounds();
             var windowRegions = DetectWindowRegions(capturedScreen);
 
