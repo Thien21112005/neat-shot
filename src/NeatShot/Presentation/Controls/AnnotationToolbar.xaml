@@ -114,11 +114,16 @@
             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
         </Style>
 
-        <!-- Nút tác vụ có chữ (Trích xuất chữ) -->
+        <!-- Nút tác vụ có chữ (Trích xuất chữ): viền mảnh + nền nhạt để thành một nút rõ ràng -->
         <Style x:Key="TextActionButtonStyle" TargetType="Button" BasedOn="{StaticResource ToolButtonStyle}">
             <Setter Property="Width" Value="NaN" />
-            <Setter Property="Padding" Value="8,0" />
-            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Padding" Value="9,0,11,0" />
+            <Setter Property="Margin" Value="3,0" />
+            <Setter Property="Foreground" Value="#E8EAED" />
+            <Setter Property="Background" Value="#14FFFFFF" />
+            <Setter Property="BorderBrush" Value="#33FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <!-- Vạch ngăn nhóm -->
@@ -839,11 +844,16 @@
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPin}" /></Viewbox>
                 </Button>
 
-                <!-- Trích xuất chữ: giữ nhãn chữ thân thiện theo yêu cầu UX -->
+                <Border Style="{StaticResource BarSeparatorV}" />
+
+                <!-- Trích xuất chữ: nút riêng có viền + icon để không bị nhìn nhầm là nhãn của nút Ghim bên cạnh -->
                 <Button x:Name="OcrButton" Style="{StaticResource TextActionButtonStyle}"
                         ToolTip="Trích xuất chữ từ ảnh vào Clipboard (Ctrl + O)"
                         Click="OnOcrClick">
-                    <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconOcr}" /></Viewbox>
+                        <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Button>
 
                 <Border Style="{StaticResource BarSeparatorV}" />

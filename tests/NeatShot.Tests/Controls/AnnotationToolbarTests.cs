@@ -634,10 +634,14 @@ public class AnnotationToolbarTests
                 Assert.NotNull(tooltip);
                 Assert.Contains("Trích xuất chữ", tooltip);
 
-                // Button content must be "Trích xuất chữ"
-                var textBlock = toolbar.OcrButton.Content as System.Windows.Controls.TextBlock;
-                Assert.NotNull(textBlock);
+                // Nút có icon OCR + chữ "Trích xuất chữ" (để không bị nhìn nhầm là nhãn của nút Ghim bên cạnh)
+                var content = Assert.IsType<System.Windows.Controls.StackPanel>(toolbar.OcrButton.Content);
+                Assert.Contains(content.Children.OfType<System.Windows.Controls.Viewbox>(), v => v.Child is System.Windows.Shapes.Path);
+                var textBlock = Assert.Single(content.Children.OfType<System.Windows.Controls.TextBlock>());
                 Assert.Equal("Trích xuất chữ", textBlock.Text);
+
+                // Có viền riêng
+                Assert.True(toolbar.OcrButton.BorderThickness.Left > 0);
             }
             catch (Exception ex)
             {
