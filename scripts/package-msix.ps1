@@ -92,7 +92,7 @@ Copy-Item (Join-Path $packagingDir "Assets") (Join-Path $layoutDir "Assets") -Re
 
 Write-Host "==> Tạo resources.pri" -ForegroundColor Cyan
 $priConfig = Join-Path $outDir "priconfig.xml"
-& $tools.MakePri createconfig /cf $priConfig /dq vi-VN /pv 10.0.0 /o | Out-Null
+& $tools.MakePri createconfig /cf $priConfig /dq vi-VN_en-US /pv 10.0.0 /o | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "makepri createconfig thất bại." }
 & $tools.MakePri new /pr $layoutDir /cf $priConfig /mn (Join-Path $layoutDir "AppxManifest.xml") /of (Join-Path $layoutDir "resources.pri") /o | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "makepri new thất bại." }

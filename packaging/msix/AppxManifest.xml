@@ -30,6 +30,7 @@
 
   <Resources>
     <Resource Language="vi-VN" />
+    <Resource Language="en-US" />
   </Resources>
 
   <Applications>
