@@ -4,6 +4,18 @@ All notable changes to NeatShot are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Landing page** in `site/` (static HTML/CSS/JS with GSAP animations, EN/VI), ready for GitHub Pages.
+- Capture overlay shows a "drag to select" hint until a region is selected.
+- Copying a capture shows a toast confirming the copy and where the file was saved.
+- Pinned captures show a temporary "Zoom · Opacity" badge while you scroll to adjust them.
+
+### Changed
+- Annotation toolbar redesigned to match the website: thin-line vector icons instead of emoji,
+  solid accent highlight for the active tool, dark rounded bars and an icon-based action bar.
+
 ## [1.0.0] - 2026-10-25
 
 First public release.

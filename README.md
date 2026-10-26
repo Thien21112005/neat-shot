@@ -150,7 +150,8 @@ src/NeatShot/
     ├── ViewModels/        # Overlay, Pin, Gallery
     └── Views/             # OverlayWindow, PinWindow, GalleryWindow
 tests/NeatShot.Tests/      # xUnit suite (WPF tests run on dedicated STA threads)
-docs/                      # SRS, architecture, workflow guide, implementation plans
+site/                      # Landing page (static HTML/CSS/JS + GSAP) — see site/README.md
+docs/                      # SRS, architecture, workflow guide, plans, design exports
 ```
 
 **Tech stack:** C# / .NET 10 (`net10.0-windows10.0.19041.0`), WPF + [WPF-UI](https://github.com/lepoco/wpfui), [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet), `Microsoft.Extensions.DependencyInjection`, `Windows.Media.Ocr`, xUnit.
