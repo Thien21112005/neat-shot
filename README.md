@@ -63,19 +63,22 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - **Beautify:** gradient background, padding, rounded corners and a soft shadow, shown in a live preview.
 
 **Export & reuse**
-- Copy to clipboard, save as PNG, or **pin** the capture as an always-on-top floating window.
+- Copy to clipboard, save as PNG or JPG, or **pin** the capture as an always-on-top floating window.
 - Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
 - **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
 - **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
 
+**Everyday**
+- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, and "copy as soon as I release the mouse" for one-step captures.
+
 ### Keyboard Shortcuts
 
 | Context | Shortcut | Action |
 |---|---|---|
-| Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture |
+| Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture (both keys can be changed in Settings) |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
-| Overlay | `Ctrl + S` | Save as PNG… |
+| Overlay | `Ctrl + S` | Save as PNG / JPG… |
 | Overlay | `Ctrl + O` | Extract text (OCR) |
 | Overlay | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Overlay | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Select, Pencil, Rectangle, Ellipse, Line, Arrow, Highlight, Text, Pixelate, Step, Eyedropper |
@@ -208,19 +211,22 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - **Làm đẹp ảnh:** nền gradient, khoảng đệm, bo góc, đổ bóng mềm, có xem trước trực tiếp.
 
 **Xuất và tái sử dụng**
-- Sao chép vào Clipboard, lưu PNG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
+- Sao chép vào Clipboard, lưu PNG hoặc JPG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
 - Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
 - **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
 - **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
 
+**Dùng hằng ngày**
+- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, và "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác.
+
 ### Phím tắt
 
 | Ngữ cảnh | Phím tắt | Chức năng |
 |---|---|---|
-| Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp |
+| Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp (đổi được cả hai phím trong Cài đặt) |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
-| Màn hình chụp | `Ctrl + S` | Lưu file PNG… |
+| Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
 | Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
 | Màn hình chụp | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Màn hình chụp | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Chọn, Bút, Chữ nhật, Oval, Đường thẳng, Mũi tên, Dạ quang, Chữ, Khảm, Đánh số, Hút màu |

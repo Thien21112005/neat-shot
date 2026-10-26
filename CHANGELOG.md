@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Settings window** (tray → *Cài đặt…*): configurable capture hotkeys that apply instantly (keeps the old key and warns
+  when another app owns the new one), save folder, PNG/JPG with quality, auto-save to the gallery, start with Windows,
+  and "copy as soon as the selection is released".
 - **Landing page** in `site/` (static HTML/CSS/JS with GSAP animations, EN/VI), ready for GitHub Pages.
 - Capture overlay shows a "drag to select" hint until a region is selected.
 - Copying a capture shows a toast confirming the copy and where the file was saved.

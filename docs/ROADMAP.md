@@ -17,7 +17,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 | # | Tính năng | Nhóm | Độ khó | Ưu tiên |
 |---|---|---|---|---|
-| 1 | Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
+| 1 | ✅ Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
 | 2 | Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
 | 3 | Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
 | 4 | Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
@@ -37,7 +37,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ## Giai đoạn 1 — Nên làm trước
 
-### 1. Cửa sổ Cài đặt + đổi phím tắt 🟡
+### 1. Cửa sổ Cài đặt + đổi phím tắt 🟡 ✅ Đã xong
 
 **Vấn đề:** `AppSettings` đã có `HotkeyCapture` và `AutoCopyOnCapture` nhưng chưa được dùng ở đâu. Phím tắt đang cố định
 `Ctrl + Shift + A` / `PrtSc` trong `App.InitializeGlobalHotkeys()`. Người dùng không có chỗ nào để tuỳ chỉnh ngoài menu khay.
@@ -46,13 +46,14 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Cửa sổ `SettingsWindow` (mở từ menu khay), cùng phong cách tối với toolbar/landing page.
 - Nhóm **Phím tắt:** ô "bấm tổ hợp phím để gán", hiển thị dạng keycap; báo lỗi khi tổ hợp đã bị app khác chiếm (`RegisterHotKey` trả về `false`).
 - Nhóm **Lưu ảnh:** chọn thư mục, bật/tắt tự lưu khi Copy/Ghim, định dạng PNG/JPG (+ chất lượng JPG).
-- Nhóm **Chung:** khởi động cùng Windows, âm thanh khi chụp, tự sao chép sau khi chọn vùng (`AutoCopyOnCapture`).
+- Nhóm **Chung:** khởi động cùng Windows, tự sao chép sau khi chọn vùng (`AutoCopyOnCapture`).
+  _(Âm thanh khi chụp được dời sang sau — chưa có trong `AppSettings`.)_
 
 **Tiêu chí hoàn thành:**
-- [ ] Đổi phím tắt có hiệu lực ngay, không cần khởi động lại; lưu vào `settings.json`.
-- [ ] Phím tắt bị trùng hiển thị cảnh báo và giữ lại phím cũ.
-- [ ] Mọi tuỳ chọn trong `AppSettings` đều có UI tương ứng (không còn "cài đặt chết").
-- [ ] Unit test cho việc parse/format chuỗi phím tắt (`"Ctrl+Shift+A"` ⇄ `Key` + `ModifierKeys`).
+- [x] Đổi phím tắt có hiệu lực ngay, không cần khởi động lại; lưu vào `settings.json`.
+- [x] Phím tắt bị trùng hiển thị cảnh báo và giữ lại phím cũ.
+- [x] Mọi tuỳ chọn trong `AppSettings` đều có UI tương ứng (không còn "cài đặt chết").
+- [x] Unit test cho việc parse/format chuỗi phím tắt (`"Ctrl+Shift+A"` ⇄ `Key` + `ModifierKeys`).
 
 **Liên quan:** `Core/Models/AppSettings.cs`, `Core/Services/Implementations/HotkeyService.cs`, `App.xaml.cs`, `ScreenshotGalleryService`.
 
