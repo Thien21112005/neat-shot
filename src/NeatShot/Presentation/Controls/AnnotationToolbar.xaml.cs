@@ -857,6 +857,11 @@ public partial class AnnotationToolbar : UserControl
             item.Tag is string tag &&
             Enum.TryParse<BeautifyPreset>(tag, out var preset))
         {
+            // Ô chọn hiển thị gradient của preset đang dùng (null = "Gốc" -> hiện icon ✦)
+            BeautifyComboBox.Tag = preset == BeautifyPreset.None
+                ? null
+                : TryFindResource($"BeautifySwatch{preset}") as Brush;
+
             if (preset == BeautifyPreset.None)
             {
                 SelectedBeautifyOptions = null;

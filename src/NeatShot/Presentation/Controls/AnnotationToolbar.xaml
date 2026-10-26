@@ -274,73 +274,187 @@
             </Style.Triggers>
         </Style>
 
-        <!-- ============ Ô chọn dạng thanh (Beautify): nền tối, chữ + mũi tên xổ xuống ============ -->
-        <Style x:Key="BarComboBoxStyle" TargetType="ComboBox">
+        <!-- ============ Ô chọn Làm đẹp (Beautify) ============ -->
+        <!-- Gradient xem trước của từng preset — trùng với BeautifyOptions.CreateBackgroundBrush -->
+        <LinearGradientBrush x:Key="BeautifySwatchSunset" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FA709A" Offset="0" />
+            <GradientStop Color="#FEE140" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BeautifySwatchOcean" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0093E9" Offset="0" />
+            <GradientStop Color="#80D0C7" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BeautifySwatchPurple" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#667EEA" Offset="0" />
+            <GradientStop Color="#764BA2" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BeautifySwatchDarkSlate" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#1E293B" Offset="0" />
+            <GradientStop Color="#0F172A" Offset="1" />
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="SparkleBrush" Color="#FFD27A" />
+
+        <!-- Một dòng trong danh sách preset: ô màu xem trước + tên + dấu ✓ khi đang chọn -->
+        <Style x:Key="BeautifyItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#E8EAED" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder" CornerRadius="6" Background="Transparent" Padding="8,7,10,7" SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Width="20" Height="20" VerticalAlignment="Center">
+                                    <Border x:Name="Swatch" CornerRadius="5" BorderBrush="#33FFFFFF" BorderThickness="1" Background="Transparent" />
+                                    <!-- Preset "Gốc": khung rỗng có vạch chéo -->
+                                    <Path x:Name="NoneMark" Data="M5,15 L15,5" Stroke="#7D838B" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed" />
+                                </Grid>
+                                <ContentPresenter Grid.Column="1" Margin="10,0,16,0" VerticalAlignment="Center" />
+                                <Viewbox x:Name="Check" Grid.Column="2" Width="14" Height="14" Visibility="Hidden" TextElement.Foreground="#3B9BEB">
+                                    <Path Style="{StaticResource IconPathStyle}" StrokeThickness="2.5" Data="M5,12.5 L9.5,17 L19,7.5" />
+                                </Viewbox>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="None">
+                                <Setter TargetName="Swatch" Property="BorderBrush" Value="#55FFFFFF" />
+                                <Setter TargetName="NoneMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Sunset">
+                                <Setter TargetName="Swatch" Property="Background" Value="{StaticResource BeautifySwatchSunset}" />
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Ocean">
+                                <Setter TargetName="Swatch" Property="Background" Value="{StaticResource BeautifySwatchOcean}" />
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Purple">
+                                <Setter TargetName="Swatch" Property="Background" Value="{StaticResource BeautifySwatchPurple}" />
+                            </Trigger>
+                            <Trigger Property="Tag" Value="DarkSlate">
+                                <Setter TargetName="Swatch" Property="Background" Value="{StaticResource BeautifySwatchDarkSlate}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource HoverOverlayBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#260078D4" />
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Nút chọn: [✦ hoặc ô màu preset] Làm đẹp · <preset> ⌄ — danh sách xổ lên phía trên -->
+        <Style x:Key="BeautifySelectorStyle" TargetType="ComboBox">
             <Setter Property="Height" Value="30" />
-            <Setter Property="MinWidth" Value="104" />
-            <Setter Property="Padding" Value="10,0,8,0" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Focusable" Value="False" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="{StaticResource IconBrush}" />
-            <Setter Property="Background" Value="#0FFFFFFF" />
-            <Setter Property="BorderBrush" Value="{StaticResource BarBorderBrush}" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource ToolComboBoxItemStyle}" />
+            <Setter Property="Foreground" Value="#E8EAED" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource BeautifyItemStyle}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
-                            <ToggleButton Focusable="False"
+                            <!-- Style={x:Null} + Stretch: không để style ToggleButton của theme WPF-UI
+                                 thu nhỏ vùng bấm (trước đây chỉ còn ~2px nên ô chọn như bị vô hiệu hoá) -->
+                            <ToggleButton x:Name="ToggleButton"
+                                          Style="{x:Null}"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          MinWidth="0"
+                                          Margin="0"
+                                          Padding="0"
+                                          Focusable="False"
                                           ClickMode="Press"
                                           IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Grid>
-                                            <Border CornerRadius="5"
-                                                    Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                    BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                    BorderThickness="1"
-                                                    SnapsToDevicePixels="True" />
-                                            <Border x:Name="Overlay" CornerRadius="5" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
+                                        <Grid Background="Transparent">
+                                            <Border x:Name="Frame" CornerRadius="6" Background="#14FFFFFF" BorderBrush="#29FFFFFF" BorderThickness="1" SnapsToDevicePixels="True" />
+                                            <Border x:Name="Overlay" CornerRadius="6" Background="{StaticResource HoverOverlayBrush}" Opacity="0" />
                                         </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                                <Setter TargetName="Frame" Property="BorderBrush" Value="#4DFFFFFF" />
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
                                                 <Setter TargetName="Overlay" Property="Opacity" Value="1" />
+                                                <Setter TargetName="Frame" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-                            <DockPanel Margin="{TemplateBinding Padding}" IsHitTestVisible="False">
-                                <Path DockPanel.Dock="Right"
-                                      Margin="8,0,0,0"
+
+                            <StackPanel Orientation="Horizontal" Margin="8,0,10,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                                <Grid Width="16" Height="16" VerticalAlignment="Center">
+                                    <Viewbox x:Name="SparkleIcon" Visibility="Collapsed" TextElement.Foreground="{StaticResource SparkleBrush}">
+                                        <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSparkle}" />
+                                    </Viewbox>
+                                    <Border x:Name="SelectedSwatch" CornerRadius="4" BorderBrush="#40FFFFFF" BorderThickness="1"
+                                            Background="{TemplateBinding Tag}" />
+                                </Grid>
+                                <TextBlock Text="Làm đẹp" Margin="8,0,0,0" Foreground="#9AA0A6" VerticalAlignment="Center" />
+                                <TextBlock Text="·" Margin="6,0" Foreground="#5F6670" VerticalAlignment="Center" />
+                                <ContentPresenter VerticalAlignment="Center"
+                                                  TextElement.FontWeight="SemiBold"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" />
+                                <Path x:Name="Chevron"
+                                      Margin="10,1,0,0"
                                       VerticalAlignment="Center"
                                       Data="M0,0 L4,4 L8,0"
-                                      Stroke="{TemplateBinding Foreground}"
+                                      Stroke="#C9CDD2"
                                       StrokeThickness="1.5"
                                       StrokeStartLineCap="Round"
                                       StrokeEndLineCap="Round"
-                                      StrokeLineJoin="Round" />
-                                <ContentPresenter VerticalAlignment="Center"
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" />
-                            </DockPanel>
-                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                                      StrokeLineJoin="Round"
+                                      RenderTransformOrigin="0.5,0.5" />
+                            </StackPanel>
+
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
                                    StaysOpen="False"
                                    Placement="Top"
-                                   VerticalOffset="-6"
+                                   VerticalOffset="-4"
+                                   HorizontalOffset="-12"
                                    AllowsTransparency="True"
                                    Focusable="False"
                                    PopupAnimation="Fade">
-                                <Border Style="{StaticResource BarBorderStyle}" Padding="4" Margin="12,12,12,0"
-                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                <Border Style="{StaticResource BarBorderStyle}" Padding="6" Margin="12,12,12,4" MinWidth="210">
+                                    <StackPanel>
+                                        <TextBlock Text="LÀM ĐẸP ẢNH" Margin="8,4,8,2" FontFamily="Consolas" FontSize="10" Foreground="#7D838B" />
+                                        <TextBlock Text="Nền gradient · bo góc · đổ bóng" Margin="8,0,8,6" FontSize="11" Foreground="#9AA0A6" />
+                                        <Border Height="1" Margin="4,0,4,4" Background="{StaticResource SeparatorBrush}" />
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                    </StackPanel>
                                 </Border>
                             </Popup>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Chưa chọn preset ("Gốc"): hiện icon ✦; đã chọn: hiện ô màu gradient của preset -->
+                            <Trigger Property="Tag" Value="{x:Null}">
+                                <Setter TargetName="SparkleIcon" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="SelectedSwatch" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="Chevron" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -735,13 +849,9 @@
                 <Border Style="{StaticResource BarSeparatorV}" />
 
                 <!-- Làm đẹp ảnh -->
-                <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,2,0" TextElement.Foreground="#9AA0A6"
-                         ToolTip="Làm đẹp ảnh: đổ bóng, bo góc &amp; nền gradient">
-                    <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSparkle}" />
-                </Viewbox>
                 <ComboBox x:Name="BeautifyComboBox"
-                          Style="{StaticResource BarComboBoxStyle}"
-                          ToolTip="Làm đẹp ảnh: đổ bóng, bo góc &amp; nền gradient"
+                          Style="{StaticResource BeautifySelectorStyle}"
+                          ToolTip="Làm đẹp ảnh: nền gradient, bo góc &amp; đổ bóng"
                           Margin="2,0"
                           SelectionChanged="OnBeautifySelectionChanged">
                     <ComboBoxItem Content="Gốc" Tag="None" IsSelected="True" />
