@@ -69,6 +69,11 @@ public class AppSettings
     public string Theme { get; set; } = "system";
 
     /// <summary>
+    /// Ngôn ngữ giao diện: "vi" (Tiếng Việt, mặc định) hoặc "en" (English).
+    /// </summary>
+    public string Language { get; set; } = "vi";
+
+    /// <summary>
     /// Tự khởi động cùng Windows và chạy nền ở khay hệ thống.
     /// null = người dùng chưa chọn (bản phát hành mặc định bật, giống Lightshot).
     /// </summary>

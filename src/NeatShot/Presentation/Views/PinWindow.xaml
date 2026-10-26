@@ -1,6 +1,7 @@
 <Window x:Class="NeatShot.Presentation.Views.PinWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:NeatShot.Common.Localization"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:NeatShot.Presentation.ViewModels"
@@ -74,14 +75,14 @@
 
     <Window.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="Vẽ chú thích (Ctrl + P)" Click="OnToggleAnnotateClick" />
-            <MenuItem Header="Sao chép ảnh (Ctrl + C)" Click="OnCopyImageClick" />
-            <MenuItem Header="Đặt lại tỉ lệ 100% (Ctrl + 0)" Click="OnResetZoomClick" />
+            <MenuItem Header="{l:T Pin.MenuAnnotate}" Click="OnToggleAnnotateClick" />
+            <MenuItem Header="{l:T Pin.MenuCopy}" Click="OnCopyImageClick" />
+            <MenuItem Header="{l:T Pin.MenuResetZoom}" Click="OnResetZoomClick" />
             <Separator />
-            <MenuItem Header="Tăng độ trong suốt" Click="OnDecreaseOpacityClick" />
-            <MenuItem Header="Giảm độ trong suốt" Click="OnIncreaseOpacityClick" />
+            <MenuItem Header="{l:T Pin.MenuMoreTransparent}" Click="OnDecreaseOpacityClick" />
+            <MenuItem Header="{l:T Pin.MenuLessTransparent}" Click="OnIncreaseOpacityClick" />
             <Separator />
-            <MenuItem Header="Đóng ghim (Esc / Nút ✕)" Click="OnCloseClick" />
+            <MenuItem Header="{l:T Pin.MenuClose}" Click="OnCloseClick" />
         </ContextMenu>
     </Window.ContextMenu>
 
@@ -91,7 +92,7 @@
             Background="#1E1E1E"
             Opacity="{Binding Opacity}"
             Cursor="SizeAll"
-            ToolTip="Kéo để di chuyển • Lăn chuột để phóng to/thu nhỏ • Ctrl + Lăn để chỉnh độ mờ • Esc hoặc nút ✕ để đóng">
+            ToolTip="{l:T Pin.Tooltip}">
         <Border.Effect>
             <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.4" Direction="270" Color="Black" />
         </Border.Effect>
@@ -159,7 +160,7 @@
                     <!-- Nút sao chép ảnh (Vector Path siêu sáng & sắc nét) -->
                     <Button x:Name="PinCopyButton"
                             Style="{StaticResource PinHeaderButtonStyle}"
-                            ToolTip="Sao chép ảnh vào Clipboard (Ctrl + C)"
+                            ToolTip="{l:T Pin.CopyTip}"
                             Click="OnCopyImageClick">
                         <Path Width="13" Height="13"
                               Stretch="Uniform"
@@ -170,7 +171,7 @@
                     <!-- Nút đóng ghim -->
                     <Button x:Name="PinCloseButton"
                             Style="{StaticResource PinCloseButtonStyle}"
-                            ToolTip="Đóng ghim (Esc)"
+                            ToolTip="{l:T Pin.CloseTip}"
                             Click="OnCloseClick">
                         <TextBlock Text="✕" FontSize="13" FontWeight="Bold" Foreground="#FF5C5C" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>

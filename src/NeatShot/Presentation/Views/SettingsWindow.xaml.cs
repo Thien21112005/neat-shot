@@ -1,9 +1,10 @@
 using Microsoft.Win32;
 using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Presentation.ViewModels;
 using System.IO;
-using System.Windows;
 using System.Windows.Input;
+using System.Windows;
 
 namespace NeatShot.Presentation.Views;
 
@@ -90,7 +91,7 @@ public partial class SettingsWindow : Window
     {
         var dialog = new OpenFolderDialog
         {
-            Title = "Chọn thư mục lưu ảnh NeatShot",
+            Title = Loc.T("Settings.ChooseFolderTitle"),
             InitialDirectory = Directory.Exists(ViewModel.SaveDirectory) ? ViewModel.SaveDirectory : string.Empty
         };
 

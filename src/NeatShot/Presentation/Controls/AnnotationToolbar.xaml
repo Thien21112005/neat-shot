@@ -1,6 +1,7 @@
 <UserControl x:Class="NeatShot.Presentation.Controls.AnnotationToolbar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:NeatShot.Common.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
@@ -296,7 +297,7 @@
                                         <Border x:Name="SelectedSwatch" CornerRadius="4" BorderBrush="#40FFFFFF" BorderThickness="1"
                                                 Background="{TemplateBinding Tag}" />
                                     </Grid>
-                                    <TextBlock Text="Làm đẹp" Margin="8,0,0,0" Foreground="#9AA0A6" VerticalAlignment="Center" />
+                                    <TextBlock Text="{l:T Toolbar.Beautify}" Margin="8,0,0,0" Foreground="#9AA0A6" VerticalAlignment="Center" />
                                     <TextBlock Text="·" Margin="6,0" Foreground="#5F6670" VerticalAlignment="Center" />
                                     <ContentPresenter VerticalAlignment="Center"
                                                       TextElement.FontWeight="SemiBold"
@@ -325,8 +326,8 @@
                                        PopupAnimation="Fade">
                                     <Border Style="{StaticResource BarBorderStyle}" Padding="6" Margin="12,12,12,4" MinWidth="210">
                                         <StackPanel>
-                                            <TextBlock Text="LÀM ĐẸP ẢNH" Margin="8,4,8,2" FontFamily="Consolas" FontSize="10" Foreground="#7D838B" />
-                                            <TextBlock Text="Nền gradient · bo góc · đổ bóng" Margin="8,0,8,6" FontSize="11" Foreground="#9AA0A6" />
+                                            <TextBlock Text="{l:T Toolbar.BeautifyHeader}" Margin="8,4,8,2" FontFamily="Consolas" FontSize="10" Foreground="#7D838B" />
+                                            <TextBlock Text="{l:T Toolbar.BeautifySub}" Margin="8,0,8,6" FontSize="11" Foreground="#9AA0A6" />
                                             <Border Height="1" Margin="4,0,4,4" Background="{StaticResource SeparatorBrush}" />
                                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                                         </StackPanel>
@@ -451,7 +452,7 @@
                         Cursor="SizeAll"
                         Background="Transparent"
                         HorizontalAlignment="Center"
-                        ToolTip="Bấm giữ để di chuyển thanh công cụ tự do (Nháy đúp để tự động căn lại vị trí)"
+                        ToolTip="{l:T Toolbar.GripTip}"
                         MouseLeftButtonDown="OnDragGripMouseDown"
                         MouseMove="OnDragGripMouseMove"
                         MouseLeftButtonUp="OnDragGripMouseUp">
@@ -461,13 +462,13 @@
                 </Border>
 
                 <Button x:Name="SelectButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Chọn &amp; di chuyển hình vẽ (V) — Chuột phải để di chuyển khung chụp"
+                        ToolTip="{l:T Toolbar.SelectTip}"
                         Click="OnSelectClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSelect}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="PencilButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Bút vẽ tự do (P)"
+                        ToolTip="{l:T Toolbar.PencilTip}"
                         Click="OnPencilClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPencil}" /></Viewbox>
                 </Button>
@@ -477,22 +478,22 @@
                           Width="32"
                           Height="30"
                           Style="{StaticResource ShapeComboBoxStyle}"
-                          ToolTip="Hình khối: Chữ nhật (R) hoặc Oval (O) — Chuột phải để đổi hình"
+                          ToolTip="{l:T Toolbar.ShapeTip}"
                           PreviewMouseDown="OnShapeComboBoxPreviewMouseDown"
                           SelectionChanged="OnShapeComboBoxSelectionChanged"
                           DropDownOpened="OnShapeComboBoxDropDownOpened">
-                    <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="Hình chữ nhật (R)"
+                    <ComboBoxItem Tag="Rectangle" IsSelected="True" ToolTip="{l:T Toolbar.RectTip}"
                                   PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRect}" /></Viewbox>
-                            <TextBlock Text="Chữ nhật (R)" Margin="10,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:T Toolbar.Rect}" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="Ellipse" ToolTip="Hình tròn / Oval (O)"
+                    <ComboBoxItem Tag="Ellipse" ToolTip="{l:T Toolbar.EllipseTip}"
                                   PreviewMouseLeftButtonUp="OnShapeItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconEllipse}" /></Viewbox>
-                            <TextBlock Text="Oval / Tròn (O)" Margin="10,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:T Toolbar.Ellipse}" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                 </ComboBox>
@@ -502,22 +503,22 @@
                           Width="32"
                           Height="30"
                           Style="{StaticResource LineComboBoxStyle}"
-                          ToolTip="Đường kẻ: Mũi tên (A) hoặc Đường thẳng (L) — Chuột phải để đổi đường kẻ"
+                          ToolTip="{l:T Toolbar.LineGroupTip}"
                           PreviewMouseDown="OnLineComboBoxPreviewMouseDown"
                           SelectionChanged="OnLineComboBoxSelectionChanged"
                           DropDownOpened="OnLineComboBoxDropDownOpened">
-                    <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="Mũi tên (A)"
+                    <ComboBoxItem Tag="Arrow" IsSelected="True" ToolTip="{l:T Toolbar.Arrow}"
                                   PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconArrow}" /></Viewbox>
-                            <TextBlock Text="Mũi tên (A)" Margin="10,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:T Toolbar.Arrow}" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="Line" ToolTip="Đường thẳng (L)"
+                    <ComboBoxItem Tag="Line" ToolTip="{l:T Toolbar.Line}"
                                   PreviewMouseLeftButtonUp="OnLineItemPreviewMouseUp">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconLine}" /></Viewbox>
-                            <TextBlock Text="Đường thẳng (L)" Margin="10,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:T Toolbar.Line}" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ComboBoxItem>
                 </ComboBox>
@@ -529,31 +530,31 @@
                 <Button x:Name="ArrowButton" Visibility="Collapsed" Click="OnArrowClick" />
 
                 <Button x:Name="HighlightButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Bút dạ quang (H)"
+                        ToolTip="{l:T Toolbar.HighlightTip}"
                         Click="OnHighlightClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconHighlighter}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="TextButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Chèn chữ (T)"
+                        ToolTip="{l:T Toolbar.TextTip}"
                         Click="OnTextClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconText}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="StepCounterButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Đánh số bước tự động (N)"
+                        ToolTip="{l:T Toolbar.StepTip}"
                         Click="OnStepCounterClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="PixelateButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Khảm ô vuông che thông tin nhạy cảm (B)"
+                        ToolTip="{l:T Toolbar.PixelateTip}"
                         Click="OnPixelateClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPixelate}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="BlurButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Làm mờ che thông tin nhạy cảm"
+                        ToolTip="{l:T Toolbar.BlurTip}"
                         Click="OnBlurClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconBlur}" /></Viewbox>
                 </Button>
@@ -563,24 +564,24 @@
                     <Border Style="{StaticResource BarSeparatorH}" />
 
                     <Button x:Name="EyedropperButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                            ToolTip="Hút màu trên màn hình (I)"
+                            ToolTip="{l:T Toolbar.DropperTip}"
                             Click="OnEyedropperClick">
                         <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconDropper}" /></Viewbox>
                     </Button>
 
-                    <Button x:Name="ColorRedButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu đỏ" Click="OnColorSelect" Tag="#FFE81123">
+                    <Button x:Name="ColorRedButton" Style="{StaticResource ColorButtonStyle}" ToolTip="{l:T Color.Red}" Click="OnColorSelect" Tag="#FFE81123">
                         <Ellipse Width="14" Height="14" Fill="#FFE81123" />
                     </Button>
-                    <Button x:Name="ColorYellowButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu vàng" Click="OnColorSelect" Tag="#FFFFB900">
+                    <Button x:Name="ColorYellowButton" Style="{StaticResource ColorButtonStyle}" ToolTip="{l:T Color.Yellow}" Click="OnColorSelect" Tag="#FFFFB900">
                         <Ellipse Width="14" Height="14" Fill="#FFFFB900" />
                     </Button>
-                    <Button x:Name="ColorGreenButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh lá" Click="OnColorSelect" Tag="#FF107C41">
+                    <Button x:Name="ColorGreenButton" Style="{StaticResource ColorButtonStyle}" ToolTip="{l:T Color.Green}" Click="OnColorSelect" Tag="#FF107C41">
                         <Ellipse Width="14" Height="14" Fill="#FF107C41" />
                     </Button>
-                    <Button x:Name="ColorBlueButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu xanh dương" Click="OnColorSelect" Tag="#FF0078D4">
+                    <Button x:Name="ColorBlueButton" Style="{StaticResource ColorButtonStyle}" ToolTip="{l:T Color.Blue}" Click="OnColorSelect" Tag="#FF0078D4">
                         <Ellipse Width="14" Height="14" Fill="#FF0078D4" />
                     </Button>
-                    <Button x:Name="ColorWhiteButton" Style="{StaticResource ColorButtonStyle}" ToolTip="Màu trắng" Click="OnColorSelect" Tag="#FFFFFFFF">
+                    <Button x:Name="ColorWhiteButton" Style="{StaticResource ColorButtonStyle}" ToolTip="{l:T Color.White}" Click="OnColorSelect" Tag="#FFFFFFFF">
                         <Ellipse Width="14" Height="14" Fill="#FFFFFFFF" />
                     </Button>
 
@@ -591,13 +592,13 @@
                 <Border Style="{StaticResource BarSeparatorH}" />
 
                 <Button x:Name="UndoButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Hoàn tác (Ctrl + Z)"
+                        ToolTip="{l:T Common.Undo}"
                         Click="OnUndoClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconUndo}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="RedoButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Làm lại (Ctrl + Y)"
+                        ToolTip="{l:T Common.Redo}"
                         Click="OnRedoClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRedo}" /></Viewbox>
                 </Button>
@@ -615,14 +616,14 @@
                     <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,0,0" TextElement.Foreground="#9AA0A6">
                         <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" />
                     </Viewbox>
-                    <TextBlock Text="Cỡ số" Style="{StaticResource FlyoutLabelStyle}" ToolTip="Kích thước ô đánh số bước (Cuộn chuột để tăng/giảm)" />
+                    <TextBlock Text="{l:T Toolbar.StepSize}" Style="{StaticResource FlyoutLabelStyle}" ToolTip="{l:T Toolbar.StepSizeTip}" />
 
                     <Button x:Name="StepSizeDecreaseButton"
                             Style="{StaticResource SpinButtonStyle}"
                             Content="−"
                             FontSize="13"
                             FontWeight="SemiBold"
-                            ToolTip="Giảm cỡ số bước (Cuộn chuột xuống)"
+                            ToolTip="{l:T Toolbar.StepSizeDownTip}"
                             Click="OnStepSizeDecreaseClick" />
 
                     <ComboBox x:Name="StepSizeComboBox"
@@ -634,13 +635,13 @@
                               Padding="4,2"
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
-                              ToolTip="Nhập cỡ số trực tiếp hoặc chọn mức gợi ý (Cuộn chuột để tăng/giảm)"
+                              ToolTip="{l:T Toolbar.SizeInputTip}"
                               PreviewMouseWheel="OnStepSizeMouseWheel"
                               SelectionChanged="OnStepSizeSelectionChanged">
-                        <ComboBoxItem Content="11" Tag="11" TextSearch.Text="11" ToolTip="Nhỏ (11)" />
-                        <ComboBoxItem Content="14" Tag="14" TextSearch.Text="14" ToolTip="Vừa (14 - Mặc định)" IsSelected="True" />
-                        <ComboBoxItem Content="18" Tag="18" TextSearch.Text="18" ToolTip="Lớn (18)" />
-                        <ComboBoxItem Content="24" Tag="24" TextSearch.Text="24" ToolTip="Rất lớn (24)" />
+                        <ComboBoxItem Content="11" Tag="11" TextSearch.Text="11" ToolTip="{l:T Toolbar.SizeSmall}" />
+                        <ComboBoxItem Content="14" Tag="14" TextSearch.Text="14" ToolTip="{l:T Toolbar.SizeMedium}" IsSelected="True" />
+                        <ComboBoxItem Content="18" Tag="18" TextSearch.Text="18" ToolTip="{l:T Toolbar.SizeLarge}" />
+                        <ComboBoxItem Content="24" Tag="24" TextSearch.Text="24" ToolTip="{l:T Toolbar.SizeXLarge}" />
                     </ComboBox>
 
                     <Button x:Name="StepSizeIncreaseButton"
@@ -648,14 +649,14 @@
                             Content="+"
                             FontSize="13"
                             FontWeight="SemiBold"
-                            ToolTip="Tăng cỡ số bước (Cuộn chuột lên)"
+                            ToolTip="{l:T Toolbar.StepSizeUpTip}"
                             Click="OnStepSizeIncreaseClick" />
                 </StackPanel>
 
                 <!-- Phông & cỡ chữ -->
                 <StackPanel x:Name="FontControlsPanel" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
                     <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15" Margin="4,0,6,0" TextElement.Foreground="#9AA0A6"
-                             ToolTip="Tùy chọn phông chữ và cỡ chữ">
+                             ToolTip="{l:T Toolbar.FontOptionsTip}">
                         <Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconFont}" />
                     </Viewbox>
                     <ComboBox x:Name="FontFamilyComboBox"
@@ -665,7 +666,7 @@
                               Margin="2,0"
                               Padding="4,2"
                               VerticalContentAlignment="Center"
-                              ToolTip="Chọn phông chữ"
+                              ToolTip="{l:T Toolbar.FontTip}"
                               SelectionChanged="OnFontFamilySelectionChanged">
                         <ComboBoxItem Content="Segoe UI" IsSelected="True" />
                         <ComboBoxItem Content="Arial" />
@@ -683,7 +684,7 @@
                             FontSize="13"
                             FontWeight="SemiBold"
                             Margin="6,0,0,0"
-                            ToolTip="Giảm cỡ chữ (Cuộn chuột xuống)"
+                            ToolTip="{l:T Toolbar.FontSizeDownTip}"
                             Click="OnFontSizeDecreaseClick" />
 
                     <ComboBox x:Name="FontSizeComboBox"
@@ -695,7 +696,7 @@
                               Padding="4,2"
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
-                              ToolTip="Nhập cỡ chữ trực tiếp hoặc chọn mức gợi ý (Cuộn chuột để tăng/giảm)"
+                              ToolTip="{l:T Toolbar.SizeInputTip}"
                               PreviewMouseWheel="OnFontSizeMouseWheel"
                               SelectionChanged="OnFontSizeSelectionChanged">
                         <ComboBoxItem Content="12" />
@@ -715,7 +716,7 @@
                             Content="+"
                             FontSize="13"
                             FontWeight="SemiBold"
-                            ToolTip="Tăng cỡ chữ (Cuộn chuột lên)"
+                            ToolTip="{l:T Toolbar.FontSizeUpTip}"
                             Click="OnFontSizeIncreaseClick" />
                 </StackPanel>
             </StackPanel>
@@ -727,7 +728,7 @@
                 Style="{StaticResource BarBorderStyle}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Button x:Name="PinButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Ghim ảnh nổi trên màn hình"
+                        ToolTip="{l:T Toolbar.PinTip}"
                         Click="OnPinClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPin}" /></Viewbox>
                 </Button>
@@ -736,11 +737,11 @@
 
                 <!-- Trích xuất chữ: nút riêng có viền + icon để không bị nhìn nhầm là nhãn của nút Ghim bên cạnh -->
                 <Button x:Name="OcrButton" Style="{StaticResource TextActionButtonStyle}"
-                        ToolTip="Trích xuất chữ từ ảnh vào Clipboard (Ctrl + O)"
+                        ToolTip="{l:T Toolbar.OcrTip}"
                         Click="OnOcrClick">
                     <StackPanel Orientation="Horizontal">
                         <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconOcr}" /></Viewbox>
-                        <TextBlock Text="Trích xuất chữ" FontWeight="SemiBold" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{l:T Toolbar.Ocr}" FontWeight="SemiBold" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
@@ -749,10 +750,10 @@
                 <!-- Làm đẹp ảnh -->
                 <ComboBox x:Name="BeautifyComboBox"
                           Style="{StaticResource BeautifySelectorStyle}"
-                          ToolTip="Làm đẹp ảnh: nền gradient, bo góc &amp; đổ bóng"
+                          ToolTip="{l:T Toolbar.BeautifyTip}"
                           Margin="2,0"
                           SelectionChanged="OnBeautifySelectionChanged">
-                    <ComboBoxItem Content="Gốc" Tag="None" IsSelected="True" />
+                    <ComboBoxItem Content="{l:T Toolbar.BeautifyNone}" Tag="None" IsSelected="True" />
                     <ComboBoxItem Content="Sunset" Tag="Sunset" />
                     <ComboBoxItem Content="Ocean" Tag="Ocean" />
                     <ComboBoxItem Content="Purple" Tag="Purple" />
@@ -765,22 +766,22 @@
                 <Border Style="{StaticResource BarSeparatorV}" />
 
                 <Button x:Name="SaveButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Lưu vào thư mục ảnh (Ctrl + S) · Shift + click hoặc Ctrl + Shift + S để chọn nơi lưu"
+                        ToolTip="{l:T Toolbar.SaveTip}"
                         Click="OnSaveClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSave}" /></Viewbox>
                 </Button>
 
                 <Button x:Name="CopyButton" Style="{StaticResource PrimaryActionButtonStyle}"
-                        ToolTip="Sao chép vào Clipboard (Enter)"
+                        ToolTip="{l:T Toolbar.CopyTip}"
                         Click="OnCopyClick">
                     <StackPanel Orientation="Horizontal">
                         <Viewbox Style="{StaticResource IconBoxStyle}" Width="16" Height="16"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconCopy}" /></Viewbox>
-                        <TextBlock Text="Sao chép" FontWeight="SemiBold" FontSize="12" Margin="7,0,0,0" VerticalAlignment="Center" />
+                        <TextBlock Text="{l:T Toolbar.Copy}" FontWeight="SemiBold" FontSize="12" Margin="7,0,0,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button x:Name="CloseButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Đóng (Esc)"
+                        ToolTip="{l:T Common.CloseEsc}"
                         Click="OnCloseClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconClose}" /></Viewbox>
                 </Button>

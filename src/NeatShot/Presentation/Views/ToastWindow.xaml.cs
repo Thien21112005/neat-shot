@@ -1,7 +1,8 @@
+using NeatShot.Common.Localization;
 using System.IO;
-using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Windows;
 
 namespace NeatShot.Presentation.Views;
 
@@ -64,7 +65,7 @@ public partial class ToastWindow : Window
             ? directory.TrimEnd(Path.DirectorySeparatorChar)
             : Path.Combine(parent, folder);
 
-        return $"Đã lưu vào {display}";
+        return Loc.F("Toast.SavedIn", display);
     }
 
     /// <summary>

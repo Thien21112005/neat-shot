@@ -1,3 +1,4 @@
+using NeatShot.Common.Localization;
 using NeatShot.Core.Models;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,7 @@ public partial class HotkeyBox : UserControl
         IsRecording = true;
         Focus();
         Keyboard.Focus(this);
-        ShowPrompt("Nhấn tổ hợp phím…", AccentTextKey);
+        ShowPrompt(Loc.T("Hotkey.PressKeys"), AccentTextKey);
         RecordingStarted?.Invoke(this, EventArgs.Empty);
     }
 
@@ -84,13 +85,13 @@ public partial class HotkeyBox : UserControl
         var candidate = new HotkeyGesture(key, modifiers);
         if (IsModifierKey(key))
         {
-            ShowPrompt(modifiers == ModifierKeys.None ? "Nhấn tổ hợp phím…" : $"{ModifierText(modifiers)} + …", AccentTextKey);
+            ShowPrompt(modifiers == ModifierKeys.None ? Loc.T("Hotkey.PressKeys") : $"{ModifierText(modifiers)} + …", AccentTextKey);
             return true;
         }
 
         if (!candidate.IsValid)
         {
-            ShowPrompt($"Cần kèm Ctrl, Alt hoặc Win — ví dụ Ctrl + Shift + {candidate.DisplayText}", WarningTextKey);
+            ShowPrompt(Loc.F("Hotkey.NeedsModifier", candidate.DisplayText), WarningTextKey);
             return true;
         }
 
@@ -110,7 +111,7 @@ public partial class HotkeyBox : UserControl
     private void Refresh()
     {
         if (IsRecording) return;
-        DisplayText.Text = Gesture.Key == Key.None ? "Chưa đặt" : Gesture.DisplayText;
+        DisplayText.Text = Gesture.Key == Key.None ? Loc.T("Hotkey.NotSet") : Gesture.DisplayText;
         DisplayText.SetResourceReference(TextBlock.ForegroundProperty, NormalTextKey);
         Frame.SetResourceReference(Border.BorderBrushProperty, IdleBorderKey);
         EditHint.Visibility = Visibility.Visible;

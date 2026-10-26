@@ -132,6 +132,25 @@ public class SettingsWindowTests : IDisposable
     }
 
     [Fact]
+    public void SettingsWindow_SavesTheChosenLanguage_OnStaThread()
+    {
+        var settings = new SettingsService(_settingsPath);
+        settings.SaveSettings(new AppSettings());
+
+        RunOnSta(() =>
+        {
+            var window = CreateWindow(settings);
+            // Mặc định Tiếng Việt
+            Assert.True(window.LanguageVietnameseOption.IsChecked);
+
+            window.ViewModel.IsEnglish = true;
+            window.ViewModel.SaveAndCloseCommand.Execute(null);
+        });
+
+        Assert.Equal("en", new SettingsService(_settingsPath).LoadSettings().Language);
+    }
+
+    [Fact]
     public void SettingsWindow_NeverGrowsTallerThanTheScreen_OnStaThread()
     {
         RunOnSta(() =>

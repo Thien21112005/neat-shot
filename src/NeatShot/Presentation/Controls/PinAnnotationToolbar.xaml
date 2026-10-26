@@ -1,6 +1,7 @@
 <UserControl x:Class="NeatShot.Presentation.Controls.PinAnnotationToolbar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:NeatShot.Common.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:NeatShot.Presentation.Controls"
@@ -44,64 +45,64 @@
     <!-- Margin chừa chỗ cho bóng đổ khi nằm trong Popup trong suốt -->
     <Border Style="{StaticResource BarBorderStyle}" Padding="4" Margin="10,6,10,14">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <Button x:Name="SelectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Chọn / kéo di chuyển ảnh (V)" Click="OnSelectClick">
+            <Button x:Name="SelectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.SelectTip}" Click="OnSelectClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSelect}" /></Viewbox>
             </Button>
-            <Button x:Name="PencilButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Bút vẽ" Click="OnPencilClick">
+            <Button x:Name="PencilButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.PencilTip}" Click="OnPencilClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPencil}" /></Viewbox>
             </Button>
-            <Button x:Name="HighlightButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Bút dạ quang (H)" Click="OnHighlightClick">
+            <Button x:Name="HighlightButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.HighlightTip}" Click="OnHighlightClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconHighlighter}" /></Viewbox>
             </Button>
 
             <Border Style="{StaticResource BarSeparatorV}" />
 
-            <Button x:Name="RectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Khung chữ nhật (R)" Click="OnRectClick">
+            <Button x:Name="RectButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.RectTip}" Click="OnRectClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRect}" /></Viewbox>
             </Button>
-            <Button x:Name="EllipseButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Hình elip (E)" Click="OnEllipseClick">
+            <Button x:Name="EllipseButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.EllipseTip}" Click="OnEllipseClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconEllipse}" /></Viewbox>
             </Button>
-            <Button x:Name="LineButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Đường thẳng (L)" Click="OnLineClick">
+            <Button x:Name="LineButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.Line}" Click="OnLineClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconLine}" /></Viewbox>
             </Button>
-            <Button x:Name="ArrowButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Mũi tên (A)" Click="OnArrowClick">
+            <Button x:Name="ArrowButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.Arrow}" Click="OnArrowClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconArrow}" /></Viewbox>
             </Button>
-            <Button x:Name="TextButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Chữ (T)" Click="OnTextClick">
+            <Button x:Name="TextButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.TextTip}" Click="OnTextClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconText}" /></Viewbox>
             </Button>
-            <Button x:Name="StepButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Đánh số thứ tự (N)" Click="OnStepClick">
+            <Button x:Name="StepButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Toolbar.StepTip}" Click="OnStepClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconStep}" /></Viewbox>
             </Button>
 
             <Border Style="{StaticResource BarSeparatorV}" />
 
-            <Button x:Name="PixelateButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm vỡ điểm ảnh để che thông tin (X)" Click="OnPixelateClick">
+            <Button x:Name="PixelateButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.PixelateTip}" Click="OnPixelateClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconPixelate}" /></Viewbox>
             </Button>
-            <Button x:Name="BlurButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm mờ (B)" Click="OnBlurClick">
+            <Button x:Name="BlurButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.BlurTip}" Click="OnBlurClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconBlur}" /></Viewbox>
             </Button>
 
             <Border Style="{StaticResource BarSeparatorV}" />
 
-            <Button x:Name="ColorRedButton" Style="{StaticResource SwatchStyle}" Background="#FF3B30" ToolTip="Đỏ" Click="OnColorClick" />
-            <Button x:Name="ColorYellowButton" Style="{StaticResource SwatchStyle}" Background="#FFCC00" ToolTip="Vàng" Click="OnColorClick" />
-            <Button x:Name="ColorGreenButton" Style="{StaticResource SwatchStyle}" Background="#34C759" ToolTip="Xanh lá" Click="OnColorClick" />
-            <Button x:Name="ColorBlueButton" Style="{StaticResource SwatchStyle}" Background="#0078D4" ToolTip="Xanh dương" Click="OnColorClick" />
-            <Button x:Name="ColorWhiteButton" Style="{StaticResource SwatchStyle}" Background="#FFFFFF" ToolTip="Trắng" Click="OnColorClick" />
-            <Button x:Name="ColorBlackButton" Style="{StaticResource SwatchStyle}" Background="#1B1F24" ToolTip="Đen" Click="OnColorClick" />
+            <Button x:Name="ColorRedButton" Style="{StaticResource SwatchStyle}" Background="#FF3B30" ToolTip="{l:T Color.Red}" Click="OnColorClick" />
+            <Button x:Name="ColorYellowButton" Style="{StaticResource SwatchStyle}" Background="#FFCC00" ToolTip="{l:T Color.Yellow}" Click="OnColorClick" />
+            <Button x:Name="ColorGreenButton" Style="{StaticResource SwatchStyle}" Background="#34C759" ToolTip="{l:T Color.Green}" Click="OnColorClick" />
+            <Button x:Name="ColorBlueButton" Style="{StaticResource SwatchStyle}" Background="#0078D4" ToolTip="{l:T Color.Blue}" Click="OnColorClick" />
+            <Button x:Name="ColorWhiteButton" Style="{StaticResource SwatchStyle}" Background="#FFFFFF" ToolTip="{l:T Color.White}" Click="OnColorClick" />
+            <Button x:Name="ColorBlackButton" Style="{StaticResource SwatchStyle}" Background="#1B1F24" ToolTip="{l:T Color.Black}" Click="OnColorClick" />
 
             <Border Style="{StaticResource BarSeparatorV}" />
 
-            <Button x:Name="UndoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Hoàn tác (Ctrl + Z)" Click="OnUndoClick">
+            <Button x:Name="UndoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Common.Undo}" Click="OnUndoClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconUndo}" /></Viewbox>
             </Button>
-            <Button x:Name="RedoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Làm lại (Ctrl + Y)" Click="OnRedoClick">
+            <Button x:Name="RedoButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Common.Redo}" Click="OnRedoClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconRedo}" /></Viewbox>
             </Button>
-            <Button x:Name="HideToolbarButton" Style="{StaticResource ToolButtonStyle}" ToolTip="Ẩn thanh vẽ (Esc)" Click="OnHideClick">
+            <Button x:Name="HideToolbarButton" Style="{StaticResource ToolButtonStyle}" ToolTip="{l:T Pin.HideToolbarTip}" Click="OnHideClick">
                 <Viewbox Style="{StaticResource IconBoxStyle}" Width="15" Height="15"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconClose}" /></Viewbox>
             </Button>
         </StackPanel>
