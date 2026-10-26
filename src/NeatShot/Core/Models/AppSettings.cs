@@ -24,9 +24,44 @@ public class AppSettings
     public string HotkeyCapture { get; set; } = "Ctrl+Shift+A";
 
     /// <summary>
+    /// Phím chụp phụ (mặc định: PrintScreen).
+    /// </summary>
+    public string HotkeyCaptureAlternate { get; set; } = "PrintScreen";
+
+    /// <summary>
+    /// Phím tắt ghim ảnh từ Clipboard lên màn hình (mặc định: F3).
+    /// </summary>
+    public string HotkeyPinClipboard { get; set; } = "F3";
+
+    /// <summary>
+    /// Phím tắt chụp lại đúng vùng vừa chụp (mặc định: Ctrl+Shift+R).
+    /// </summary>
+    public string HotkeyRepeatLast { get; set; } = "Ctrl+Shift+R";
+
+    /// <summary>
+    /// Vùng chụp gần nhất (toạ độ overlay, DIP) để dùng cho "Chụp lại vùng vừa chụp".
+    /// </summary>
+    public CaptureRegion? LastCaptureRegion { get; set; }
+
+    /// <summary>
     /// Tự động copy ảnh vào Clipboard sau khi hoàn tất khoanh vùng.
     /// </summary>
     public bool AutoCopyOnCapture { get; set; } = false;
+
+    /// <summary>
+    /// Tự lưu ảnh vào thư viện (thư mục lưu ảnh) mỗi khi Sao chép hoặc Ghim.
+    /// </summary>
+    public bool AutoSaveToGallery { get; set; } = true;
+
+    /// <summary>
+    /// Định dạng ảnh khi lưu: "png" (mặc định, không mất chất lượng) hoặc "jpg" (dung lượng nhỏ).
+    /// </summary>
+    public string ImageFormat { get; set; } = "png";
+
+    /// <summary>
+    /// Chất lượng nén JPG (1–100), chỉ dùng khi ImageFormat = "jpg".
+    /// </summary>
+    public int JpegQuality { get; set; } = 90;
 
     /// <summary>
     /// Tự khởi động cùng Windows và chạy nền ở khay hệ thống.

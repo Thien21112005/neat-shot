@@ -1,4 +1,5 @@
 using NeatShot.Core.Interop;
+using NeatShot.Core.Models;
 using NeatShot.Core.Services.Interfaces;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -12,6 +13,7 @@ public class HotkeyService : IHotkeyService
 {
     private int _nextHotkeyId = 9001;
     private readonly Dictionary<int, (Key Key, ModifierKeys Modifiers)> _registeredHotkeys = new();
+    private readonly Dictionary<int, Action> _callbacks = new();
     private HwndSource? _hwndSource;
     private bool _disposed;
 
@@ -20,12 +22,39 @@ public class HotkeyService : IHotkeyService
     public Key RegisteredKey => _registeredHotkeys.Values.FirstOrDefault().Key;
     public ModifierKeys RegisteredModifiers => _registeredHotkeys.Values.FirstOrDefault().Modifiers;
 
-    public bool Register(Key key, ModifierKeys modifiers)
+    public bool Register(Key key, ModifierKeys modifiers) => RegisterCore(key, modifiers) > 0;
+
+    public int RegisterHotkey(HotkeyGesture gesture, Action callback)
     {
-        if (key == Key.None) return false;
+        ArgumentNullException.ThrowIfNull(callback);
+        if (!gesture.IsValid) return 0;
+
+        var id = RegisterCore(gesture.Key, gesture.Modifiers);
+        if (id > 0)
+        {
+            _callbacks[id] = callback;
+        }
+
+        return id;
+    }
+
+    public void UnregisterHotkey(int id)
+    {
+        if (!_registeredHotkeys.Remove(id)) return;
+
+        _callbacks.Remove(id);
+        if (_hwndSource != null && _hwndSource.Handle != IntPtr.Zero)
+        {
+            NativeMethods.UnregisterHotKey(_hwndSource.Handle, id);
+        }
+    }
+
+    private int RegisterCore(Key key, ModifierKeys modifiers)
+    {
+        if (key == Key.None) return 0;
 
         EnsureHwndSource();
-        if (_hwndSource == null || _hwndSource.Handle == IntPtr.Zero) return false;
+        if (_hwndSource == null || _hwndSource.Handle == IntPtr.Zero) return 0;
 
         var vk = (uint)KeyInterop.VirtualKeyFromKey(key);
         uint fsModifiers = NativeConstants.MOD_NOREPEAT;
@@ -37,12 +66,10 @@ public class HotkeyService : IHotkeyService
 
         var hotkeyId = _nextHotkeyId++;
         var success = NativeMethods.RegisterHotKey(_hwndSource.Handle, hotkeyId, fsModifiers, vk);
-        if (success)
-        {
-            _registeredHotkeys[hotkeyId] = (key, modifiers);
-        }
+        if (!success) return 0;
 
-        return success;
+        _registeredHotkeys[hotkeyId] = (key, modifiers);
+        return hotkeyId;
     }
 
     public void Unregister()
@@ -56,6 +83,7 @@ public class HotkeyService : IHotkeyService
         }
 
         _registeredHotkeys.Clear();
+        _callbacks.Clear();
     }
 
     private void EnsureHwndSource()
@@ -84,9 +112,18 @@ public class HotkeyService : IHotkeyService
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg == NativeConstants.WM_HOTKEY && _registeredHotkeys.ContainsKey(wParam.ToInt32()))
+        var id = wParam.ToInt32();
+        if (msg == NativeConstants.WM_HOTKEY && _registeredHotkeys.ContainsKey(id))
         {
-            HotkeyPressed?.Invoke(this, EventArgs.Empty);
+            // Phím tắt có hành động riêng thì gọi hành động đó, ngược lại phát sự kiện chung (API cũ)
+            if (_callbacks.TryGetValue(id, out var callback))
+            {
+                callback();
+            }
+            else
+            {
+                HotkeyPressed?.Invoke(this, EventArgs.Empty);
+            }
             handled = true;
         }
 

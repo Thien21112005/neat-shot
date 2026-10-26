@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NeatShot.Common.Helpers;
 using NeatShot.Core.Interop;
+using NeatShot.Core.Models;
 using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.Tray;
@@ -55,8 +56,7 @@ public partial class App : Application
         Console.WriteLine("  NeatShot - Chụp màn hình thông minh");
         Console.WriteLine("  Trạng thái: Đang chạy ngầm trong khay hệ thống (System Tray)");
         Console.WriteLine($"  Phím tắt chụp: {activeHotkey}");
-        Console.WriteLine("  * Mẹo: Nếu phím PrintScreen bị Windows Snipping Tool chặn,");
-        Console.WriteLine("    hãy nhấn Ctrl + Shift + A hoặc click icon NeatShot ở khay hệ thống.");
+        Console.WriteLine("  * Mẹo: Đổi phím tắt trong menu khay → Cài đặt…");
         Console.WriteLine("==================================================");
         Console.WriteLine();
     }
@@ -72,29 +72,50 @@ public partial class App : Application
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IScreenshotGalleryService, ScreenshotGalleryService>();
         services.AddSingleton<IStartupService, WindowsStartupService>();
+        services.AddSingleton<IAppHotkeyManager, AppHotkeyManager>();
+        services.AddSingleton<IWindowRegionService, WindowRegionService>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();
         services.AddTransient<PinViewModel>();
         services.AddTransient<GalleryViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         // Views
         services.AddTransient<OverlayWindow>();
         services.AddTransient<PinWindow>();
         services.AddTransient<GalleryWindow>();
+        services.AddTransient<SettingsWindow>();
     }
 
     private void InitializeTrayIcon()
     {
         _trayContextMenu = new ContextMenu();
 
-        var captureItem = new MenuItem { Header = "Chụp vùng chọn (Ctrl+Shift+A / PrtSc)" };
+        var captureItem = new MenuItem { Header = "Chụp vùng chọn" };
         captureItem.Click += (s, e) => TriggerCapture();
         _trayContextMenu.Items.Add(captureItem);
 
         var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
         fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
+
+        var repeatItem = new MenuItem { Header = "🔁 Chụp lại vùng vừa chụp" };
+        repeatItem.Click += (s, e) => TriggerCapture(repeatLastRegion: true);
+        _trayContextMenu.Items.Add(repeatItem);
+
+        var delayItem = new MenuItem { Header = "⏱️ Chụp hẹn giờ" };
+        foreach (var seconds in new[] { 3, 5, 10 })
+        {
+            var item = new MenuItem { Header = $"Sau {seconds} giây" };
+            item.Click += (s, e) => StartDelayedCapture(seconds);
+            delayItem.Items.Add(item);
+        }
+        _trayContextMenu.Items.Add(delayItem);
+
+        var pinClipboardItem = new MenuItem { Header = "📌 Ghim ảnh từ Clipboard" };
+        pinClipboardItem.Click += (s, e) => PinFromClipboard();
+        _trayContextMenu.Items.Add(pinClipboardItem);
 
         _trayContextMenu.Items.Add(new Separator());
 
@@ -117,7 +138,22 @@ public partial class App : Application
         startupItem.Click += (s, e) => SetLaunchAtStartup(startupItem.IsChecked);
         _trayContextMenu.Items.Add(startupItem);
 
+        var settingsItem = new MenuItem { Header = "⚙️ Cài đặt…" };
+        settingsItem.Click += (s, e) => OpenSettings();
+        _trayContextMenu.Items.Add(settingsItem);
+
         _trayContextMenu.Items.Add(new Separator());
+
+        // Menu luôn hiển thị phím tắt & trạng thái mới nhất (có thể vừa đổi trong cửa sổ Cài đặt)
+        _trayContextMenu.Opened += (s, e) =>
+        {
+            var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
+            captureItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.Capture)?.DisplayText ?? string.Empty;
+            pinClipboardItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.PinFromClipboard)?.DisplayText ?? string.Empty;
+            repeatItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.RepeatLastCapture)?.DisplayText ?? string.Empty;
+            repeatItem.IsEnabled = Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion != null;
+            startupItem.IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled();
+        };
 
         var exitItem = new MenuItem { Header = "Thoát" };
         exitItem.Click += (s, e) => Shutdown();
@@ -136,26 +172,73 @@ public partial class App : Application
         };
     }
 
+    /// <summary>
+    /// Đăng ký phím tắt toàn cục theo cài đặt của người dùng (đổi được trong cửa sổ Cài đặt, có hiệu lực ngay).
+    /// </summary>
     private string InitializeGlobalHotkeys()
     {
-        var hotkeyService = Services.GetRequiredService<IHotkeyService>();
-        hotkeyService.HotkeyPressed += (s, e) => TriggerCapture();
+        var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
+        hotkeys.SetHandler(HotkeyAction.Capture, () => TriggerCapture());
+        hotkeys.SetHandler(HotkeyAction.CaptureAlternate, () => TriggerCapture());
+        hotkeys.SetHandler(HotkeyAction.PinFromClipboard, PinFromClipboard);
+        hotkeys.SetHandler(HotkeyAction.RepeatLastCapture, () => TriggerCapture(repeatLastRegion: true));
+        hotkeys.Apply(Services.GetRequiredService<ISettingsService>().CurrentSettings);
 
-        var activeKeys = new List<string>();
-
-        // 1. Đăng ký phím tắt chính Ctrl + Shift + A (không bao giờ bị Windows 11 chặn)
-        if (hotkeyService.Register(Key.A, ModifierKeys.Control | ModifierKeys.Shift))
-        {
-            activeKeys.Add("Ctrl + Shift + A");
-        }
-
-        // 2. Đăng ký phím PrintScreen truyền thống
-        if (hotkeyService.Register(Key.PrintScreen, ModifierKeys.None))
-        {
-            activeKeys.Add("PrintScreen");
-        }
+        var activeKeys = new[] { HotkeyAction.Capture, HotkeyAction.CaptureAlternate }
+            .Select(action => hotkeys.GetActiveGesture(action)?.DisplayText)
+            .Where(text => text != null)
+            .ToList();
 
         return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
+    }
+
+    /// <summary>
+    /// Ghim ảnh đang có trong Clipboard (copy từ web, Zalo, Figma, Explorer…) thành cửa sổ nổi.
+    /// </summary>
+    private static void PinFromClipboard()
+    {
+        try
+        {
+            var image = ClipboardImageReader.ReadFromClipboard();
+            if (image == null)
+            {
+                ToastWindow.Show("Clipboard không có ảnh", "Sao chép một ảnh rồi thử lại", ToastKind.Warning);
+                return;
+            }
+
+            var screen = new System.Windows.Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
+            var pinWindow = new PinWindow(new PinViewModel());
+            pinWindow.SetImage(image, GalleryWindow.CalculatePinPosition(image, screen));
+            pinWindow.Show();
+            pinWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi ghim ảnh từ Clipboard: {ex.Message}");
+        }
+    }
+
+    private SettingsWindow? _activeSettingsWindow;
+
+    private void OpenSettings()
+    {
+        try
+        {
+            if (_activeSettingsWindow != null && _activeSettingsWindow.IsLoaded)
+            {
+                _activeSettingsWindow.Activate();
+                return;
+            }
+
+            _activeSettingsWindow = Services.GetRequiredService<SettingsWindow>();
+            _activeSettingsWindow.Closed += (s, e) => _activeSettingsWindow = null;
+            _activeSettingsWindow.Show();
+            _activeSettingsWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở cửa sổ cài đặt: {ex.Message}");
+        }
     }
 
 #if DEBUG
@@ -269,7 +352,43 @@ public partial class App : Application
         }
     }
 
-    private async void TriggerCapture(bool selectFullScreen = false)
+    private CountdownWindow? _activeCountdown;
+
+    /// <summary>
+    /// Chụp hẹn giờ: đếm ngược để người dùng kịp mở menu/tooltip, rồi chụp mà KHÔNG đóng popup.
+    /// </summary>
+    private void StartDelayedCapture(int seconds)
+    {
+        if (_activeCountdown != null || (_activeOverlayWindow != null && _activeOverlayWindow.IsLoaded)) return;
+
+        if (_trayContextMenu != null && _trayContextMenu.IsOpen)
+        {
+            _trayContextMenu.IsOpen = false;
+        }
+
+        var countdown = new CaptureCountdown(seconds);
+        var window = new CountdownWindow(countdown);
+        _activeCountdown = window;
+
+        countdown.Cancelled += (s, e) =>
+        {
+            window.Close();
+            _activeCountdown = null;
+        };
+        countdown.Completed += async (s, e) =>
+        {
+            window.Close();
+            _activeCountdown = null;
+
+            // Chờ cửa sổ đếm ngược biến mất hẳn khỏi màn hình trước khi chụp
+            await Task.Delay(150);
+            TriggerCapture(dismissPopups: false);
+        };
+
+        window.ShowAndStart();
+    }
+
+    private async void TriggerCapture(bool selectFullScreen = false, bool dismissPopups = true, bool repeatLastRegion = false)
     {
         try
         {
@@ -279,25 +398,47 @@ public partial class App : Application
                 return;
             }
 
-            // Đóng context menu khay hệ thống nếu đang mở
-            if (_trayContextMenu != null && _trayContextMenu.IsOpen)
+            // Đóng context menu khay hệ thống nếu đang mở (trừ khi chụp hẹn giờ: người dùng muốn giữ menu của họ)
+            if (dismissPopups && _trayContextMenu != null && _trayContextMenu.IsOpen)
             {
                 _trayContextMenu.IsOpen = false;
             }
 
             var captureService = Services.GetRequiredService<IScreenCaptureService>();
-            var capturedScreen = await captureService.CaptureCleanScreenAsync();
+            var capturedScreen = await captureService.CaptureScreenAsync(dismissPopups);
             var virtualBounds = captureService.GetVirtualScreenBounds();
+            var windowRegions = DetectWindowRegions(capturedScreen);
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
             _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
-            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen);
+            var preselect = repeatLastRegion
+                ? Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion
+                : null;
+            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen, windowRegions, preselect);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[NeatShot] Lỗi chụp màn hình: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"Lỗi chụp màn hình: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Liệt kê cửa sổ đang mở (trước khi overlay che màn hình) để rê chuột là viền sẵn cửa sổ.
+    /// </summary>
+    private static IReadOnlyList<Core.Models.WindowRegion> DetectWindowRegions(System.Windows.Media.Imaging.BitmapSource capturedScreen)
+    {
+        try
+        {
+            var scaleX = capturedScreen.DpiX > 0 ? capturedScreen.DpiX / 96.0 : 1.0;
+            var scaleY = capturedScreen.DpiY > 0 ? capturedScreen.DpiY / 96.0 : 1.0;
+            return Services.GetRequiredService<IWindowRegionService>().GetOverlayRegions(scaleX, scaleY);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Không liệt kê được cửa sổ: {ex.Message}");
+            return Array.Empty<Core.Models.WindowRegion>();
         }
     }
 

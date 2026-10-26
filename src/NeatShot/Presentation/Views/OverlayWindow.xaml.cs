@@ -46,6 +46,15 @@ public partial class OverlayWindow : Window
         ViewModel.RequestClose += (s, e) => Close();
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
+        SelectionControl.SelectionCompleted += (s, e) =>
+        {
+            // Chế độ "Sao chép ngay khi thả chuột": bỏ qua bước chỉnh sửa, giống chụp nhanh
+            if (_settingsService?.CurrentSettings.AutoCopyOnCapture == true)
+            {
+                _ = ExecuteCopyAsync();
+            }
+        };
+
         SelectionControl.RegionMoved += (s, delta) =>
         {
             _isToolbarManuallyPositioned = false;
@@ -170,6 +179,7 @@ public partial class OverlayWindow : Window
 
             var savedPath = await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
+            RememberRegion();
             CaptureCopied?.Invoke(this, savedPath);
             Close();
         }
@@ -214,12 +224,14 @@ public partial class OverlayWindow : Window
                 ? defaultDir
                 : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
+            var preferredExtension = ImageEncoderFactory.ExtensionFor(_settingsService?.CurrentSettings.ImageFormat);
             var dialog = new SaveFileDialog
             {
                 Title = "Lưu ảnh chụp màn hình NeatShot",
-                Filter = "PNG Image (*.png)|*.png",
-                DefaultExt = ".png",
-                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png",
+                Filter = "Ảnh PNG (*.png)|*.png|Ảnh JPG (*.jpg)|*.jpg",
+                FilterIndex = preferredExtension == ".jpg" ? 2 : 1,
+                DefaultExt = preferredExtension,
+                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}{preferredExtension}",
                 InitialDirectory = initialDir
             };
 
@@ -236,6 +248,7 @@ public partial class OverlayWindow : Window
                 }
 
                 await _exportService.SaveToFileAsync(finalImage, dialog.FileName);
+                RememberRegion();
                 Close();
             }
         }
@@ -259,6 +272,7 @@ public partial class OverlayWindow : Window
                 Toolbar.SelectedBeautifyOptions);
 
             await SaveToGalleryAsync(finalImage);
+            RememberRegion();
 
             var pinWindow = new PinWindow(new PinViewModel());
             var pinPosition = CalculatePinPosition(new Point(Left, Top), ViewModel.SelectedRegion, Toolbar.SelectedBeautifyOptions);
@@ -293,6 +307,7 @@ public partial class OverlayWindow : Window
     private async Task<string?> SaveToGalleryAsync(BitmapSource image)
     {
         if (_galleryService == null) return null;
+        if (_settingsService?.CurrentSettings.AutoSaveToGallery == false) return null;
 
         try
         {
@@ -564,8 +579,11 @@ public partial class OverlayWindow : Window
         }
     }
 
-    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false)
+    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false,
+        IReadOnlyList<WindowRegion>? windowRegions = null, CaptureRegion? preselectRegion = null)
     {
+        SetWindowRegions(windowRegions ?? Array.Empty<WindowRegion>());
+
         Left = virtualBounds.Left;
         Top = virtualBounds.Top;
         Width = virtualBounds.Width;
@@ -583,6 +601,21 @@ public partial class OverlayWindow : Window
         {
             SelectFullScreen(virtualBounds);
         }
+        else if (preselectRegion is { } region)
+        {
+            PreselectRegion(region, virtualBounds);
+        }
+    }
+
+    /// <summary>
+    /// Danh sách cửa sổ (toạ độ overlay) để viền sẵn khi rê chuột; click một lần sẽ chọn đúng cửa sổ đó.
+    /// </summary>
+    public void SetWindowRegions(IReadOnlyList<WindowRegion> windowRegions)
+    {
+        ArgumentNullException.ThrowIfNull(windowRegions);
+        SelectionControl.HoverRegionProvider = windowRegions.Count == 0
+            ? null
+            : point => WindowHitTester.Find(windowRegions, point);
     }
 
     /// <summary>
@@ -595,6 +628,29 @@ public partial class OverlayWindow : Window
         var left = -virtualBounds.Left + (primaryWidth - SelectionHint.DesiredSize.Width) / 2;
         Canvas.SetLeft(SelectionHint, Math.Max(0, left));
         Canvas.SetTop(SelectionHint, Math.Max(0, -virtualBounds.Top) + 16);
+    }
+
+    /// <summary>
+    /// Chọn sẵn một vùng (ví dụ vùng chụp lần trước), giới hạn trong màn hình ảo hiện tại.
+    /// </summary>
+    public void PreselectRegion(CaptureRegion region, Rect virtualBounds)
+    {
+        var clamped = region.ClampTo(new Size(virtualBounds.Width, virtualBounds.Height));
+        if (clamped.IsValid)
+        {
+            ViewModel.SelectedRegion = clamped;
+        }
+    }
+
+    /// <summary>
+    /// Ghi nhớ vùng vừa chụp để dùng cho "Chụp lại vùng vừa chụp".
+    /// </summary>
+    private void RememberRegion()
+    {
+        if (_settingsService == null || !ViewModel.SelectedRegion.IsValid) return;
+
+        _settingsService.CurrentSettings.LastCaptureRegion = ViewModel.SelectedRegion.Normalize();
+        _settingsService.SaveSettings(_settingsService.CurrentSettings);
     }
 
     /// <summary>

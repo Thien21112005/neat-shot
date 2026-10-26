@@ -53,4 +53,32 @@ public class ToastWindowTests
 
         Assert.Null(threadException);
     }
+
+    [Fact]
+    public void WarningToast_UsesAWarningIcon_InsteadOfTheCheckMark_OnStaThread()
+    {
+        Exception? threadException = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var success = new ToastWindow("Đã sao chép", null);
+                var warning = new ToastWindow("Clipboard không có ảnh", "Sao chép một ảnh rồi thử lại", ToastKind.Warning);
+
+                Assert.Equal(Visibility.Visible, success.SuccessIcon.Visibility);
+                Assert.Equal(Visibility.Collapsed, success.WarningIcon.Visibility);
+                Assert.Equal(Visibility.Collapsed, warning.SuccessIcon.Visibility);
+                Assert.Equal(Visibility.Visible, warning.WarningIcon.Visibility);
+            }
+            catch (Exception ex)
+            {
+                threadException = ex;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(threadException);
+    }
 }

@@ -29,7 +29,25 @@ public class ScreenCaptureService : IScreenCaptureService
             height);
     }
 
-    public async Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default)
+    public Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default) =>
+        CaptureScreenAsync(dismissPopups: true, cancellationToken);
+
+    public async Task<BitmapSource> CaptureScreenAsync(bool dismissPopups, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (dismissPopups)
+        {
+            await DismissPopupsAsync(cancellationToken);
+        }
+
+        return CaptureVirtualScreen();
+    }
+
+    /// <summary>
+    /// Thuật toán Clean Shot: đóng flyout/popup của khay hệ thống rồi chờ animation kết thúc.
+    /// </summary>
+    private static async Task DismissPopupsAsync(CancellationToken cancellationToken)
     {
         // 1. Kiểm tra trạng thái các phím bổ trợ (Ctrl, Shift, Alt):
         // Nếu người dùng kích hoạt qua phím tắt như Ctrl+Shift+A, phím có thể đang được giữ vật lý.
@@ -68,7 +86,10 @@ public class ScreenCaptureService : IScreenCaptureService
 
         // 3. Chờ 250ms để hiệu ứng animation đóng popup/flyout của Windows hoàn tất sạch sẽ
         await Task.Delay(250, cancellationToken);
+    }
 
+    private BitmapSource CaptureVirtualScreen()
+    {
         // 4. Thực hiện chụp ảnh toàn bộ toạ độ Virtual Screen qua Win32 GDI BitBlt
         var bounds = GetVirtualScreenBounds();
         var physicalLeft = NativeMethods.GetSystemMetrics(NativeConstants.SM_XVIRTUALSCREEN);

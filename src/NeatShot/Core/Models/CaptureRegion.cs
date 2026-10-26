@@ -46,6 +46,19 @@ public readonly record struct CaptureRegion(double X, double Y, double Width, do
     }
 
     /// <summary>
+    /// Giới hạn vùng chọn trong màn hình kích thước <paramref name="bounds"/> (gốc 0,0).
+    /// Trả về <see cref="Empty"/> nếu vùng nằm hoàn toàn ngoài màn hình (ví dụ màn hình phụ đã bị rút ra).
+    /// </summary>
+    public CaptureRegion ClampTo(Size bounds)
+    {
+        var norm = Normalize();
+        var clamped = Rect.Intersect(new Rect(norm.X, norm.Y, norm.Width, norm.Height), new Rect(0, 0, bounds.Width, bounds.Height));
+        return clamped.IsEmpty || clamped.Width <= 0 || clamped.Height <= 0
+            ? Empty
+            : new CaptureRegion(clamped.X, clamped.Y, clamped.Width, clamped.Height);
+    }
+
+    /// <summary>
     /// Chuyển đổi sang WPF Rect.
     /// </summary>
     public Rect ToRect() => new(X, Y, Math.Max(0, Width), Math.Max(0, Height));

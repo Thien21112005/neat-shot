@@ -20,6 +20,12 @@ public interface IScreenCaptureService
     Task<BitmapSource> CaptureCleanScreenAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Chụp toàn bộ màn hình ảo. <paramref name="dismissPopups"/> = true sẽ đóng flyout/popup trước khi chụp
+    /// (Clean Shot); false giữ nguyên màn hình — dùng cho chụp hẹn giờ để chụp được menu đang mở.
+    /// </summary>
+    Task<BitmapSource> CaptureScreenAsync(bool dismissPopups, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Cắt vùng ảnh từ bitmap gốc theo toạ độ CaptureRegion.
     /// </summary>
     BitmapSource Crop(BitmapSource source, CaptureRegion region);

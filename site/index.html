@@ -466,6 +466,7 @@
         <li><span data-i18n="pZoom">Zoom</span><kbd class="kbd kbd--md" data-i18n="kWheel">Wheel</kbd></li>
         <li><span data-i18n="pOpac">Opacity</span><span class="kbd-combo"><kbd class="kbd kbd--md">Ctrl</kbd>+<kbd class="kbd kbd--md" data-i18n="kWheel">Wheel</kbd></span></li>
         <li><span data-i18n="pDraw">Draw directly on the pin</span><svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pencil"/></svg></li>
+        <li><span data-i18n="pClip">Pin from the clipboard</span><kbd class="kbd kbd--md">F3</kbd></li>
         <li><span data-i18n="pMany">Many pins at once</span><svg class="icon" width="18" height="18" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pin"/></svg></li>
       </ul>
     </div>
@@ -594,17 +595,20 @@
   <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">08</span><span data-i18n="eyKeys">Shortcuts</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
   <div class="section-head">
     <h2 class="title title--xl" id="keys-title" data-i18n="keysTitle" data-reveal style="max-width:14ch">Keep your hands on the keys.</h2>
-    <p class="lead" data-i18n="keysLead" data-reveal>Try it: press Ctrl, Shift, A or PrtSc and watch the keys light up.</p>
+    <p class="lead" data-i18n="keysLead" data-reveal>Try it: press Ctrl, Shift, A or PrtSc and watch the keys light up. Every global hotkey can be changed in Settings.</p>
   </div>
   <div class="key-groups">
     <div>
-      <h3 class="key-group__title"><span data-i18n="gGlobal">Global</span><span class="key-group__count">02</span></h3>
+      <h3 class="key-group__title"><span data-i18n="gGlobal">Global</span><span class="key-group__count">04</span></h3>
       <div class="key-row"><span data-i18n="kCapture">Capture a region</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="shift">Shift</kbd>+<kbd class="kbd kbd--interactive" data-key="a">A</kbd></span></div>
       <div class="key-row"><span data-i18n="kCaptureAlt">Capture a region (alternative)</span><kbd class="kbd kbd--interactive" data-key="printscreen">PrtSc</kbd></div>
+      <div class="key-row"><span data-i18n="kPinClip">Pin the clipboard image</span><kbd class="kbd kbd--interactive" data-key="f3">F3</kbd></div>
+      <div class="key-row"><span data-i18n="kRepeat">Capture the last region again</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="shift">Shift</kbd>+<kbd class="kbd kbd--interactive" data-key="r">R</kbd></span></div>
     </div>
     <div>
-      <h3 class="key-group__title"><span data-i18n="gCapture">Capture</span><span class="key-group__count">08</span></h3>
+      <h3 class="key-group__title"><span data-i18n="gCapture">Capture</span><span class="key-group__count">09</span></h3>
       <div class="key-row"><span data-i18n="kSelect">Select an area</span><kbd class="kbd kbd--interactive" data-i18n="kDrag" style="cursor:crosshair">Drag</kbd></div>
+      <div class="key-row"><span data-i18n="kWindow">Select a window</span><kbd class="kbd kbd--interactive" data-i18n="kClick" style="cursor:pointer">Click</kbd></div>
       <div class="key-row"><span data-i18n="kResize">Resize with 8 handles</span><kbd class="kbd kbd--interactive" data-i18n="kDragHandle" style="cursor:nwse-resize">Drag a handle</kbd></div>
       <div class="key-row"><span data-i18n="kUndo">Undo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="z">Z</kbd></span></div>
       <div class="key-row"><span data-i18n="kRedo">Redo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="y">Y</kbd></span></div>
@@ -622,11 +626,54 @@
   </div>
 </section>
 
-<!-- ============ 09 · PRIVACY ============ -->
+<!-- ============ 09 · EVERYDAY ============ -->
+<section class="section section--surface" id="everyday" aria-labelledby="every-title">
+  <div class="container">
+    <div class="eyebrow" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">09</span><span data-i18n="eyEvery">Everyday</span><span class="eyebrow__ants"></span><span class="eyebrow__box"></span></div>
+    <div class="section-head">
+      <h2 class="title title--xl" id="every-title" data-i18n="everyTitle" data-reveal style="max-width:14ch">The small things that save you time.</h2>
+      <p class="lead" data-i18n="everyLead" data-reveal>Details you only notice when another tool doesn't have them.</p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-card" data-feature>
+        <span class="feature-card__icon"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-gear"/></svg></span>
+        <h3 class="feature-card__title" data-i18n="fSetT">Settings that apply instantly</h3>
+        <p class="feature-card__desc" data-i18n="fSetD">Change hotkeys on the fly — NeatShot warns you if another app already owns a key. Pick the save folder, PNG or JPG, auto-save and start with Windows.</p>
+        <span class="feature-card__meta" data-i18n="fSetM">Tray → Settings…</span>
+      </article>
+      <article class="feature-card" data-feature>
+        <span class="feature-card__icon"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-window"/></svg></span>
+        <h3 class="feature-card__title" data-i18n="fWinT">Click to grab a window</h3>
+        <p class="feature-card__desc" data-i18n="fWinD">Hover and NeatShot outlines the window — or the panel and button inside it — under your cursor. One click selects it exactly, shadow excluded.</p>
+        <span class="feature-card__meta" data-i18n="fWinM">Hover · Click</span>
+      </article>
+      <article class="feature-card" data-feature>
+        <span class="feature-card__icon"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-pin"/></svg></span>
+        <h3 class="feature-card__title" data-i18n="fClipT">Pin straight from the clipboard</h3>
+        <p class="feature-card__desc" data-i18n="fClipD">Copied an image from the web, a chat or Figma? Press F3 and it floats on top of everything — no capture needed.</p>
+        <span class="feature-card__meta"><kbd class="kbd kbd--md">F3</kbd></span>
+      </article>
+      <article class="feature-card" data-feature>
+        <span class="feature-card__icon"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-timer"/></svg></span>
+        <h3 class="feature-card__title" data-i18n="fDelayT">Capture menus and tooltips</h3>
+        <p class="feature-card__desc" data-i18n="fDelayD">Start a 3, 5 or 10-second countdown, open the menu you need, and NeatShot captures it without making it disappear.</p>
+        <span class="feature-card__meta" data-i18n="fDelayM">Tray → Delayed capture · Esc to cancel</span>
+      </article>
+      <article class="feature-card" data-feature>
+        <span class="feature-card__icon"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="assets/icons/sprite.svg#i-repeat"/></svg></span>
+        <h3 class="feature-card__title" data-i18n="fRepeatT">Same region, one keystroke</h3>
+        <p class="feature-card__desc" data-i18n="fRepeatD">Comparing before and after? Ctrl + Shift + R reopens the capture screen with last time's region already selected.</p>
+        <span class="feature-card__meta"><kbd class="kbd kbd--md">Ctrl + Shift + R</kbd></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · PRIVACY ============ -->
 <section class="section" id="privacy" aria-labelledby="priv-title" style="border-top:1px solid var(--line)">
   <div class="privacy__layout container">
     <div class="privacy__copy">
-      <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">09</span><span data-i18n="eyPriv">Privacy &amp; open source</span></div>
+      <div class="eyebrow eyebrow--tight" aria-hidden="true"><span class="eyebrow__box"></span><span class="eyebrow__num">10</span><span data-i18n="eyPriv">Privacy &amp; open source</span></div>
       <h2 class="privacy__title" id="priv-title" data-i18n="privTitle" data-reveal>Nothing leaves your machine.</h2>
       <p class="lead privacy__lead" data-i18n="privLead" data-reveal>NeatShot makes no network calls. Your captures, your text and your settings stay on this PC.</p>
       <dl class="facts">

@@ -51,7 +51,10 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 **Capture**
 - **Clean Shot:** dismisses tray flyouts and popups, then waits 250 ms for Windows animations to finish before capturing with GDI `BitBlt` (`CAPTUREBLT` included for layered windows).
 - **Freeze overlay** that spans every monitor, with a resizable and movable selection (8 handles plus a live `W × H` badge).
+- **Window detection:** hover to outline the window (or the panel/button) under the cursor, then click once to select exactly that area — no more dragging edge to edge.
 - **Full-screen capture** from the tray menu, with the whole virtual screen already selected.
+- **Repeat the last region** (`Ctrl + Shift + R`): reopens the capture screen with the region you used last time already selected — handy for before/after comparisons. If a monitor was unplugged, the region is trimmed to the current screen.
+- **Delayed capture** (tray → *Chụp hẹn giờ*: 3, 5 or 10 s): open the menu or tooltip you need, and NeatShot captures it without closing it. Press `Esc` to cancel the countdown.
 - Per-Monitor V2 DPI awareness, so selections map exactly to physical pixels.
 
 **Annotate**
@@ -63,19 +66,26 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - **Beautify:** gradient background, padding, rounded corners and a soft shadow, shown in a live preview.
 
 **Export & reuse**
-- Copy to clipboard, save as PNG, or **pin** the capture as an always-on-top floating window.
+- Copy to clipboard, save as PNG or JPG, or **pin** the capture as an always-on-top floating window.
 - Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
+- **Pin from the clipboard** (`F3`): pin any image you copied from a browser, chat app, Figma or Explorer — no capture needed.
 - **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
 - **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
+
+**Everyday**
+- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, and "copy as soon as I release the mouse" for one-step captures.
 
 ### Keyboard Shortcuts
 
 | Context | Shortcut | Action |
 |---|---|---|
-| Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture |
+| Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture (both keys can be changed in Settings) |
+| Global | `F3` | Pin the image in the clipboard |
+| Global | `Ctrl + Shift + R` | Capture the last region again |
+| Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
-| Overlay | `Ctrl + S` | Save as PNG… |
+| Overlay | `Ctrl + S` | Save as PNG / JPG… |
 | Overlay | `Ctrl + O` | Extract text (OCR) |
 | Overlay | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Overlay | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Select, Pencil, Rectangle, Ellipse, Line, Arrow, Highlight, Text, Pixelate, Step, Eyedropper |
@@ -196,7 +206,10 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 **Chụp ảnh**
 - **Chụp sạch (Clean Shot):** đóng flyout/popup, chờ 250 ms cho animation của Windows kết thúc rồi mới chụp bằng GDI `BitBlt`.
 - **Màn hình đóng băng** trải trên mọi màn hình. Vùng chọn kéo giãn và di chuyển được (8 tay nắm, hiển thị kích thước `W × H`).
+- **Tự nhận diện cửa sổ:** rê chuột để viền sẵn cửa sổ (hoặc panel/nút) dưới con trỏ, click một lần là chọn đúng vùng đó — không cần kéo từng mép.
 - **Chụp toàn màn hình** từ menu khay, toàn bộ màn hình được chọn sẵn.
+- **Chụp lại vùng vừa chụp** (`Ctrl + Shift + R`): mở màn hình chụp với đúng vùng lần trước được chọn sẵn — tiện so sánh trước/sau. Nếu đã rút màn hình phụ, vùng được tự cắt gọn trong màn hình hiện tại.
+- **Chụp hẹn giờ** (menu khay → *Chụp hẹn giờ*: 3, 5 hoặc 10 giây): mở sẵn menu hay tooltip cần chụp, NeatShot chụp mà không làm chúng biến mất. Nhấn `Esc` để huỷ đếm ngược.
 - Hỗ trợ Per-Monitor DPI V2, toạ độ khớp chính xác với pixel vật lý.
 
 **Chú thích**
@@ -208,19 +221,26 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - **Làm đẹp ảnh:** nền gradient, khoảng đệm, bo góc, đổ bóng mềm, có xem trước trực tiếp.
 
 **Xuất và tái sử dụng**
-- Sao chép vào Clipboard, lưu PNG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
+- Sao chép vào Clipboard, lưu PNG hoặc JPG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
 - Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
+- **Ghim ảnh từ Clipboard** (`F3`): ghim bất kỳ ảnh nào bạn vừa copy từ trình duyệt, Zalo, Figma hay Explorer — không cần chụp.
 - **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
 - **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
+
+**Dùng hằng ngày**
+- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, và "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác.
 
 ### Phím tắt
 
 | Ngữ cảnh | Phím tắt | Chức năng |
 |---|---|---|
-| Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp |
+| Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp (đổi được cả hai phím trong Cài đặt) |
+| Toàn cục | `F3` | Ghim ảnh đang có trong Clipboard |
+| Toàn cục | `Ctrl + Shift + R` | Chụp lại vùng vừa chụp |
+| Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
-| Màn hình chụp | `Ctrl + S` | Lưu file PNG… |
+| Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
 | Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
 | Màn hình chụp | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Màn hình chụp | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Chọn, Bút, Chữ nhật, Oval, Đường thẳng, Mũi tên, Dạ quang, Chữ, Khảm, Đánh số, Hút màu |

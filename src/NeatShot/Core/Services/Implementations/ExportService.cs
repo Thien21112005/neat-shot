@@ -17,11 +17,13 @@ public class ExportService : IExportService
 {
     private readonly IScreenCaptureService _screenCaptureService;
     private readonly IBeautifyService _beautifyService;
+    private readonly ISettingsService? _settingsService;
 
-    public ExportService(IScreenCaptureService screenCaptureService, IBeautifyService? beautifyService = null)
+    public ExportService(IScreenCaptureService screenCaptureService, IBeautifyService? beautifyService = null, ISettingsService? settingsService = null)
     {
         _screenCaptureService = screenCaptureService ?? throw new ArgumentNullException(nameof(screenCaptureService));
         _beautifyService = beautifyService ?? new BeautifyService();
+        _settingsService = settingsService;
     }
 
     /// <inheritdoc />
@@ -120,7 +122,8 @@ public class ExportService : IExportService
             Directory.CreateDirectory(directory);
         }
 
-        var encoder = new PngBitmapEncoder();
+        var quality = _settingsService?.CurrentSettings.JpegQuality ?? ImageEncoderFactory.DefaultJpegQuality;
+        var encoder = ImageEncoderFactory.CreateForPath(filePath, quality);
         encoder.Frames.Add(BitmapFrame.Create(image));
 
         await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);

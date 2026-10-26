@@ -56,4 +56,8 @@ public static class NativeConstants
     public const int VK_MENU = 0x12; // Alt
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const int WM_CLOSE = 0x0010;
+
+    // DWM window attributes (dùng cho nhận diện cửa sổ khi chụp)
+    public const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+    public const int DWMWA_CLOAKED = 14;
 }

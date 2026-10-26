@@ -176,4 +176,15 @@ public class SettingsServiceTests : IDisposable
 
         Assert.False(new SettingsService(_settingsFilePath).LoadSettings().LaunchAtStartup);
     }
+
+    [Fact]
+    public void LastCaptureRegion_RoundTripsThroughTheSettingsFile()
+    {
+        var service = new SettingsService(_settingsFilePath);
+        Assert.Null(service.LoadSettings().LastCaptureRegion);
+
+        service.SaveSettings(new AppSettings { LastCaptureRegion = new CaptureRegion(10, 20, 300, 150) });
+
+        Assert.Equal(new CaptureRegion(10, 20, 300, 150), new SettingsService(_settingsFilePath).LoadSettings().LastCaptureRegion);
+    }
 }

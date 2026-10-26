@@ -1,0 +1,268 @@
+<Window x:Class="NeatShot.Presentation.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:NeatShot.Presentation.ViewModels"
+        xmlns:controls="clr-namespace:NeatShot.Presentation.Controls"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+        Title="Cài đặt NeatShot"
+        Width="620"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="True">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/NeatShot;component/Presentation/Themes/NeatShotControls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Margin="18"
+            Background="#F716181D"
+            BorderBrush="#24FFFFFF"
+            BorderThickness="1"
+            CornerRadius="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="10" Direction="270" Opacity="0.5" Color="Black" />
+        </Border.Effect>
+        <StackPanel>
+            <!-- Header kéo được -->
+            <Border x:Name="HeaderBar" Padding="18,14,12,14" BorderBrush="#12FFFFFF" BorderThickness="0,0,0,1"
+                    Background="Transparent" MouseLeftButtonDown="OnHeaderMouseDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="32" Height="32" CornerRadius="8" Background="#1F0078D4">
+                        <Viewbox Width="18" Height="18" TextElement.Foreground="#3B9BEB">
+                            <Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconGear}" />
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Cài đặt" FontSize="15" FontWeight="SemiBold" Foreground="#E8EAED" />
+                        <TextBlock Text="Phím tắt, nơi lưu ảnh và cách NeatShot chạy nền" FontSize="11.5" Foreground="#9AA0A6" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Style="{StaticResource CardIconButton}" ToolTip="Đóng (Esc)"
+                            Command="{Binding CancelCommand}">
+                        <Viewbox Width="14" Height="14">
+                            <Path Style="{StaticResource CardIconPath}" StrokeThickness="2.2" Data="{StaticResource CardIconClose}" />
+                        </Viewbox>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <StackPanel Margin="18,0,18,4">
+                <!-- ===== PHÍM TẮT ===== -->
+                <Grid Margin="0,18,0,8">
+                    <TextBlock Text="PHÍM TẮT" Style="{StaticResource SettingsSectionTitle}" Margin="2,0,0,0" VerticalAlignment="Center" />
+                    <Button HorizontalAlignment="Right" Style="{StaticResource CardGhostButton}" Height="28" Padding="10,0"
+                            ToolTip="Khôi phục phím tắt mặc định" Command="{Binding ResetHotkeysCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="13" Height="13"><Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconReset}" /></Viewbox>
+                            <TextBlock Text="Mặc định" Margin="6,0,0,0" FontSize="11.5" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <Border Style="{StaticResource SettingsCard}">
+                    <StackPanel>
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Chụp vùng chọn" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Phím tắt chính để mở màn hình chụp." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="CaptureHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding CaptureHotkey}" />
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Phím chụp phụ" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Dự phòng khi phím chính bị ứng dụng khác chiếm (mặc định PrtSc)." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="CaptureAlternateHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding CaptureAlternateHotkey}" />
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Ghim ảnh từ Clipboard" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Ghim ảnh vừa copy (từ web, Zalo, Figma…) thành cửa sổ nổi." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="PinClipboardHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding PinClipboardHotkey}" />
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Chụp lại vùng vừa chụp" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Mở màn hình chụp với đúng vùng lần trước — tiện so sánh trước/sau." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="RepeatLastHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding RepeatLastHotkey}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== LƯU ẢNH ===== -->
+                <TextBlock Text="LƯU ẢNH" Style="{StaticResource SettingsSectionTitle}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <StackPanel>
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                                <TextBlock Text="Thư mục lưu ảnh" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock x:Name="SaveDirectoryText" Text="{Binding SaveDirectory}" FontFamily="Consolas" FontSize="11.5"
+                                           Foreground="#9AA0A6" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding SaveDirectory}" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Style="{StaticResource CardGhostButton}" Click="OnBrowseFolderClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox Width="15" Height="15"><Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconFolder}" /></Viewbox>
+                                    <TextBlock Text="Đổi thư mục…" Margin="7,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Tự lưu vào thư viện" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Lưu ảnh mỗi khi Sao chép hoặc Ghim, để xem lại trong Thư viện ảnh chụp." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <CheckBox x:Name="AutoSaveToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                      IsChecked="{Binding AutoSaveToGallery}" VerticalAlignment="Center" />
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Định dạng ảnh" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="PNG giữ nguyên chất lượng · JPG cho file nhỏ hơn." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <Border Grid.Column="1" CornerRadius="7" Padding="3" Background="#0FFFFFFF"
+                                    BorderBrush="#1FFFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton Content="PNG" GroupName="ImageFormat" Style="{StaticResource SegmentRadio}" IsChecked="{Binding IsPng}" />
+                                    <RadioButton Content="JPG" GroupName="ImageFormat" Style="{StaticResource SegmentRadio}" IsChecked="{Binding IsJpg}" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        <Grid Margin="0,0,0,12" Visibility="{Binding IsJpg, Converter={StaticResource BoolToVisibility}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Chất lượng JPG" FontSize="12" Foreground="#9AA0A6" VerticalAlignment="Center" />
+                            <Slider Grid.Column="1" Margin="14,0" Minimum="50" Maximum="100" SmallChange="1" LargeChange="5"
+                                    IsSnapToTickEnabled="True" TickFrequency="1" Style="{StaticResource SettingsSlider}"
+                                    Value="{Binding JpegQuality}" />
+                            <TextBlock Grid.Column="2" Width="36" TextAlignment="Right" FontFamily="Consolas" FontSize="12"
+                                       Foreground="#E8EAED" VerticalAlignment="Center" Text="{Binding JpegQuality, StringFormat={}{0}%}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== CHUNG ===== -->
+                <TextBlock Text="CHUNG" Style="{StaticResource SettingsSectionTitle}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <StackPanel>
+                        <Grid Margin="0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Khởi động cùng Windows" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Chạy nền ở khay hệ thống sau khi đăng nhập, phím tắt luôn sẵn sàng." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <CheckBox x:Name="LaunchAtStartupToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                      IsChecked="{Binding LaunchAtStartup}" VerticalAlignment="Center" />
+                        </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Sao chép ngay khi thả chuột" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Chọn vùng xong là sao chép và đóng luôn, bỏ qua bước chú thích." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <CheckBox x:Name="AutoCopyToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                      IsChecked="{Binding AutoCopyOnCapture}" VerticalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Footer: trạng thái + nút -->
+            <Grid Margin="18,16,18,18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="StatusText" Text="{Binding StatusMessage}" VerticalAlignment="Center" TextWrapping="Wrap"
+                           FontSize="12" Margin="0,0,12,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#4ADE80" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasError}" Value="True">
+                                    <Setter Property="Foreground" Value="#F87171" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource CardGhostButton}" Command="{Binding CancelCommand}">
+                        <TextBlock Text="Huỷ" />
+                    </Button>
+                    <Button x:Name="SaveButton" Style="{StaticResource CardPrimaryButton}" Command="{Binding SaveAndCloseCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="15" Height="15"><Path Style="{StaticResource CardIconPath}" StrokeThickness="2.4" Data="{StaticResource CardIconCheck}" /></Viewbox>
+                            <TextBlock Text="Lưu" Margin="7,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

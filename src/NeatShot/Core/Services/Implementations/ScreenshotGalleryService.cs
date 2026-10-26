@@ -1,3 +1,4 @@
+using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services.Interfaces;
 using System.IO;
@@ -110,9 +111,10 @@ public class ScreenshotGalleryService : IScreenshotGalleryService
 
         var dir = GetScreenshotsDirectory();
 
+        var settings = _settingsService?.CurrentSettings;
         if (string.IsNullOrWhiteSpace(filename))
         {
-            filename = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+            filename = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}{ImageEncoderFactory.ExtensionFor(settings?.ImageFormat)}";
         }
 
         var fullPath = Path.Combine(dir, filename);
@@ -125,7 +127,7 @@ public class ScreenshotGalleryService : IScreenshotGalleryService
 
         await Task.Run(() =>
         {
-            var encoder = new PngBitmapEncoder();
+            var encoder = ImageEncoderFactory.CreateForPath(fullPath, settings?.JpegQuality ?? ImageEncoderFactory.DefaultJpegQuality);
             encoder.Frames.Add(BitmapFrame.Create(image));
 
             using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);

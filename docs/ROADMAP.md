@@ -17,11 +17,11 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 | # | Tính năng | Nhóm | Độ khó | Ưu tiên |
 |---|---|---|---|---|
-| 1 | Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
-| 2 | Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
-| 3 | Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
-| 4 | Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
-| 5 | Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
+| 1 | ✅ Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
+| 2 | ✅ Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
+| 3 | ✅ Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
+| 4 | ✅ Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
+| 5 | ✅ Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
 | 6 | Kính lúp + toạ độ pixel khi chọn vùng | Chụp | 🟡 | ⭐⭐ |
 | 7 | Công cụ chú thích mở rộng | Chú thích | 🟡 | ⭐⭐ |
 | 8 | Đọc mã QR offline | Trích xuất | 🟡 | ⭐ |
@@ -37,7 +37,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ## Giai đoạn 1 — Nên làm trước
 
-### 1. Cửa sổ Cài đặt + đổi phím tắt 🟡
+### 1. Cửa sổ Cài đặt + đổi phím tắt 🟡 ✅ Đã xong
 
 **Vấn đề:** `AppSettings` đã có `HotkeyCapture` và `AutoCopyOnCapture` nhưng chưa được dùng ở đâu. Phím tắt đang cố định
 `Ctrl + Shift + A` / `PrtSc` trong `App.InitializeGlobalHotkeys()`. Người dùng không có chỗ nào để tuỳ chỉnh ngoài menu khay.
@@ -46,19 +46,20 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Cửa sổ `SettingsWindow` (mở từ menu khay), cùng phong cách tối với toolbar/landing page.
 - Nhóm **Phím tắt:** ô "bấm tổ hợp phím để gán", hiển thị dạng keycap; báo lỗi khi tổ hợp đã bị app khác chiếm (`RegisterHotKey` trả về `false`).
 - Nhóm **Lưu ảnh:** chọn thư mục, bật/tắt tự lưu khi Copy/Ghim, định dạng PNG/JPG (+ chất lượng JPG).
-- Nhóm **Chung:** khởi động cùng Windows, âm thanh khi chụp, tự sao chép sau khi chọn vùng (`AutoCopyOnCapture`).
+- Nhóm **Chung:** khởi động cùng Windows, tự sao chép sau khi chọn vùng (`AutoCopyOnCapture`).
+  _(Âm thanh khi chụp được dời sang sau — chưa có trong `AppSettings`.)_
 
 **Tiêu chí hoàn thành:**
-- [ ] Đổi phím tắt có hiệu lực ngay, không cần khởi động lại; lưu vào `settings.json`.
-- [ ] Phím tắt bị trùng hiển thị cảnh báo và giữ lại phím cũ.
-- [ ] Mọi tuỳ chọn trong `AppSettings` đều có UI tương ứng (không còn "cài đặt chết").
-- [ ] Unit test cho việc parse/format chuỗi phím tắt (`"Ctrl+Shift+A"` ⇄ `Key` + `ModifierKeys`).
+- [x] Đổi phím tắt có hiệu lực ngay, không cần khởi động lại; lưu vào `settings.json`.
+- [x] Phím tắt bị trùng hiển thị cảnh báo và giữ lại phím cũ.
+- [x] Mọi tuỳ chọn trong `AppSettings` đều có UI tương ứng (không còn "cài đặt chết").
+- [x] Unit test cho việc parse/format chuỗi phím tắt (`"Ctrl+Shift+A"` ⇄ `Key` + `ModifierKeys`).
 
 **Liên quan:** `Core/Models/AppSettings.cs`, `Core/Services/Implementations/HotkeyService.cs`, `App.xaml.cs`, `ScreenshotGalleryService`.
 
 ---
 
-### 2. Tự nhận diện cửa sổ khi rê chuột 🟡
+### 2. Tự nhận diện cửa sổ khi rê chuột 🟡 ✅ Đã xong
 
 **Vấn đề:** Muốn chụp đúng một cửa sổ, người dùng phải kéo tay khớp từng mép. Snipaste/ShareX tự viền cửa sổ dưới con trỏ.
 
@@ -68,15 +69,15 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Liệt kê cửa sổ **trước khi** hiện overlay (`EnumWindows` + `DwmGetWindowAttribute(DWMWA_EXTENDED_FRAME_BOUNDS)` để bỏ phần bóng đổ).
 
 **Tiêu chí hoàn thành:**
-- [ ] Bỏ qua cửa sổ ẩn, thu nhỏ, cửa sổ của chính NeatShot.
-- [ ] Toạ độ đúng trên đa màn hình và DPI hỗn hợp (100% / 125% / 150%).
-- [ ] Unit test cho thuật toán chọn hình chữ nhật nhỏ nhất chứa con trỏ.
+- [x] Bỏ qua cửa sổ ẩn, thu nhỏ, cửa sổ của chính NeatShot.
+- [x] Toạ độ đúng trên đa màn hình và DPI hỗn hợp (100% / 125% / 150%).
+- [x] Unit test cho thuật toán chọn hình chữ nhật nhỏ nhất chứa con trỏ.
 
 **Liên quan:** `Core/Interop/NativeMethods.cs`, `Presentation/Controls/SelectionCanvas.xaml.cs`, `Common/Helpers/DpiHelper.cs`.
 
 ---
 
-### 3. Ghim ảnh từ Clipboard 🟢
+### 3. Ghim ảnh từ Clipboard 🟢 ✅ Đã xong
 
 **Vấn đề:** Ảnh copy từ trình duyệt, Zalo, Figma… không ghim lên màn hình được, trong khi `PinWindow` đã có sẵn.
 
@@ -85,30 +86,30 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Nếu Clipboard không có ảnh: hiện toast "Clipboard không có ảnh" (dùng `ToastWindow` sẵn có).
 
 **Tiêu chí hoàn thành:**
-- [ ] Ghim được ảnh PNG/Bitmap từ Clipboard, giữ đúng kích thước theo DPI.
-- [ ] Ghim được nhiều ảnh liên tiếp.
+- [x] Ghim được ảnh PNG/Bitmap từ Clipboard, giữ đúng kích thước theo DPI.
+- [x] Ghim được nhiều ảnh liên tiếp.
 
 **Liên quan:** `Presentation/Views/PinWindow.xaml.cs`, `Presentation/Views/ToastWindow.xaml.cs`, `HotkeyService`.
 
 ---
 
-### 4. Chụp hẹn giờ (3s / 5s) 🟢
+### 4. Chụp hẹn giờ (3s / 5s) 🟢 ✅ Đã xong
 
 **Vấn đề:** Menu xổ xuống và tooltip biến mất khi bấm phím tắt nên không chụp được.
 
 **Phạm vi:**
-- Mục "Chụp sau 3 giây / 5 giây" trong menu khay.
+- Mục "Chụp sau 3 giây / 5 giây" trong menu khay _(đã làm: menu con 3 / 5 / 10 giây)_.
 - Đếm ngược nhỏ ở góc màn hình (không bị chụp vào ảnh).
 
 **Tiêu chí hoàn thành:**
-- [ ] Bộ đếm tự ẩn trước thời điểm `BitBlt`.
-- [ ] Huỷ được bằng `Esc` trong lúc đếm.
+- [x] Bộ đếm tự ẩn trước thời điểm `BitBlt`.
+- [x] Huỷ được bằng `Esc` trong lúc đếm.
 
 **Liên quan:** `App.TriggerCapture()`, `ScreenCaptureService.CaptureCleanScreenAsync()`.
 
 ---
 
-### 5. Chụp lại vùng vừa chụp 🟢
+### 5. Chụp lại vùng vừa chụp 🟢 ✅ Đã xong
 
 **Vấn đề:** Khi so sánh trước/sau (ví dụ sửa lỗi UI), phải kéo lại đúng vùng cũ nhiều lần.
 
@@ -117,8 +118,8 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Phím tắt `Ctrl + Shift + R`: mở overlay với vùng cũ được chọn sẵn (tương tự "Chụp toàn màn hình" hiện tại).
 
 **Tiêu chí hoàn thành:**
-- [ ] Nếu bố cục màn hình thay đổi, vùng cũ được giới hạn lại trong màn hình ảo.
-- [ ] Unit test cho việc clamp vùng chọn.
+- [x] Nếu bố cục màn hình thay đổi, vùng cũ được giới hạn lại trong màn hình ảo.
+- [x] Unit test cho việc clamp vùng chọn.
 
 **Liên quan:** `OverlayWindow.SelectFullScreen()`, `AppSettings`, `CaptureRegion`.
 

@@ -112,4 +112,15 @@ public class ScreenCaptureServiceTests
             await _service.CaptureCleanScreenAsync(cts.Token);
         });
     }
+
+    [Fact]
+    public async Task CaptureScreenAsync_WithoutDismissingPopups_ReturnsTheScreen_WithoutSendingKeys()
+    {
+        // Dùng cho chụp hẹn giờ: không gửi phím Esc nên menu đang mở vẫn còn trong ảnh
+        var bitmap = await _service.CaptureScreenAsync(dismissPopups: false);
+
+        Assert.NotNull(bitmap);
+        Assert.True(bitmap.PixelWidth > 0);
+        Assert.True(bitmap.IsFrozen);
+    }
 }

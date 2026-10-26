@@ -29,6 +29,23 @@ public partial class SelectionCanvas : UserControl
 
     public event EventHandler<Point>? RegionMoved;
 
+    /// <summary>
+    /// Phát ra khi người dùng thả chuột sau khi kéo xong một vùng chọn hợp lệ.
+    /// </summary>
+    public event EventHandler? SelectionCompleted;
+
+    /// <summary>
+    /// Trả về vùng cửa sổ dưới con trỏ (toạ độ của canvas) để viền sẵn khi chưa có vùng chọn; null nếu không có.
+    /// </summary>
+    public Func<Point, Rect?>? HoverRegionProvider { get; set; }
+
+    /// <summary>
+    /// Cửa sổ đang được viền sẵn dưới con trỏ (null nếu không có).
+    /// </summary>
+    public Rect? HoveredRegion { get; private set; }
+
+    private Rect? _pendingWindowRegion;
+
     public static readonly DependencyProperty SelectedRegionProperty =
         DependencyProperty.Register(
             nameof(SelectedRegion),
@@ -125,9 +142,27 @@ public partial class SelectionCanvas : UserControl
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
+        HandlePointerDown(e.GetPosition(this));
+        e.Handled = true;
+    }
 
-        var pos = e.GetPosition(this);
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        base.OnMouseMove(e);
+        if (HandlePointerMove(e.GetPosition(this))) e.Handled = true;
+    }
 
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonUp(e);
+        if (HandlePointerUp(e.GetPosition(this))) e.Handled = true;
+    }
+
+    /// <summary>
+    /// Nhấn chuột trái: bắt đầu kéo tay nắm / di chuyển vùng chọn, hoặc bắt đầu chọn vùng mới.
+    /// </summary>
+    public void HandlePointerDown(Point pos)
+    {
         if (SelectedRegion.IsValid)
         {
             var rect = SelectedRegion.ToRect();
@@ -139,7 +174,6 @@ public partial class SelectionCanvas : UserControl
                 _originalRegion = SelectedRegion;
                 CaptureMouse();
                 Cursor = GetCursorForMode(handle);
-                e.Handled = true;
                 return;
             }
 
@@ -150,27 +184,28 @@ public partial class SelectionCanvas : UserControl
                 _originalRegion = SelectedRegion;
                 CaptureMouse();
                 Cursor = Cursors.SizeAll;
-                e.Handled = true;
                 return;
             }
         }
 
-        // Bấm ngoài vùng chọn hoặc chưa có vùng chọn -> Bắt đầu vẽ vùng chọn mới
+        // Bấm ngoài vùng chọn hoặc chưa có vùng chọn -> Bắt đầu vẽ vùng chọn mới.
+        // Ghi nhớ cửa sổ đang được viền: nếu người dùng chỉ click (không kéo) thì chọn luôn cửa sổ đó.
+        _pendingWindowRegion = HoveredRegion;
+        SetHoveredRegion(null);
         _dragMode = DragMode.Select;
         _startPoint = pos;
         CaptureMouse();
         SelectedRegion = new CaptureRegion(pos.X, pos.Y, 0, 0);
         UpdateVisuals(SelectedRegion);
         Cursor = CursorHelper.WhiteCrosshair;
-        e.Handled = true;
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    /// <summary>
+    /// Di chuột: kéo/giãn vùng chọn, hoặc (khi chưa chọn gì) viền sẵn cửa sổ dưới con trỏ.
+    /// </summary>
+    /// <returns>true nếu sự kiện đã được xử lý.</returns>
+    public bool HandlePointerMove(Point pos)
     {
-        base.OnMouseMove(e);
-
-        var pos = e.GetPosition(this);
-
         if (_dragMode == DragMode.Move)
         {
             var dx = pos.X - _startPoint.X;
@@ -196,8 +231,7 @@ public partial class SelectionCanvas : UserControl
                 RegionMoved?.Invoke(this, new Point(actualDx, actualDy));
             }
 
-            e.Handled = true;
-            return;
+            return true;
         }
 
         if (_dragMode >= DragMode.ResizeNW && _dragMode <= DragMode.ResizeSE)
@@ -230,8 +264,7 @@ public partial class SelectionCanvas : UserControl
             var region = CaptureRegion.FromPoints(new Point(left, top), new Point(right, bottom));
             SelectedRegion = region;
             UpdateVisuals(region);
-            e.Handled = true;
-            return;
+            return true;
         }
 
         if (_dragMode == DragMode.Select)
@@ -239,35 +272,84 @@ public partial class SelectionCanvas : UserControl
             var region = CaptureRegion.FromPoints(_startPoint, pos);
             SelectedRegion = region;
             UpdateVisuals(region);
-            e.Handled = true;
-            return;
+            return true;
+        }
+
+        if (!SelectedRegion.IsValid)
+        {
+            SetHoveredRegion(FindHoverRegion(pos));
         }
 
         UpdateHoverCursor(pos);
+        return false;
     }
 
-    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    /// <summary>
+    /// Thả chuột: kết thúc kéo; click không kéo trên một cửa sổ sẽ chọn đúng cửa sổ đó.
+    /// </summary>
+    /// <returns>true nếu sự kiện đã được xử lý.</returns>
+    public bool HandlePointerUp(Point pos)
     {
-        base.OnMouseLeftButtonUp(e);
+        if (_dragMode == DragMode.None) return false;
 
-        if (_dragMode != DragMode.None)
+        if (_dragMode == DragMode.Select)
         {
-            if (_dragMode == DragMode.Select)
+            // Vùng kéo quá nhỏ (< 5px) = click: chọn cửa sổ đang được viền (nếu có), ngược lại bỏ chọn
+            if (SelectedRegion.Width < 5 || SelectedRegion.Height < 5)
             {
-                // Nếu kích thước vùng chọn quá nhỏ (< 5px), coi như click nhầm và xóa vùng chọn
-                if (SelectedRegion.Width < 5 || SelectedRegion.Height < 5)
-                {
-                    SelectedRegion = CaptureRegion.Empty;
-                    UpdateVisuals(SelectedRegion);
-                }
+                SelectedRegion = _pendingWindowRegion is { } window
+                    ? new CaptureRegion(window.X, window.Y, window.Width, window.Height)
+                    : CaptureRegion.Empty;
+                UpdateVisuals(SelectedRegion);
             }
+        }
 
-            _dragMode = DragMode.None;
-            ReleaseMouseCapture();
-            UpdateHoverCursor(e.GetPosition(this));
-            e.Handled = true;
+        _pendingWindowRegion = null;
+        var finishedSelecting = _dragMode == DragMode.Select && SelectedRegion.IsValid;
+        _dragMode = DragMode.None;
+        ReleaseMouseCapture();
+        UpdateHoverCursor(pos);
+
+        if (finishedSelecting)
+        {
+            NotifySelectionCompleted();
+        }
+
+        return true;
+    }
+
+    private Rect? FindHoverRegion(Point pos)
+    {
+        if (HoverRegionProvider?.Invoke(pos) is not { } region) return null;
+
+        var bounds = new Rect(0, 0, ActualWidth, ActualHeight);
+        var clamped = Rect.Intersect(region, bounds);
+        return clamped.IsEmpty || clamped.Width < 5 || clamped.Height < 5 ? null : clamped;
+    }
+
+    private void SetHoveredRegion(Rect? region)
+    {
+        if (HoveredRegion == region) return;
+        HoveredRegion = region;
+
+        if (SelectedRegion.IsValid || _dragMode != DragMode.None) return;
+
+        if (region is { } rect)
+        {
+            // Viền cửa sổ giống vùng chọn nhưng không có tay nắm: báo hiệu "click để chọn cửa sổ này"
+            UpdateVisuals(new CaptureRegion(rect.X, rect.Y, rect.Width, rect.Height));
+            HandlesLayer.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            UpdateVisuals(CaptureRegion.Empty);
         }
     }
+
+    /// <summary>
+    /// Báo cho overlay biết người dùng đã chọn xong vùng (dùng cho chế độ tự sao chép).
+    /// </summary>
+    public void NotifySelectionCompleted() => SelectionCompleted?.Invoke(this, EventArgs.Empty);
 
     private void UpdateVisuals(CaptureRegion region)
     {

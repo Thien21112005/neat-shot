@@ -233,6 +233,13 @@ export function initMotion(root, { toolList }) {
     return () => lineSplits.forEach((s) => s?.revert());
   };
 
+  const everyday = () => {
+    gsap.from($$('[data-feature]'), {
+      opacity: 0, y: 24, duration: .6, stagger: .08,
+      scrollTrigger: { trigger: '#everyday', start: 'top 75%', once: true }
+    });
+  };
+
   const gallery = () => {
     gsap.from($$('[data-thumb]'), {
       opacity: 0, y: 24, scale: .97, duration: .6, stagger: .06,
@@ -289,7 +296,7 @@ export function initMotion(root, { toolList }) {
       };
       safe(headline); safe(hero); safe(beforeAfter);
       safe(() => annotate(c.desktop)); safe(beautify); safe(pin);
-      safe(ocr); safe(gallery); safe(reveals);
+      safe(ocr); safe(gallery); safe(everyday); safe(reveals);
       if (c.hover) safe(magnetic);
       requestAnimationFrame(() => ScrollTrigger.refresh());
       return () => cleanups.forEach((f) => f());
