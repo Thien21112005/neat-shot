@@ -14,7 +14,10 @@ public enum HotkeyAction
     CaptureAlternate,
 
     /// <summary>Ghim ảnh đang có trong Clipboard lên màn hình (mặc định F3).</summary>
-    PinFromClipboard
+    PinFromClipboard,
+
+    /// <summary>Chụp lại đúng vùng vừa chụp (mặc định Ctrl+Shift+R).</summary>
+    RepeatLastCapture
 }
 
 /// <summary>

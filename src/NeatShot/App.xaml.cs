@@ -100,6 +100,10 @@ public partial class App : Application
         fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
 
+        var repeatItem = new MenuItem { Header = "🔁 Chụp lại vùng vừa chụp" };
+        repeatItem.Click += (s, e) => TriggerCapture(repeatLastRegion: true);
+        _trayContextMenu.Items.Add(repeatItem);
+
         var delayItem = new MenuItem { Header = "⏱️ Chụp hẹn giờ" };
         foreach (var seconds in new[] { 3, 5, 10 })
         {
@@ -146,6 +150,8 @@ public partial class App : Application
             var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
             captureItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.Capture)?.DisplayText ?? string.Empty;
             pinClipboardItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.PinFromClipboard)?.DisplayText ?? string.Empty;
+            repeatItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.RepeatLastCapture)?.DisplayText ?? string.Empty;
+            repeatItem.IsEnabled = Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion != null;
             startupItem.IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled();
         };
 
@@ -175,6 +181,7 @@ public partial class App : Application
         hotkeys.SetHandler(HotkeyAction.Capture, () => TriggerCapture());
         hotkeys.SetHandler(HotkeyAction.CaptureAlternate, () => TriggerCapture());
         hotkeys.SetHandler(HotkeyAction.PinFromClipboard, PinFromClipboard);
+        hotkeys.SetHandler(HotkeyAction.RepeatLastCapture, () => TriggerCapture(repeatLastRegion: true));
         hotkeys.Apply(Services.GetRequiredService<ISettingsService>().CurrentSettings);
 
         var activeKeys = new[] { HotkeyAction.Capture, HotkeyAction.CaptureAlternate }
@@ -381,7 +388,7 @@ public partial class App : Application
         window.ShowAndStart();
     }
 
-    private async void TriggerCapture(bool selectFullScreen = false, bool dismissPopups = true)
+    private async void TriggerCapture(bool selectFullScreen = false, bool dismissPopups = true, bool repeatLastRegion = false)
     {
         try
         {
@@ -405,7 +412,10 @@ public partial class App : Application
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
             _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
-            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen, windowRegions);
+            var preselect = repeatLastRegion
+                ? Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion
+                : null;
+            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen, windowRegions, preselect);
         }
         catch (Exception ex)
         {

@@ -179,6 +179,7 @@ public partial class OverlayWindow : Window
 
             var savedPath = await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
+            RememberRegion();
             CaptureCopied?.Invoke(this, savedPath);
             Close();
         }
@@ -247,6 +248,7 @@ public partial class OverlayWindow : Window
                 }
 
                 await _exportService.SaveToFileAsync(finalImage, dialog.FileName);
+                RememberRegion();
                 Close();
             }
         }
@@ -270,6 +272,7 @@ public partial class OverlayWindow : Window
                 Toolbar.SelectedBeautifyOptions);
 
             await SaveToGalleryAsync(finalImage);
+            RememberRegion();
 
             var pinWindow = new PinWindow(new PinViewModel());
             var pinPosition = CalculatePinPosition(new Point(Left, Top), ViewModel.SelectedRegion, Toolbar.SelectedBeautifyOptions);
@@ -577,7 +580,7 @@ public partial class OverlayWindow : Window
     }
 
     public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false,
-        IReadOnlyList<WindowRegion>? windowRegions = null)
+        IReadOnlyList<WindowRegion>? windowRegions = null, CaptureRegion? preselectRegion = null)
     {
         SetWindowRegions(windowRegions ?? Array.Empty<WindowRegion>());
 
@@ -597,6 +600,10 @@ public partial class OverlayWindow : Window
         if (selectFullScreen)
         {
             SelectFullScreen(virtualBounds);
+        }
+        else if (preselectRegion is { } region)
+        {
+            PreselectRegion(region, virtualBounds);
         }
     }
 
@@ -621,6 +628,29 @@ public partial class OverlayWindow : Window
         var left = -virtualBounds.Left + (primaryWidth - SelectionHint.DesiredSize.Width) / 2;
         Canvas.SetLeft(SelectionHint, Math.Max(0, left));
         Canvas.SetTop(SelectionHint, Math.Max(0, -virtualBounds.Top) + 16);
+    }
+
+    /// <summary>
+    /// Chọn sẵn một vùng (ví dụ vùng chụp lần trước), giới hạn trong màn hình ảo hiện tại.
+    /// </summary>
+    public void PreselectRegion(CaptureRegion region, Rect virtualBounds)
+    {
+        var clamped = region.ClampTo(new Size(virtualBounds.Width, virtualBounds.Height));
+        if (clamped.IsValid)
+        {
+            ViewModel.SelectedRegion = clamped;
+        }
+    }
+
+    /// <summary>
+    /// Ghi nhớ vùng vừa chụp để dùng cho "Chụp lại vùng vừa chụp".
+    /// </summary>
+    private void RememberRegion()
+    {
+        if (_settingsService == null || !ViewModel.SelectedRegion.IsValid) return;
+
+        _settingsService.CurrentSettings.LastCaptureRegion = ViewModel.SelectedRegion.Normalize();
+        _settingsService.SaveSettings(_settingsService.CurrentSettings);
     }
 
     /// <summary>

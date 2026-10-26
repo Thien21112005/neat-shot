@@ -33,7 +33,7 @@ public partial class SettingsWindow : Window
     }
 
     private IEnumerable<Controls.HotkeyBox> HotkeyBoxes =>
-        new[] { CaptureHotkeyBox, CaptureAlternateHotkeyBox, PinClipboardHotkeyBox };
+        new[] { CaptureHotkeyBox, CaptureAlternateHotkeyBox, PinClipboardHotkeyBox, RepeatLastHotkeyBox };
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {

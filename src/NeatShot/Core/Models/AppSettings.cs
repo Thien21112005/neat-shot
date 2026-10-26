@@ -34,6 +34,16 @@ public class AppSettings
     public string HotkeyPinClipboard { get; set; } = "F3";
 
     /// <summary>
+    /// Phím tắt chụp lại đúng vùng vừa chụp (mặc định: Ctrl+Shift+R).
+    /// </summary>
+    public string HotkeyRepeatLast { get; set; } = "Ctrl+Shift+R";
+
+    /// <summary>
+    /// Vùng chụp gần nhất (toạ độ overlay, DIP) để dùng cho "Chụp lại vùng vừa chụp".
+    /// </summary>
+    public CaptureRegion? LastCaptureRegion { get; set; }
+
+    /// <summary>
     /// Tự động copy ảnh vào Clipboard sau khi hoàn tất khoanh vùng.
     /// </summary>
     public bool AutoCopyOnCapture { get; set; } = false;

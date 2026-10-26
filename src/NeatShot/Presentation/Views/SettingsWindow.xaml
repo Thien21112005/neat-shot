@@ -114,6 +114,19 @@
                             <controls:HotkeyBox x:Name="PinClipboardHotkeyBox" Grid.Column="1" Width="240"
                                                 Gesture="{Binding PinClipboardHotkey}" />
                         </Grid>
+                        <Border Height="1" Background="#12FFFFFF" />
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Chụp lại vùng vừa chụp" Style="{StaticResource SettingsLabel}" />
+                                <TextBlock Text="Mở màn hình chụp với đúng vùng lần trước — tiện so sánh trước/sau." Style="{StaticResource SettingsHint}" />
+                            </StackPanel>
+                            <controls:HotkeyBox x:Name="RepeatLastHotkeyBox" Grid.Column="1" Width="240"
+                                                Gesture="{Binding RepeatLastHotkey}" />
+                        </Grid>
                     </StackPanel>
                 </Border>
 

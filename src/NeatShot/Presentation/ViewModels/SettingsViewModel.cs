@@ -27,6 +27,9 @@ public partial class SettingsViewModel : ObservableObject
     private HotkeyGesture _pinClipboardHotkey;
 
     [ObservableProperty]
+    private HotkeyGesture _repeatLastHotkey;
+
+    [ObservableProperty]
     private string _saveDirectory = string.Empty;
 
     [ObservableProperty]
@@ -88,6 +91,7 @@ public partial class SettingsViewModel : ObservableObject
         yield return (HotkeyAction.Capture, () => CaptureHotkey, g => CaptureHotkey = g, (s, v) => s.HotkeyCapture = v);
         yield return (HotkeyAction.CaptureAlternate, () => CaptureAlternateHotkey, g => CaptureAlternateHotkey = g, (s, v) => s.HotkeyCaptureAlternate = v);
         yield return (HotkeyAction.PinFromClipboard, () => PinClipboardHotkey, g => PinClipboardHotkey = g, (s, v) => s.HotkeyPinClipboard = v);
+        yield return (HotkeyAction.RepeatLastCapture, () => RepeatLastHotkey, g => RepeatLastHotkey = g, (s, v) => s.HotkeyRepeatLast = v);
     }
 
     private void LoadFrom(AppSettings settings)
