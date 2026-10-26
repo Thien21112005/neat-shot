@@ -36,6 +36,27 @@
 
         <!-- Thanh công cụ nổi cạnh vùng chọn và các lớp overlay tương tác -->
         <Canvas x:Name="OverlayCanvas">
+            <!-- Gợi ý khi vừa mở màn hình chụp (ẩn khi đã có vùng chọn) -->
+            <Border x:Name="SelectionHint"
+                    IsHitTestVisible="False"
+                    Canvas.Top="16"
+                    Background="#E60E0F12"
+                    BorderBrush="#1FFFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12,8">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Màn hình đã đóng băng · Kéo để chọn vùng"
+                               FontFamily="Consolas"
+                               FontSize="12"
+                               Foreground="#E8EAED" />
+                    <TextBlock Text="  ·  Esc để thoát"
+                               FontFamily="Consolas"
+                               FontSize="12"
+                               Foreground="#9AA0A6" />
+                </StackPanel>
+            </Border>
+
             <!-- Khung xem trước hiệu ứng Làm đẹp ảnh trực tiếp (Live Beautify Preview Frame) -->
             <Border x:Name="BeautifyPreviewFrame"
                     Visibility="Collapsed"

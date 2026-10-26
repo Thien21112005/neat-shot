@@ -467,6 +467,7 @@ public partial class OverlayWindow : Window
     {
         if (e.PropertyName == nameof(OverlayViewModel.SelectedRegion))
         {
+            SelectionHint.Visibility = ViewModel.SelectedRegion.IsValid ? Visibility.Collapsed : Visibility.Visible;
             _isToolbarManuallyPositioned = false;
             UpdateBeautifyPreview(ViewModel.SelectedRegion);
             UpdateToolbarPosition(ViewModel.SelectedRegion);
@@ -552,11 +553,24 @@ public partial class OverlayWindow : Window
         Show();
         Activate();
         Focus();
+        PositionSelectionHint(virtualBounds);
 
         if (selectFullScreen)
         {
             SelectFullScreen(virtualBounds);
         }
+    }
+
+    /// <summary>
+    /// Căn gợi ý ở giữa phía trên màn hình chính (overlay phủ cả màn hình ảo nên gốc toạ độ có thể âm).
+    /// </summary>
+    private void PositionSelectionHint(Rect virtualBounds)
+    {
+        SelectionHint.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var primaryWidth = SystemParameters.PrimaryScreenWidth > 0 ? SystemParameters.PrimaryScreenWidth : virtualBounds.Width;
+        var left = -virtualBounds.Left + (primaryWidth - SelectionHint.DesiredSize.Width) / 2;
+        Canvas.SetLeft(SelectionHint, Math.Max(0, left));
+        Canvas.SetTop(SelectionHint, Math.Max(0, -virtualBounds.Top) + 16);
     }
 
     /// <summary>
