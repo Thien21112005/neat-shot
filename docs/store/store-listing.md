@@ -211,18 +211,20 @@ lightshot
 
 ## 7. Hình ảnh cho trang Store
 
-| Hạng mục | Kích thước | File / cách làm |
+| Hạng mục | Kích thước | File |
 |---|---|---|
 | Store logo (1:1) | 300 × 300 | `docs/store/StoreLogo-300.png` (sinh bởi `scripts/generate-icons.py`) |
-| Screenshots (Desktop) | 1920 × 1080 (PNG, tối thiểu 1, nên 4–6 ảnh) | Chụp thật trên máy, xem gợi ý dưới |
+| Screenshots (Desktop) | 1920 × 1080 PNG | `docs/store/screenshots/` — 5 ảnh × 2 ngôn ngữ, tải theo đúng thứ tự dưới |
 
-Gợi ý bộ ảnh chụp (nền desktop gọn, màn hình 1920 × 1080, scale 100%):
+Bộ ảnh dựng từ các cảnh demo của landing page, kèm thanh công cụ, thanh vẽ ảnh ghim, thẻ OCR và cửa sổ Cài đặt
+render trực tiếp từ app. Trang tiếng Việt dùng file `-vi.png`, trang English dùng file `-en.png`.
 
-1. Overlay đang chọn vùng trên một trang web, thanh công cụ hiện đầy đủ.
-2. Ảnh có chú thích: mũi tên, khung đỏ, đánh số, làm mờ email.
-3. Ảnh đã "Làm đẹp" với nền gradient và đổ bóng.
-4. Hai ảnh đang được ghim trên màn hình cạnh cửa sổ code.
-5. Thẻ OCR đang hiện chữ trích xuất.
-6. Cửa sổ Cài đặt.
+| # | File | Caption (vi) | Caption (en) |
+|---|---|---|---|
+| 1 | `NeatShot-store-1-annotate-*.png` | Chú thích bằng mũi tên, khung, đánh số và làm mờ thông tin nhạy cảm | Annotate with arrows, boxes, numbered steps and blur |
+| 2 | `NeatShot-store-2-beautify-*.png` | Làm đẹp ảnh với nền gradient, bo góc và đổ bóng chỉ một click | Beautify with a gradient backdrop, rounded corners and shadow in one click |
+| 3 | `NeatShot-store-3-pin-*.png` | Ghim ảnh nổi trên mọi cửa sổ, phóng to, chỉnh độ trong suốt và vẽ trực tiếp | Pin captures above every window — zoom, fade and draw on them |
+| 4 | `NeatShot-store-4-ocr-*.png` | Trích xuất chữ offline, giữ nguyên dấu tiếng Việt và xuống dòng | Extract text offline, keeping accents and line breaks |
+| 5 | `NeatShot-store-5-settings-*.png` | Tuỳ chỉnh phím tắt, nơi lưu, giao diện sáng/tối và ngôn ngữ | Custom hotkeys, save folder, light/dark theme and language |
 
-Có thể thêm một dòng chú thích ngắn cho mỗi ảnh (Caption, tối đa 200 ký tự).
+Nên thêm 1 ảnh chụp thật toàn màn hình khi đang dùng NeatShot (Snipping Tool, hẹn giờ 5 giây) để bộ ảnh có cả ảnh thực tế.
