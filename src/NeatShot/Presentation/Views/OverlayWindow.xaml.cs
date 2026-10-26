@@ -373,18 +373,32 @@ public partial class OverlayWindow : Window
         }
     }
 
-    private void ShowOcrResult(string text)
+    internal void ShowOcrResult(string text)
     {
         OcrResultTextBox.Text = text;
+        OcrResultMetaText.Text = DescribeOcrText(text);
+        OcrCopiedText.Text = "Đã sao chép toàn bộ văn bản vào Clipboard";
         OcrResultCard.Visibility = Visibility.Visible;
 
-        var cardWidth = OcrResultCard.Width > 0 ? OcrResultCard.Width : 480;
-        var cardHeight = 290;
+        OcrResultCard.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var cardWidth = OcrResultCard.Width > 0 ? OcrResultCard.Width : 580;
+        var cardHeight = OcrResultCard.DesiredSize.Height > 0 ? OcrResultCard.DesiredSize.Height : 340;
         var screenW = ActualWidth > 0 ? ActualWidth : 1920;
         var screenH = ActualHeight > 0 ? ActualHeight : 1080;
 
         Canvas.SetLeft(OcrResultCard, Math.Max(20, (screenW - cardWidth) / 2));
         Canvas.SetTop(OcrResultCard, Math.Max(20, (screenH - cardHeight) / 2));
+    }
+
+    /// <summary>
+    /// Thống kê ngắn gọn cho footer thẻ kết quả, ví dụ "2 dòng · 16 ký tự".
+    /// </summary>
+    private static string DescribeOcrText(string text)
+    {
+        var normalized = text.Replace("\r\n", "\n");
+        var lines = normalized.Split('\n').Count(l => !string.IsNullOrWhiteSpace(l));
+        var characters = normalized.Count(c => c != '\n');
+        return $"{lines} dòng · {characters} ký tự";
     }
 
     private void OnOcrCloseClick(object sender, RoutedEventArgs e)
@@ -397,6 +411,8 @@ public partial class OverlayWindow : Window
         if (!string.IsNullOrEmpty(OcrResultTextBox.Text))
         {
             CopyTextToClipboardWithRetry(OcrResultTextBox.Text);
+            OcrCopiedText.Text = "Đã sao chép lại văn bản (gồm cả phần đã sửa)";
+            OcrResultMetaText.Text = DescribeOcrText(OcrResultTextBox.Text);
         }
     }
 
