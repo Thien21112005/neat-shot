@@ -247,11 +247,24 @@
   z-index: 6;
 }
 
+/* Hai thanh công cụ đặt quanh vùng chọn đúng như app: thanh dọc bên phải, thanh tác vụ bên dưới */
 .hero__toolbar {
   position: absolute;
-  left: 266px;
-  top: 388px;
+  inset: 0;
   z-index: 6;
+  pointer-events: none;
+}
+
+.hero__toolbar .tb--vertical {
+  position: absolute;
+  left: 686px;
+  top: 140px;
+}
+
+.hero__toolbar .tb--actions {
+  position: absolute;
+  right: 522px;
+  top: 386px;
 }
 
 .hero__toast {

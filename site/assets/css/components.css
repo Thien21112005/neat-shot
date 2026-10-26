@@ -375,6 +375,86 @@
   background: rgba(255, 255, 255, .12);
 }
 
+/* Thanh dọc công cụ vẽ (bên phải vùng chọn, giống app) */
+.tb--vertical {
+  flex-direction: column;
+  width: 42px;
+}
+
+.tb--vertical .tb__btn {
+  width: 32px;
+}
+
+.tb--vertical .tb__sep {
+  width: 20px;
+  height: 1px;
+  margin: 4px 0;
+}
+
+.tb__grip {
+  height: 12px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, .4);
+  font: 700 9px/1 var(--mono);
+  letter-spacing: 1px;
+}
+
+/* Nút có dropdown (hình khối / đường kẻ): tam giác nhỏ ở góc */
+.tb__btn--caret {
+  position: relative;
+}
+
+.tb__btn--caret::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  border-left: 2.5px solid transparent;
+  border-right: 2.5px solid transparent;
+  border-top: 3px solid currentColor;
+  opacity: .7;
+}
+
+.tb__btn--text {
+  width: auto;
+  padding: 0 8px;
+  font: 600 12px/1 var(--sans);
+  white-space: nowrap;
+}
+
+.tb__btn--primary {
+  width: auto;
+  gap: 7px;
+  display: flex;
+  padding: 0 12px 0 10px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 12px/1 var(--sans);
+  white-space: nowrap;
+}
+
+.tb__select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 8px 0 4px;
+  font: 500 12px/1 var(--sans);
+  white-space: nowrap;
+}
+
+.tb__select-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 30px;
+  padding: 0 8px 0 10px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 5px;
+}
+
 /* ---------- Toast ---------- */
 .toast {
   display: flex;

@@ -166,26 +166,33 @@
 
         <div class="hero__badge size-badge" id="hero-badge"><span id="hero-w">412</span> × <span id="hero-h">236</span></div>
 
-        <div class="hero__toolbar tb" id="hero-toolbar">
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pencil"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-highlighter"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-rect"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-ellipse"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-line"/></svg></span>
-          <span class="tb__btn is-active"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-arrow"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-text"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-step"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pixel"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-blur"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-dropper"/></svg></span>
-          <span class="tb__sep"></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-undo"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-redo"/></svg></span>
-          <span class="tb__sep"></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pin"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-ocr"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-copy"/></svg></span>
-          <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-save"/></svg></span>
+        <!-- Toolbar giống app: thanh dọc công cụ vẽ + thanh ngang tác vụ -->
+        <div class="hero__toolbar" id="hero-toolbar">
+          <div class="tb tb--vertical">
+            <span class="tb__grip">:::</span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-select"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pencil"/></svg></span>
+            <span class="tb__btn tb__btn--caret"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-rect"/></svg></span>
+            <span class="tb__btn tb__btn--caret is-active"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-arrow"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-highlighter"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-text"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-step"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pixel"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-blur"/></svg></span>
+            <span class="tb__sep"></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-undo"/></svg></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-redo"/></svg></span>
+          </div>
+          <div class="tb tb--actions">
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-pin"/></svg></span>
+            <span class="tb__btn tb__btn--text" data-i18n="tbOcr">Extract text</span>
+            <span class="tb__sep"></span>
+            <span class="tb__select"><svg class="icon" width="15" height="15" style="color:#9AA0A6"><use href="assets/icons/sprite.svg#i-sparkle"/></svg><span class="tb__select-box"><span data-i18n="tbOriginal">Original</span><svg class="icon" width="10" height="10" style="stroke-width:3"><use href="assets/icons/sprite.svg#i-chevron"/></svg></span></span>
+            <span class="tb__sep"></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-save"/></svg></span>
+            <span class="tb__btn tb__btn--primary"><svg class="icon" width="15" height="15"><use href="assets/icons/sprite.svg#i-copy"/></svg><span data-i18n="tbCopy">Copy</span></span>
+            <span class="tb__btn"><svg class="icon" width="17" height="17"><use href="assets/icons/sprite.svg#i-x"/></svg></span>
+          </div>
         </div>
 
         <div class="hero__toast toast" id="hero-toast">
@@ -499,7 +506,7 @@
           <span style="width:64px;height:64px;border-radius:6px;background:#0078D4;flex:none"></span>
           <span style="display:flex;flex-direction:column;gap:6px;line-height:1.3"><b style="font-family:var(--sans);font-size:13px">Button / primary</b><span>fill #0078D4</span><span>radius 6 · height 36</span><span>label 13 / 600</span></span>
         </div>
-        <div class="size-badge" id="pin-hud" style="position:absolute;left:648px;top:50px;z-index:3;font-weight:400">Zoom 120% · Opacity 75%</div>
+        <div class="size-badge" id="pin-hud" style="position:absolute;left:648px;top:50px;z-index:3;font-weight:400">Zoom 120% · Opacity 70%</div>
         <div class="pinned" id="pin-main" style="left:690px;top:110px;width:420px;height:210px;background:#fff;border-color:rgba(255,255,255,.25);box-shadow:0 24px 60px rgba(0,0,0,.6);overflow:hidden;transform:scale(1.2);opacity:.75;z-index:2;color:#1B1F24">
           <div style="height:28px;background:#F1F3F5;border-bottom:1px solid #E1E4E8;padding:0 12px;font:600 11px/28px var(--sans);color:#4A525C">Console</div>
           <div style="padding:10px 12px 0 30px;font-size:12px;line-height:20px;position:relative;white-space:nowrap">
@@ -596,17 +603,21 @@
       <div class="key-row"><span data-i18n="kCaptureAlt">Capture a region (alternative)</span><kbd class="kbd kbd--interactive" data-key="printscreen">PrtSc</kbd></div>
     </div>
     <div>
-      <h3 class="key-group__title"><span data-i18n="gCapture">Capture</span><span class="key-group__count">05</span></h3>
+      <h3 class="key-group__title"><span data-i18n="gCapture">Capture</span><span class="key-group__count">08</span></h3>
       <div class="key-row"><span data-i18n="kSelect">Select an area</span><kbd class="kbd kbd--interactive" data-i18n="kDrag" style="cursor:crosshair">Drag</kbd></div>
       <div class="key-row"><span data-i18n="kResize">Resize with 8 handles</span><kbd class="kbd kbd--interactive" data-i18n="kDragHandle" style="cursor:nwse-resize">Drag a handle</kbd></div>
       <div class="key-row"><span data-i18n="kUndo">Undo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="z">Z</kbd></span></div>
       <div class="key-row"><span data-i18n="kRedo">Redo</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="y">Y</kbd></span></div>
+      <div class="key-row"><span data-i18n="kCopy">Copy &amp; close</span><kbd class="kbd kbd--interactive" data-key="enter">Enter</kbd></div>
+      <div class="key-row"><span data-i18n="kSave">Save as PNG</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="s">S</kbd></span></div>
+      <div class="key-row"><span data-i18n="kOcr">Extract text</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-key="o">O</kbd></span></div>
       <div class="key-row"><span data-i18n="kCancel">Cancel</span><kbd class="kbd kbd--interactive" data-key="escape">Esc</kbd></div>
     </div>
     <div>
-      <h3 class="key-group__title"><span data-i18n="gPin">Pin</span><span class="key-group__count">02</span></h3>
+      <h3 class="key-group__title"><span data-i18n="gPin">Pin</span><span class="key-group__count">03</span></h3>
       <div class="key-row"><span data-i18n="kZoom">Zoom the pin</span><kbd class="kbd kbd--interactive" data-i18n="kWheel">Wheel</kbd></div>
       <div class="key-row"><span data-i18n="kOpac">Change opacity</span><span class="kbd-combo"><kbd class="kbd kbd--interactive" data-key="control">Ctrl</kbd>+<kbd class="kbd kbd--interactive" data-i18n="kWheel">Wheel</kbd></span></div>
+      <div class="key-row"><span data-i18n="kPinClose">Close the pin</span><kbd class="kbd kbd--interactive" data-key="escape">Esc</kbd></div>
     </div>
   </div>
 </section>
@@ -687,7 +698,7 @@
     <nav class="footer-links" aria-label="Footer">
       <a href="https://github.com/Thien21112005/neat-shot">GitHub</a>
       <a href="https://github.com/Thien21112005/neat-shot/blob/main/LICENSE" data-i18n="fLic">MIT License</a>
-      <a href="https://github.com/Thien21112005/neat-shot/releases" data-i18n="fLog">Changelog</a>
+      <a href="https://github.com/Thien21112005/neat-shot/blob/main/CHANGELOG.md" data-i18n="fLog">Changelog</a>
     </nav>
     <span class="site-footer__made" data-i18n="fMade">Made for Windows</span>
   </div>

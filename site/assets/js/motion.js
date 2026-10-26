@@ -45,7 +45,7 @@ export function initMotion(root, { toolList }) {
 
   const hero = () => {
     const stage = $('#hero-fit'), sel = $('#hero-sel'), cur = $('#hero-cursor'), badge = $('#hero-badge');
-    const tb = $('#hero-toolbar'), toast = $('#hero-toast'), hint = $('#hero-hint');
+    const bars = $$('#hero-toolbar .tb'), toast = $('#hero-toast'), hint = $('#hero-hint');
     const arrow = $('#hero-arrow'), head = $('#hero-head');
     const steps = $$('[data-hstep]'), cells = $$('[data-hcell]');
     const wEl = $('#hero-w'), hEl = $('#hero-h');
@@ -55,7 +55,7 @@ export function initMotion(root, { toolList }) {
 
     gsap.set(sel, { width: 0, height: 0, opacity: 0 });
     gsap.set(badge, { opacity: 0 });
-    gsap.set(tb, { opacity: 0, y: -10, scale: .97, transformOrigin: '0 0' });
+    gsap.set(bars, { opacity: 0, y: -10, scale: .97, transformOrigin: '50% 0' });
     drawSet(arrow);
     gsap.set(head, { opacity: 0 });
     gsap.set(steps, { scale: 0, transformOrigin: '50% 50%' });
@@ -76,7 +76,7 @@ export function initMotion(root, { toolList }) {
       .to(sel, { width: S.w, height: S.h, duration: .9, ease: 'power3.inOut' }, 'drag')
       .to(cur, { x: S.x + S.w, y: S.y + S.h, duration: .9, ease: 'power3.inOut' }, 'drag')
       .to(size, { w: S.w, h: S.h, duration: .9, ease: 'power3.inOut', onUpdate: writeSize }, 'drag')
-      .to(tb, { opacity: 1, y: 0, scale: 1, duration: .45, ease: 'back.out(1.4)' }, '+=.08')
+      .to(bars, { opacity: 1, y: 0, scale: 1, duration: .45, ease: 'back.out(1.4)', stagger: .08 }, '+=.08')
       .to(hint, { opacity: 0, duration: .3 }, '<')
       .to(cur, { x: S.x + 112, y: S.y + 214, duration: .5, ease: 'power2.inOut' })
       .addLabel('arrow')
@@ -207,9 +207,9 @@ export function initMotion(root, { toolList }) {
     });
     gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: frame, start: 'top 70%', end: 'bottom 40%', scrub: .6 } })
       .to(p, { z: 120, duration: 1, onUpdate: write })
-      .to(p, { o: 75, duration: 1, onUpdate: write })
+      .to(p, { o: 70, duration: 1, onUpdate: write })
       .to(pen, drawTo({ duration: 1 }));
-    return () => { hud.textContent = 'Zoom 120% · Opacity 75%'; };
+    return () => { hud.textContent = 'Zoom 120% · Opacity 70%'; };
   };
 
   const ocr = () => {

@@ -78,7 +78,7 @@ export function initStageFit(root) {
 
 /** Làm sáng keycap tương ứng khi người dùng nhấn phím thật. */
 export function initKeycaps(root) {
-  const keys = ['control', 'shift', 'a', 'printscreen', 'escape', 'z', 'y'];
+  const keys = ['control', 'shift', 'a', 'printscreen', 'escape', 'z', 'y', 'enter', 's', 'o'];
   const set = (k, on) => root.querySelectorAll(`[data-key="${k}"]`)
     .forEach((el) => (on ? el.setAttribute('data-on', '') : el.removeAttribute('data-on')));
   const keyOf = (e) => {
