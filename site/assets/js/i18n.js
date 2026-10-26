@@ -33,6 +33,8 @@ export const VI = {
   fSetT: 'Cài đặt có hiệu lực ngay', fSetD: 'Đổi phím tắt ngay lập tức — NeatShot cảnh báo nếu phím đã bị ứng dụng khác dùng. Chọn thư mục lưu, PNG hoặc JPG, tự lưu và khởi động cùng Windows.', fSetM: 'Khay hệ thống → Cài đặt…',
   fWinT: 'Click để chọn cửa sổ', fWinD: 'Rê chuột là NeatShot viền sẵn cửa sổ — hoặc panel, nút bên trong — dưới con trỏ. Một cú click chọn đúng vùng đó, không dính bóng đổ.', fWinM: 'Rê chuột · Click',
   kWindow: 'Chọn một cửa sổ', kClick: 'Click',
+  fClipT: 'Ghim thẳng từ Clipboard', fClipD: 'Vừa copy một ảnh trên web, Zalo hay Figma? Nhấn F3 là ảnh nổi lên trên mọi cửa sổ — không cần chụp.',
+  pClip: 'Ghim ảnh từ Clipboard', kPinClip: 'Ghim ảnh trong Clipboard',
   eyPriv: 'Quyền riêng tư & mã nguồn mở', privTitle: 'Không gì rời khỏi máy bạn.', privLead: 'NeatShot không gửi bất kỳ yêu cầu mạng nào. Ảnh chụp, chữ và cài đặt của bạn ở yên trên máy này.',
   f1t: 'Hoàn toàn offline', f1d: 'OCR chạy bằng chính Windows. Không tải lên thứ gì.',
   f2t: 'Không cần tài khoản', f2d: 'Tải về, giải nén, nhấn Ctrl + Shift + A.',

@@ -19,7 +19,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 |---|---|---|---|---|
 | 1 | ✅ Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
 | 2 | ✅ Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
-| 3 | Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
+| 3 | ✅ Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
 | 4 | Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
 | 5 | Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
 | 6 | Kính lúp + toạ độ pixel khi chọn vùng | Chụp | 🟡 | ⭐⭐ |
@@ -77,7 +77,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ---
 
-### 3. Ghim ảnh từ Clipboard 🟢
+### 3. Ghim ảnh từ Clipboard 🟢 ✅ Đã xong
 
 **Vấn đề:** Ảnh copy từ trình duyệt, Zalo, Figma… không ghim lên màn hình được, trong khi `PinWindow` đã có sẵn.
 
@@ -86,8 +86,8 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Nếu Clipboard không có ảnh: hiện toast "Clipboard không có ảnh" (dùng `ToastWindow` sẵn có).
 
 **Tiêu chí hoàn thành:**
-- [ ] Ghim được ảnh PNG/Bitmap từ Clipboard, giữ đúng kích thước theo DPI.
-- [ ] Ghim được nhiều ảnh liên tiếp.
+- [x] Ghim được ảnh PNG/Bitmap từ Clipboard, giữ đúng kích thước theo DPI.
+- [x] Ghim được nhiều ảnh liên tiếp.
 
 **Liên quan:** `Presentation/Views/PinWindow.xaml.cs`, `Presentation/Views/ToastWindow.xaml.cs`, `HotkeyService`.
 

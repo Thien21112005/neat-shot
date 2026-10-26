@@ -66,6 +66,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 **Export & reuse**
 - Copy to clipboard, save as PNG or JPG, or **pin** the capture as an always-on-top floating window.
 - Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
+- **Pin from the clipboard** (`F3`): pin any image you copied from a browser, chat app, Figma or Explorer — no capture needed.
 - **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
 - **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
@@ -78,6 +79,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Context | Shortcut | Action |
 |---|---|---|
 | Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture (both keys can be changed in Settings) |
+| Global | `F3` | Pin the image in the clipboard |
 | Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
 | Overlay | `Ctrl + S` | Save as PNG / JPG… |
@@ -216,6 +218,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 **Xuất và tái sử dụng**
 - Sao chép vào Clipboard, lưu PNG hoặc JPG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
 - Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
+- **Ghim ảnh từ Clipboard** (`F3`): ghim bất kỳ ảnh nào bạn vừa copy từ trình duyệt, Zalo, Figma hay Explorer — không cần chụp.
 - **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
 - **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
@@ -228,6 +231,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Ngữ cảnh | Phím tắt | Chức năng |
 |---|---|---|
 | Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp (đổi được cả hai phím trong Cài đặt) |
+| Toàn cục | `F3` | Ghim ảnh đang có trong Clipboard |
 | Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
 | Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
