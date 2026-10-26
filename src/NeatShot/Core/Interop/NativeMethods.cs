@@ -154,4 +154,11 @@ public static class NativeMethods
 
     [DllImport(User32, SetLastError = true)]
     public static extern IntPtr CreateIconIndirect(ref ICONINFO icon);
+
+    /// <summary>
+    /// Lấy tên đầy đủ của gói MSIX chứa tiến trình hiện tại.
+    /// Trả về APPMODEL_ERROR_NO_PACKAGE (15700) nếu app không chạy từ gói.
+    /// </summary>
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetCurrentPackageFullName(ref int packageFullNameLength, char[]? packageFullName);
 }

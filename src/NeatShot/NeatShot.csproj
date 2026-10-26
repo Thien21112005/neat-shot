@@ -7,9 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\NeatShot.ico</ApplicationIcon>
 
     <!-- Thông tin phiên bản & sản phẩm (hiển thị trong Properties của file exe) -->
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Product>NeatShot</Product>
     <AssemblyTitle>NeatShot</AssemblyTitle>
     <Description>Lightweight Windows screenshot tool with annotations, pin to screen and offline OCR.</Description>
@@ -17,6 +18,11 @@
     <Copyright>Copyright (c) 2026 Thien21112005</Copyright>
     <RepositoryUrl>https://github.com/Thien21112005/neat-shot</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Icon dùng chung cho exe và khay hệ thống (sinh bởi scripts/generate-icons.py) -->
+    <EmbeddedResource Include="Assets\NeatShot.ico" LogicalName="NeatShot.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

@@ -1,10 +1,10 @@
 // Song ngữ EN / VI: tiếng Anh nằm sẵn trong HTML, tiếng Việt lấy từ từ điển dưới đây.
 export const VI = {
   navFeat: 'Tính năng', navKeys: 'Phím tắt', navPriv: 'Quyền riêng tư', navDl: 'Tải về',
-  heroEyebrow: 'v1.0.0 · Miễn phí & mã nguồn mở · Windows 10 / 11',
+  heroEyebrow: 'v1.1.0 · Miễn phí & mã nguồn mở · Windows 10 / 11',
   h1a: 'Ảnh chụp sạch trên mọi màn hình.', h1b: 'Chú thích trong vài giây.',
   heroSub: 'Công cụ chụp màn hình miễn phí, mã nguồn mở cho Windows, không chen ngang công việc của bạn — chụp, đánh dấu, ghim và trích xuất chữ mà không cần rời bàn phím.',
-  ctaDl: 'Tải về cho Windows', ctaMeta: 'v1.0.0 · 64 MB · không cần cài đặt', ctaSrc: 'Xem mã nguồn trên GitHub',
+  ctaDl: 'Tải về cho Windows', ctaMeta: 'v1.1.0 · 65 MB · không cần cài đặt', ctaSrc: 'Xem mã nguồn trên GitHub',
   or: 'hoặc', heroHint: 'Rê chuột lên màn hình để xem lại',
   tbOcr: 'Trích xuất chữ', tbOriginal: 'Gốc', tbCopy: 'Sao chép',
   eyAnnoy: 'Trước / sau', annoyTitle: 'Ba điều khiến bạn bực mình',
@@ -42,10 +42,10 @@ export const VI = {
   f2t: 'Không cần tài khoản', f2d: 'Tải về, giải nén, nhấn Ctrl + Shift + A.',
   f3t: 'Không thu thập dữ liệu', f3d: 'Không phân tích, không theo dõi sử dụng, không gửi gì về máy chủ.',
   f4t: 'Giấy phép MIT', f4d: 'Đọc mã, fork, xây tiếp trên đó.',
-  dlTitle: 'Tải NeatShot cho Windows', reqTitle: 'Yêu cầu', r1: 'Windows 10 (2004 trở lên) hoặc Windows 11', r3: 'File zip ~64 MB · không cần trình cài đặt', r4: 'Không cần cài .NET runtime',
+  dlTitle: 'Tải NeatShot cho Windows', reqTitle: 'Yêu cầu', r1: 'Windows 10 (2004 trở lên) hoặc Windows 11', r3: 'File zip ~65 MB · không cần trình cài đặt', r4: 'Không cần cài .NET runtime',
   stepsTitle: 'Cài đặt trong ba bước', s1: 'Tải file zip từ GitHub Releases.', s2: 'Giải nén vào bất kỳ đâu và chạy NeatShot.', s3: 'Biểu tượng nằm ở khay hệ thống. Nhấn Ctrl + Shift + A.',
   ssTitle: 'Về SmartScreen', ssBody: 'Bản này chưa được ký số, nên lần đầu Windows có thể hiện cảnh báo SmartScreen. Chọn More info → Run anyway. Mã nguồn công khai nếu bạn muốn xem trước.',
-  dlBtn: 'Tải v1.0.0', fLic: 'Giấy phép MIT', fLog: 'Nhật ký thay đổi', fMade: 'Làm cho Windows'
+  dlBtn: 'Tải v1.1.0', fLic: 'Giấy phép MIT', fLog: 'Nhật ký thay đổi', fPriv: 'Chính sách quyền riêng tư', fMade: 'Làm cho Windows'
 };
 
 const STORAGE_KEY = 'neatshot-lang';

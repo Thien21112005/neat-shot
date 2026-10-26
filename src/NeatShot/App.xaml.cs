@@ -71,7 +71,7 @@ public partial class App : Application
         services.AddSingleton<IBeautifyService, BeautifyService>();
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IScreenshotGalleryService, ScreenshotGalleryService>();
-        services.AddSingleton<IStartupService, WindowsStartupService>();
+        services.AddSingleton<IStartupService>(_ => StartupServiceFactory.Create());
         services.AddSingleton<IAppHotkeyManager, AppHotkeyManager>();
         services.AddSingleton<IWindowRegionService, WindowRegionService>();
 
