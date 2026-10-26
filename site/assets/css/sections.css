@@ -569,10 +569,11 @@
 }
 
 /* Gradient của từng preset Beautify */
-.grad-pink { background: linear-gradient(135deg, #FA709A, #FEE140); }
+/* Đúng với BeautifyPreset trong app (BeautifyOptions.CreateBackgroundBrush) */
+.grad-sunset { background: linear-gradient(135deg, #FA709A, #FEE140); }
 .grad-ocean { background: linear-gradient(135deg, #0093E9, #80D0C7); }
-.grad-mint { background: linear-gradient(135deg, #43E97B, #38F9D7); }
-.grad-graphite { background: linear-gradient(135deg, #5B6270, #1C1F25); }
+.grad-purple { background: linear-gradient(135deg, #667EEA, #764BA2); }
+.grad-darkslate { background: linear-gradient(135deg, #1E293B, #0F172A); }
 
 /* ---------- Pin ---------- */
 .pin-facts {

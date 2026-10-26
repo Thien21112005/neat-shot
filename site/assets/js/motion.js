@@ -180,15 +180,16 @@ export function initMotion(root, { toolList }) {
     write();
     shadowLabel.textContent = 'none';
 
+    // Giá trị đúng với mặc định của app: Padding 20px, CornerRadius 12px
     gsap.timeline({ scrollTrigger: { trigger: '#bf-fit', start: 'top 70%', once: true } })
-      .to(shot, { scale: .8, duration: .8, ease: 'power3.inOut' }, 0)
-      .to(p, { pad: 64, duration: .8, ease: 'power3.inOut', onUpdate: write }, 0)
-      .to([shadow, card], { borderRadius: 14, duration: .5 }, .7)
-      .to(p, { rad: 14, duration: .5, onUpdate: write }, .7)
+      .to(shot, { scale: .9, duration: .8, ease: 'power3.inOut' }, 0)
+      .to(p, { pad: 20, duration: .8, ease: 'power3.inOut', onUpdate: write }, 0)
+      .to([shadow, card], { borderRadius: 12, duration: .5 }, .7)
+      .to(p, { rad: 12, duration: .5, onUpdate: write }, .7)
       .to(shadow, { opacity: 1, duration: .6 }, 1.1)
       .call(() => { shadowLabel.textContent = 'soft'; }, null, 1.1)
       .to(grads, { xPercent: 0, duration: .8 }, 1.4);
-    return () => { shadowLabel.textContent = 'soft'; p.pad = 64; p.rad = 14; write(); };
+    return () => { shadowLabel.textContent = 'soft'; p.pad = 20; p.rad = 12; write(); };
   };
 
   const pin = () => {

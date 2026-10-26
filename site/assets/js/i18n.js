@@ -17,7 +17,7 @@ export const VI = {
   dArrow: 'Chỉ đúng vào nút cần bấm.', dRect: 'Khoanh vùng ô cần chú ý.', dText: 'Gõ ghi chú ngay trên ảnh.', dStep: 'Bấm để đặt 1, 2, 3… theo thứ tự.', dPix: 'Che token, khoá và email.', dBlur: 'Làm mờ khuôn mặt và ảnh đại diện.',
   annAlso: 'Ngoài ra: bút chì, bút dạ quang, hình elip, đường thẳng, hút màu, hoàn tác / làm lại.',
   eyBf: 'Làm đẹp', bfTitle: 'Sẵn sàng cho slide, README hay bài đăng.', bfLead: 'Thêm nền gradient, khoảng đệm, bo góc và bóng đổ nhẹ chỉ trong một bước. Chọn một mẫu:',
-  pPink: 'Hồng', pOcean: 'Đại dương', pMint: 'Bạc hà', pGraph: 'Than chì', lPad: 'Khoảng đệm', lRad: 'Bo góc', lShadow: 'Bóng đổ',
+  pSunset: 'Hoàng hôn', pOcean: 'Đại dương', pPurple: 'Tím', pSlate: 'Xám đá', lPad: 'Khoảng đệm', lRad: 'Bo góc', lShadow: 'Bóng đổ',
   eyPin: 'Ghim lên màn hình', pinTitle: 'Ghim lại. Làm tiếp.', pinLead: 'Ảnh chụp nổi trên mọi cửa sổ. Giữ thông báo lỗi, bản thiết kế hay tài liệu tham khảo trong tầm mắt khi bạn viết code.',
   pZoom: 'Phóng to', pOpac: 'Độ trong suốt', pDraw: 'Vẽ trực tiếp lên ảnh ghim', pMany: 'Ghim nhiều ảnh cùng lúc', kWheel: 'Con lăn',
   eyOcr: 'Trích xuất chữ', ocrTitle: 'Sao chép chữ, không phải ảnh của chữ.', ocrLead: 'Windows OCR đọc vùng chọn ngay trên máy bạn, hoàn toàn offline. Xuống dòng được giữ nguyên, dấu tiếng Việt không bị mất.',
