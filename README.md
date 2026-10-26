@@ -176,7 +176,7 @@ More detail: [SRS](./docs/SRS-screenshot-app.md) · [Architecture & tech stack](
 ### Troubleshooting
 
 - **`PrtSc` does nothing.** Windows 11 may give `PrtSc` to Snipping Tool. Turn off *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, or use `Ctrl + Shift + A`. The console output at startup shows which hotkeys were registered.
-- **"Windows is blocking saves to the screenshots folder."** *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) stops unknown apps from writing to Pictures, Documents or Desktop. NeatShot then saves to `%USERPROFILE%\NeatShot` and tells you so. To use Pictures again, choose *Allow an app through Controlled folder access* and add `NeatShot.exe`, or pick another folder in Settings.
+- **Screenshots end up in `%USERPROFILE%\NeatShot` instead of Pictures.** *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) stops unknown apps from writing to Pictures, Documents or Desktop. NeatShot then saves to `%USERPROFILE%\NeatShot` instead (the "saved" toast shows the folder). To use Pictures again, choose *Allow an app through Controlled folder access* and add `NeatShot.exe`, or pick another folder in Settings.
 - **"No OCR language pack found."** Add a language that supports OCR under *Settings → Time & language → Language & region*.
 - **The tray icon disappeared.** NeatShot re-registers its icon when Explorer restarts. If it is still missing, the app may have exited; start it again.
 
@@ -312,7 +312,7 @@ Dự án chia lớp Core / Presentation, dùng MVVM với CommunityToolkit.Mvvm 
 
 ### Xử lý sự cố
 
-- **"Windows đang chặn lưu vào thư mục ảnh":** tính năng *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) chặn app lạ ghi vào Pictures, Documents, Desktop. Khi đó NeatShot lưu vào `%USERPROFILE%\NeatShot` và báo cho bạn. Muốn lưu lại vào Pictures, chọn *Allow an app through Controlled folder access* rồi thêm `NeatShot.exe`, hoặc đổi thư mục trong Cài đặt.
+- **Ảnh được lưu vào `%USERPROFILE%\NeatShot` thay vì Pictures:** tính năng *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) chặn app lạ ghi vào Pictures, Documents, Desktop. Khi đó NeatShot lưu vào `%USERPROFILE%\NeatShot` (thông báo "Đã lưu" ghi rõ thư mục). Muốn lưu lại vào Pictures, chọn *Allow an app through Controlled folder access* rồi thêm `NeatShot.exe`, hoặc đổi thư mục trong Cài đặt.
 - **Bấm `PrtSc` không có tác dụng:** Windows 11 có thể dành phím `PrtSc` cho Snipping Tool. Tắt tuỳ chọn *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, hoặc dùng `Ctrl + Shift + A`.
 - **Báo "Không tìm thấy gói ngôn ngữ OCR":** thêm một ngôn ngữ có hỗ trợ OCR trong *Settings → Time & language → Language & region*.
 - **Mất icon dưới khay hệ thống:** NeatShot tự gắn lại icon khi Explorer khởi động lại. Nếu vẫn không thấy, có thể ứng dụng đã thoát; hãy mở lại.

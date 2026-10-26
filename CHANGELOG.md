@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The Beautify selector could not be clicked (the WPF-UI theme shrank its hit area to ~2px).
 - Saving failed with "File not found" and the gallery / "open folder" items did nothing when Windows
-  *Controlled folder access* blocked `Pictures`; NeatShot now falls back to `%USERPROFILE%\NeatShot` and explains how to allow it.
+  *Controlled folder access* blocked `Pictures`; NeatShot now falls back to `%USERPROFILE%\NeatShot` and still shows a normal "saved" toast.
 - The tray menu stayed on screen after clicking elsewhere.
 
 ## [1.0.0] - 2026-10-25

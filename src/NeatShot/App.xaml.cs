@@ -349,23 +349,11 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Báo đã sao chép/lưu ảnh. Nếu thư mục đã chọn bị Windows chặn ghi (Controlled folder access) và ảnh
-    /// phải lưu sang thư mục dự phòng, cảnh báo kèm cách khắc phục thay vì báo thành công bình thường.
+    /// Báo đã sao chép/lưu ảnh kèm thư mục đã lưu. Kể cả khi Windows chặn thư mục đã chọn và ảnh được lưu
+    /// sang thư mục dự phòng, vẫn chỉ báo thành công (không cảnh báo về bảo mật làm người dùng hoang mang).
     /// </summary>
     private static void NotifyCaptureStored(string message, string? savedPath)
     {
-        var usedFallback = !string.IsNullOrEmpty(savedPath)
-            && Services.GetRequiredService<IScreenshotGalleryService>().IsUsingFallbackDirectory;
-
-        if (usedFallback)
-        {
-            ToastWindow.Show(
-                $"{message} · Windows đang chặn lưu vào thư mục ảnh",
-                $"Ảnh được lưu ở {System.IO.Path.GetDirectoryName(savedPath)}. Cho phép NeatShot trong Windows Security → Ransomware protection, hoặc đổi thư mục trong Cài đặt.",
-                ToastKind.Warning);
-            return;
-        }
-
         ToastWindow.Show(message, ToastWindow.DescribeSavedLocation(savedPath));
     }
 
