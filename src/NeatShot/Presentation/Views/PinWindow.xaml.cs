@@ -317,7 +317,6 @@ public partial class PinWindow : Window
         }
     }
 
-    private void OnAnnotateButtonClick(object sender, RoutedEventArgs e) => ToggleAnnotationToolbar();
     private void OnToggleAnnotateClick(object sender, RoutedEventArgs e) => ToggleAnnotationToolbar();
     private void OnCopyImageClick(object sender, RoutedEventArgs e) => CopyImageToClipboard();
     private void OnResetZoomClick(object sender, RoutedEventArgs e) => ViewModel.ResetZoom();

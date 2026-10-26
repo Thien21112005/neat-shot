@@ -154,16 +154,7 @@
                     <DropShadowEffect BlurRadius="6" ShadowDepth="2" Opacity="0.4" Direction="270" Color="Black" />
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Nút Bật/Tắt vẽ chú thích (Vector Path siêu sáng & sắc nét) -->
-                    <Button x:Name="PinAnnotateButton"
-                            Style="{StaticResource PinHeaderButtonStyle}"
-                            ToolTip="Vẽ chú thích lên ảnh (Ctrl + P)"
-                            Click="OnAnnotateButtonClick">
-                        <Path Width="13" Height="13"
-                              Stretch="Uniform"
-                              Fill="#FFFFFF"
-                              Data="M3,17.25V21h3.75L17.81,9.94l-3.75-3.75L3,17.25z M20.71,7.04c0.39-0.39,0.39-1.02,0-1.41l-2.34-2.34c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75L20.71,7.04z" />
-                    </Button>
+                    <!-- Không có nút bật/tắt vẽ: click vào ảnh (hoặc Ctrl + P) đã làm việc đó -->
 
                     <!-- Nút sao chép ảnh (Vector Path siêu sáng & sắc nét) -->
                     <Button x:Name="PinCopyButton"

@@ -34,8 +34,10 @@ public class PinWindowAnnotationTests
                 Assert.NotNull(window.AnnotationToolbar);
                 Assert.Equal(Visibility.Collapsed, window.AnnotationToolbar.Visibility);
 
-                // Có nút bật/tắt vẽ trên header
-                Assert.NotNull(window.PinAnnotateButton);
+                // Header không còn nút bút chì: click vào ảnh (hoặc Ctrl + P) đã bật/tắt chế độ vẽ
+                Assert.Null(window.FindName("PinAnnotateButton"));
+                Assert.NotNull(window.PinCopyButton);
+                Assert.NotNull(window.PinCloseButton);
 
                 window.Close();
             }
@@ -52,7 +54,7 @@ public class PinWindowAnnotationTests
     }
 
     [Fact]
-    public void PinWindow_PinAnnotateButton_TogglesAnnotationToolbar_OnStaThread()
+    public void PinWindow_CtrlP_TogglesAnnotationToolbar_OnStaThread()
     {
         Exception? threadException = null;
         var thread = new Thread(() =>
@@ -64,12 +66,12 @@ public class PinWindowAnnotationTests
                 var dummyBitmap = new RenderTargetBitmap(100, 80, 96, 96, PixelFormats.Pbgra32);
                 window.SetImage(dummyBitmap, new Point(50, 60));
 
-                // Bấm nút bút vẽ trên header -> Thanh công cụ hiện lên
-                window.PinAnnotateButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                // Ctrl + P -> Thanh công cụ hiện lên
+                window.ProcessShortcut(System.Windows.Input.Key.P, System.Windows.Input.ModifierKeys.Control);
                 Assert.Equal(Visibility.Visible, window.AnnotationToolbar.Visibility);
 
-                // Bấm lại -> Thanh công cụ ẩn đi
-                window.PinAnnotateButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                // Ctrl + P lần nữa -> Thanh công cụ ẩn đi
+                window.ProcessShortcut(System.Windows.Input.Key.P, System.Windows.Input.ModifierKeys.Control);
                 Assert.Equal(Visibility.Collapsed, window.AnnotationToolbar.Visibility);
 
                 window.Close();
