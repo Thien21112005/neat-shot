@@ -52,8 +52,8 @@
                 </Border>
             </Grid>
             <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock x:Name="MessageText" FontSize="13" FontWeight="SemiBold" Foreground="#E8EAED" />
-                <TextBlock x:Name="DetailText" FontFamily="Consolas" FontSize="12" Foreground="#9AA0A6" Margin="0,2,0,0" />
+                <TextBlock x:Name="MessageText" FontSize="13" FontWeight="SemiBold" Foreground="#E8EAED" MaxWidth="340" TextWrapping="Wrap" />
+                <TextBlock x:Name="DetailText" FontSize="12" Foreground="#B4BAC1" Margin="0,3,0,0" MaxWidth="340" TextWrapping="Wrap" LineHeight="17" />
             </StackPanel>
         </StackPanel>
     </Border>

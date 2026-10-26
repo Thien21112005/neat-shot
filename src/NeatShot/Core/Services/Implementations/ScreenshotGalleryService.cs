@@ -13,11 +13,13 @@ public class ScreenshotGalleryService : IScreenshotGalleryService
 {
     private readonly string? _customDirectory;
     private readonly ISettingsService? _settingsService;
+    private readonly string _fallbackDirectory;
 
-    public ScreenshotGalleryService(string? customDirectory = null, ISettingsService? settingsService = null)
+    public ScreenshotGalleryService(string? customDirectory = null, ISettingsService? settingsService = null, string? fallbackDirectory = null)
     {
         _customDirectory = customDirectory;
         _settingsService = settingsService;
+        _fallbackDirectory = string.IsNullOrWhiteSpace(fallbackDirectory) ? WritableDirectory.DefaultFallback : fallbackDirectory;
     }
 
     public ScreenshotGalleryService(ISettingsService settingsService) : this(null, settingsService)
@@ -41,13 +43,20 @@ public class ScreenshotGalleryService : IScreenshotGalleryService
             dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
         }
 
-        if (!Directory.Exists(dir))
+        if (WritableDirectory.TryPrepare(dir))
         {
-            Directory.CreateDirectory(dir);
+            IsUsingFallbackDirectory = false;
+            return dir;
         }
 
-        return dir;
+        // Thư mục đã chọn bị chặn ghi (thường do Controlled folder access) -> vẫn lưu được ảnh ở thư mục dự phòng
+        Directory.CreateDirectory(_fallbackDirectory);
+        IsUsingFallbackDirectory = true;
+        return _fallbackDirectory;
     }
+
+    /// <inheritdoc />
+    public bool IsUsingFallbackDirectory { get; private set; }
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<GalleryItem>> GetSavedScreenshotsAsync()

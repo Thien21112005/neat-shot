@@ -344,7 +344,29 @@ public partial class App : Application
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở thư mục ảnh: {ex.Message}");
+            ToastWindow.Show("Không mở được thư mục ảnh", ex.Message, ToastKind.Warning);
         }
+    }
+
+    /// <summary>
+    /// Báo đã sao chép/lưu ảnh. Nếu thư mục đã chọn bị Windows chặn ghi (Controlled folder access) và ảnh
+    /// phải lưu sang thư mục dự phòng, cảnh báo kèm cách khắc phục thay vì báo thành công bình thường.
+    /// </summary>
+    private static void NotifyCaptureStored(string message, string? savedPath)
+    {
+        var usedFallback = !string.IsNullOrEmpty(savedPath)
+            && Services.GetRequiredService<IScreenshotGalleryService>().IsUsingFallbackDirectory;
+
+        if (usedFallback)
+        {
+            ToastWindow.Show(
+                $"{message} · Windows đang chặn lưu vào thư mục ảnh",
+                $"Ảnh được lưu ở {System.IO.Path.GetDirectoryName(savedPath)}. Cho phép NeatShot trong Windows Security → Ransomware protection, hoặc đổi thư mục trong Cài đặt.",
+                ToastKind.Warning);
+            return;
+        }
+
+        ToastWindow.Show(message, ToastWindow.DescribeSavedLocation(savedPath));
     }
 
     private CountdownWindow? _activeCountdown;
@@ -406,7 +428,8 @@ public partial class App : Application
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
-            _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
+            _activeOverlayWindow.CaptureCopied += (s, savedPath) => NotifyCaptureStored("Đã sao chép vào Clipboard", savedPath);
+            _activeOverlayWindow.CaptureSaved += (s, savedPath) => NotifyCaptureStored("Đã lưu ảnh", savedPath);
             var preselect = repeatLastRegion
                 ? Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion
                 : null;

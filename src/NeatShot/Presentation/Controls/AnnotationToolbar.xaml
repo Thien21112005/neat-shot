@@ -867,7 +867,7 @@
                 <Border Style="{StaticResource BarSeparatorV}" />
 
                 <Button x:Name="SaveButton" Width="32" Style="{StaticResource ToolButtonStyle}"
-                        ToolTip="Lưu file PNG (Ctrl + S)"
+                        ToolTip="Lưu vào thư mục ảnh (Ctrl + S) · Shift + click hoặc Ctrl + Shift + S để chọn nơi lưu"
                         Click="OnSaveClick">
                     <Viewbox Style="{StaticResource IconBoxStyle}"><Path Style="{StaticResource IconPathStyle}" Data="{StaticResource IconSave}" /></Viewbox>
                 </Button>

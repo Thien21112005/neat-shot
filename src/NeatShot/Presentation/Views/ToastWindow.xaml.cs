@@ -20,11 +20,17 @@ public enum ToastKind
 public partial class ToastWindow : Window
 {
     private static readonly TimeSpan VisibleDuration = TimeSpan.FromSeconds(2.4);
+    // Cảnh báo thường kèm hướng dẫn -> cần đủ thời gian để đọc
+    private static readonly TimeSpan WarningVisibleDuration = TimeSpan.FromSeconds(7);
     private static readonly TimeSpan FadeDuration = TimeSpan.FromMilliseconds(220);
+
+    private readonly TimeSpan _visibleDuration;
 
     public ToastWindow(string message, string? detail, ToastKind kind = ToastKind.Success)
     {
         InitializeComponent();
+
+        _visibleDuration = kind == ToastKind.Warning ? WarningVisibleDuration : VisibleDuration;
 
         SuccessIcon.Visibility = kind == ToastKind.Success ? Visibility.Visible : Visibility.Collapsed;
         WarningIcon.Visibility = kind == ToastKind.Warning ? Visibility.Visible : Visibility.Collapsed;
@@ -32,14 +38,6 @@ public partial class ToastWindow : Window
         MessageText.Text = message;
         DetailText.Text = detail ?? string.Empty;
         DetailText.Visibility = string.IsNullOrWhiteSpace(detail) ? Visibility.Collapsed : Visibility.Visible;
-    }
-
-    /// <summary>
-    /// Hiển thị toast "Đã sao chép" sau khi chụp, kèm nơi ảnh đã được lưu (nếu có).
-    /// </summary>
-    public static void ShowCopied(string? savedPath)
-    {
-        new ToastWindow("Đã sao chép vào Clipboard", DescribeSavedLocation(savedPath)).ShowNearTaskbar();
     }
 
     /// <summary>
@@ -83,7 +81,7 @@ public partial class ToastWindow : Window
 
         BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, FadeDuration));
 
-        var timer = new DispatcherTimer { Interval = VisibleDuration };
+        var timer = new DispatcherTimer { Interval = _visibleDuration };
         timer.Tick += (_, _) =>
         {
             timer.Stop();
