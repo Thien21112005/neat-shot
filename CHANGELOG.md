@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   start-with-Windows uses a Windows startup task (manageable in *Settings → Apps → Startup*).
 - **Privacy policy** page (`site/privacy.html`, EN/VI) and a GitHub Pages workflow that publishes the site.
 - **App icon:** the exe, tray and Store package now use the NeatShot logo instead of a generic camera.
+- **English interface:** every screen is available in Vietnamese (default) or English; switch in *Settings → General → Language*.
+- **Full annotation toolbar on pinned captures:** same icons and tools as the capture screen (highlighter, ellipse, line,
+  pixelate, blur, redo added), floating below the pin, with tool letters and `Ctrl + Z` / `Ctrl + Y` shortcuts.
 - **Settings window** (tray → *Cài đặt…*): configurable capture hotkeys that apply instantly (keeps the old key and warns
   when another app owns the new one), save folder, PNG/JPG with quality, auto-save to the gallery, start with Windows,
   and "copy as soon as the selection is released".

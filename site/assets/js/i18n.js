@@ -37,6 +37,7 @@ export const VI = {
   pClip: 'Ghim ảnh từ Clipboard', kPinClip: 'Ghim ảnh trong Clipboard', kRepeat: 'Chụp lại vùng vừa chụp',
   fDelayT: 'Chụp được cả menu và tooltip', fDelayD: 'Bắt đầu đếm ngược 3, 5 hoặc 10 giây, mở menu cần chụp, NeatShot chụp mà không làm menu biến mất.', fDelayM: 'Khay hệ thống → Chụp hẹn giờ · Esc để huỷ',
   fRepeatT: 'Đúng vùng cũ, một phím bấm', fRepeatD: 'Cần so sánh trước/sau? Ctrl + Shift + R mở màn hình chụp với vùng lần trước đã chọn sẵn.',
+  fLangT: 'Tiếng Việt hoặc English', fLangD: 'Mọi menu, thanh công cụ và hộp thoại đều có hai ngôn ngữ. Mặc định Tiếng Việt, đổi sang English chỉ một cú click.', fLangM: 'Cài đặt → Chung → Ngôn ngữ',
   eyPriv: 'Quyền riêng tư & mã nguồn mở', privTitle: 'Không gì rời khỏi máy bạn.', privLead: 'NeatShot không gửi bất kỳ yêu cầu mạng nào. Ảnh chụp, chữ và cài đặt của bạn ở yên trên máy này.',
   f1t: 'Hoàn toàn offline', f1d: 'OCR chạy bằng chính Windows. Không tải lên thứ gì.',
   f2t: 'Không cần tài khoản', f2d: 'Tải về, giải nén, nhấn Ctrl + Shift + A.',

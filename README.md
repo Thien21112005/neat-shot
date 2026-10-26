@@ -69,12 +69,13 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - Copy to clipboard, save as PNG or JPG, or **pin** the capture as an always-on-top floating window.
 - Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
 - **Pin from the clipboard** (`F3`): pin any image you copied from a browser, chat app, Figma or Explorer — no capture needed.
-- **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
+- **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, copy the annotated result, and keep as many pins open as you need. Click a pin to annotate it with the same tools as the capture screen (pen, highlighter, shapes, lines, arrows, text, steps, pixelate, blur, undo/redo); the toolbar floats just below the pin so small pins stay uncovered.
 - **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
 
 **Everyday**
-- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, "copy as soon as I release the mouse" for one-step captures, and a light, dark or system theme.
+- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, "copy as soon as I release the mouse" for one-step captures, a light, dark or system theme, and the interface language.
+- **Vietnamese or English interface:** Vietnamese by default; switch to English in *Settings → General → Language*.
 
 ### Keyboard Shortcuts
 
@@ -95,6 +96,8 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Pin | Mouse wheel / `+` `-` / `Ctrl + 0` | Zoom in, zoom out, reset |
 | Pin | `Ctrl + wheel` | Change opacity |
 | Pin | `P` / `Ctrl + P` | Show or hide the annotation toolbar |
+| Pin | `V` `H` `R` `E` `L` `A` `T` `N` `X` `B` | Pick a tool while the toolbar is open (select, highlighter, rectangle, ellipse, line, arrow, text, steps, pixelate, blur) |
+| Pin | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Pin | `Ctrl + C` | Copy the pinned image, including annotations |
 | Pin | `Esc` | Hide the controls; press again to close the pin |
 | Gallery | `F5` / `Esc` | Refresh / Close |
@@ -228,12 +231,13 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - Sao chép vào Clipboard, lưu PNG hoặc JPG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
 - Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
 - **Ghim ảnh từ Clipboard** (`F3`): ghim bất kỳ ảnh nào bạn vừa copy từ trình duyệt, Zalo, Figma hay Explorer — không cần chụp.
-- **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
+- **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, sao chép cả ảnh lẫn chú thích. Click vào ảnh ghim để vẽ chú thích với đủ công cụ như màn hình chụp (bút, dạ quang, khung, đường kẻ, mũi tên, chữ, đánh số, làm vỡ điểm ảnh, làm mờ, hoàn tác/làm lại); thanh công cụ nổi ngay dưới ảnh nên ảnh nhỏ không bị che. Ghim được nhiều ảnh cùng lúc.
 - **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
 
 **Dùng hằng ngày**
-- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác, và giao diện sáng, tối hoặc theo hệ thống.
+- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác, giao diện sáng, tối hoặc theo hệ thống, và ngôn ngữ.
+- **Giao diện Tiếng Việt hoặc English:** mặc định Tiếng Việt; đổi sang English trong *Cài đặt → Chung → Ngôn ngữ*.
 
 ### Phím tắt
 
@@ -254,6 +258,8 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Ảnh ghim | Lăn chuột / `+` `-` / `Ctrl + 0` | Phóng to, thu nhỏ, về 100% |
 | Ảnh ghim | `Ctrl + lăn chuột` | Chỉnh độ trong suốt |
 | Ảnh ghim | `P` / `Ctrl + P` | Bật/tắt thanh công cụ vẽ |
+| Ảnh ghim | `V` `H` `R` `E` `L` `A` `T` `N` `X` `B` | Chọn công cụ khi thanh vẽ đang mở (chọn, dạ quang, khung, elip, đường thẳng, mũi tên, chữ, đánh số, làm vỡ điểm ảnh, làm mờ) |
+| Ảnh ghim | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Ảnh ghim | `Ctrl + C` | Sao chép ảnh ghim (kèm chú thích) |
 | Ảnh ghim | `Esc` | Ẩn thanh điều khiển; bấm lần nữa để đóng ảnh ghim |
 | Thư viện | `F5` / `Esc` | Làm mới / Đóng |

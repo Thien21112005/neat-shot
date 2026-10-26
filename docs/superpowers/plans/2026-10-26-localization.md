@@ -24,7 +24,7 @@ Cài đặt → Chung → Ngôn ngữ.
        cửa sổ ghim, thư viện, cài đặt, hotkey box, countdown, toast, thông báo lỗi trong SettingsViewModel.
 3. [x] Cài đặt: lựa chọn "Ngôn ngữ / Language" (Tiếng Việt | English), lưu `AppSettings.Language`.
 4. [x] App: áp dụng ngôn ngữ khi khởi động và sau khi lưu; dựng lại menu khay.
-5. [ ] Gói MSIX khai báo thêm `en-US`; README, CHANGELOG, landing page.
+5. [x] Gói MSIX khai báo thêm `en-US`; README, CHANGELOG, landing page.
 
 ## Tiêu chí hoàn thành
 - Test bao phủ khóa xanh; toàn bộ test suite xanh.
