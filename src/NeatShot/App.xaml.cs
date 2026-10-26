@@ -72,6 +72,7 @@ public partial class App : Application
         services.AddSingleton<IScreenshotGalleryService, ScreenshotGalleryService>();
         services.AddSingleton<IStartupService, WindowsStartupService>();
         services.AddSingleton<IAppHotkeyManager, AppHotkeyManager>();
+        services.AddSingleton<IWindowRegionService, WindowRegionService>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();
@@ -321,16 +322,35 @@ public partial class App : Application
             var captureService = Services.GetRequiredService<IScreenCaptureService>();
             var capturedScreen = await captureService.CaptureCleanScreenAsync();
             var virtualBounds = captureService.GetVirtualScreenBounds();
+            var windowRegions = DetectWindowRegions(capturedScreen);
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
             _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
-            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen);
+            _activeOverlayWindow.Display(virtualBounds, capturedScreen, selectFullScreen, windowRegions);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[NeatShot] Lỗi chụp màn hình: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"Lỗi chụp màn hình: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Liệt kê cửa sổ đang mở (trước khi overlay che màn hình) để rê chuột là viền sẵn cửa sổ.
+    /// </summary>
+    private static IReadOnlyList<Core.Models.WindowRegion> DetectWindowRegions(System.Windows.Media.Imaging.BitmapSource capturedScreen)
+    {
+        try
+        {
+            var scaleX = capturedScreen.DpiX > 0 ? capturedScreen.DpiX / 96.0 : 1.0;
+            var scaleY = capturedScreen.DpiY > 0 ? capturedScreen.DpiY / 96.0 : 1.0;
+            return Services.GetRequiredService<IWindowRegionService>().GetOverlayRegions(scaleX, scaleY);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Không liệt kê được cửa sổ: {ex.Message}");
+            return Array.Empty<Core.Models.WindowRegion>();
         }
     }
 

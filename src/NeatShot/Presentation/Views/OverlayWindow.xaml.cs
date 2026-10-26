@@ -576,8 +576,11 @@ public partial class OverlayWindow : Window
         }
     }
 
-    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false)
+    public void Display(Rect virtualBounds, BitmapSource frozenScreen, bool selectFullScreen = false,
+        IReadOnlyList<WindowRegion>? windowRegions = null)
     {
+        SetWindowRegions(windowRegions ?? Array.Empty<WindowRegion>());
+
         Left = virtualBounds.Left;
         Top = virtualBounds.Top;
         Width = virtualBounds.Width;
@@ -595,6 +598,17 @@ public partial class OverlayWindow : Window
         {
             SelectFullScreen(virtualBounds);
         }
+    }
+
+    /// <summary>
+    /// Danh sách cửa sổ (toạ độ overlay) để viền sẵn khi rê chuột; click một lần sẽ chọn đúng cửa sổ đó.
+    /// </summary>
+    public void SetWindowRegions(IReadOnlyList<WindowRegion> windowRegions)
+    {
+        ArgumentNullException.ThrowIfNull(windowRegions);
+        SelectionControl.HoverRegionProvider = windowRegions.Count == 0
+            ? null
+            : point => WindowHitTester.Find(windowRegions, point);
     }
 
     /// <summary>

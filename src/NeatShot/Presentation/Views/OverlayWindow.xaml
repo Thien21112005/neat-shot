@@ -54,7 +54,7 @@
                     CornerRadius="6"
                     Padding="12,8">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Màn hình đã đóng băng · Kéo để chọn vùng"
+                    <TextBlock Text="Kéo để chọn vùng · Click để chọn cửa sổ"
                                FontFamily="Consolas"
                                FontSize="12"
                                Foreground="#E8EAED" />
