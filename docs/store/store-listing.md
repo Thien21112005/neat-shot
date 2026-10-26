@@ -94,7 +94,8 @@ QUYỀN RIÊNG TƯ
 NeatShot không kết nối mạng, không có quảng cáo, không thu thập dữ liệu. Ảnh và cài đặt chỉ nằm trên máy của bạn. Mã nguồn mở (MIT) trên GitHub.
 ```
 
-**What's new in this version** (1.1.0):
+**What's new in this version**: để trống ở lần nộp đầu tiên (Partner Center ghi "Leave blank if this is the first submission").
+Dùng khối dưới cho bản cập nhật sau:
 
 ```
 • Cửa sổ Cài đặt: đổi phím tắt, thư mục lưu, PNG/JPG, tự copy khi chụp
@@ -120,19 +121,25 @@ Tuỳ chỉnh phím tắt, thư mục lưu, PNG/JPG
 Không kết nối mạng, không quảng cáo, mã nguồn mở
 ```
 
-**Search terms** (tối đa 7):
+**Short description** (Supplemental fields, ≤ 270 ký tự):
+
+```
+Chụp màn hình, chú thích, ghim ảnh và trích xuất chữ offline — gọn nhẹ, không tài khoản, không quảng cáo.
+```
+
+**Keywords** (tối đa 7, không dùng tên sản phẩm của hãng khác như "lightshot", "snipping tool"):
 
 ```
 chụp màn hình
 screenshot
-snipping tool
+screen capture
 OCR
 chú thích ảnh
-pin screenshot
-lightshot
+ghim ảnh
+trích xuất chữ
 ```
 
-> Lưu ý: nếu Store từ chối từ khoá "lightshot" / "snipping tool" (tên sản phẩm khác), thay bằng "screen capture" và "annotate".
+**Copyright and trademark info**: `© 2026 Nguyễn Ngọc Thiện` · **Developed by**: để trống (Store tự hiện tên nhà phát hành).
 
 ---
 
@@ -169,7 +176,7 @@ PRIVACY
 NeatShot makes no network connections, shows no ads and collects no data. Screenshots and settings stay on your PC. Open source (MIT) on GitHub.
 ```
 
-**What's new in this version** (1.1.0):
+**What's new in this version**: leave blank on the first submission; use this block for later updates:
 
 ```
 • Settings window: hotkeys, save folder, PNG/JPG, copy on capture
@@ -195,17 +202,25 @@ Custom hotkeys, save folder and PNG/JPG
 No network, no ads, open source
 ```
 
-**Search terms**:
+**Short description**:
+
+```
+Capture, annotate, pin and extract text offline — lightweight, no account, no ads.
+```
+
+**Keywords**:
 
 ```
 screenshot
 screen capture
-snipping tool
 OCR
 annotate
 pin screenshot
-lightshot
+extract text
+image markup
 ```
+
+**Copyright and trademark info**: `© 2026 Nguyễn Ngọc Thiện` · **Developed by**: leave blank.
 
 ---
 
@@ -213,7 +228,9 @@ lightshot
 
 | Hạng mục | Kích thước | File |
 |---|---|---|
-| Store logo (1:1) | 300 × 300 | `docs/store/StoreLogo-300.png` (sinh bởi `scripts/generate-icons.py`) |
+| 9:16 Poster art | 1440 × 2160 | `docs/store/PosterArt-1440x2160.png` |
+| 1:1 Box art | 2160 × 2160 | `docs/store/BoxArt-2160x2160.png` |
+| 1:1 App tile icon | 300 × 300 | `docs/store/StoreLogo-300.png` (sinh bởi `scripts/generate-icons.py`) |
 | Screenshots (Desktop) | 1920 × 1080 PNG | `docs/store/screenshots/` — 5 ảnh × 2 ngôn ngữ, tải theo đúng thứ tự dưới |
 
 Bộ ảnh dựng từ các cảnh demo của landing page, kèm thanh công cụ, thanh vẽ ảnh ghim, thẻ OCR và cửa sổ Cài đặt
