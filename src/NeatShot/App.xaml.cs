@@ -55,8 +55,7 @@ public partial class App : Application
         Console.WriteLine("  NeatShot - Chụp màn hình thông minh");
         Console.WriteLine("  Trạng thái: Đang chạy ngầm trong khay hệ thống (System Tray)");
         Console.WriteLine($"  Phím tắt chụp: {activeHotkey}");
-        Console.WriteLine("  * Mẹo: Nếu phím PrintScreen bị Windows Snipping Tool chặn,");
-        Console.WriteLine("    hãy nhấn Ctrl + Shift + A hoặc click icon NeatShot ở khay hệ thống.");
+        Console.WriteLine("  * Mẹo: Đổi phím tắt trong menu khay → Cài đặt…");
         Console.WriteLine("==================================================");
         Console.WriteLine();
     }
@@ -72,23 +71,26 @@ public partial class App : Application
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IScreenshotGalleryService, ScreenshotGalleryService>();
         services.AddSingleton<IStartupService, WindowsStartupService>();
+        services.AddSingleton<IAppHotkeyManager, AppHotkeyManager>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();
         services.AddTransient<PinViewModel>();
         services.AddTransient<GalleryViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         // Views
         services.AddTransient<OverlayWindow>();
         services.AddTransient<PinWindow>();
         services.AddTransient<GalleryWindow>();
+        services.AddTransient<SettingsWindow>();
     }
 
     private void InitializeTrayIcon()
     {
         _trayContextMenu = new ContextMenu();
 
-        var captureItem = new MenuItem { Header = "Chụp vùng chọn (Ctrl+Shift+A / PrtSc)" };
+        var captureItem = new MenuItem { Header = "Chụp vùng chọn" };
         captureItem.Click += (s, e) => TriggerCapture();
         _trayContextMenu.Items.Add(captureItem);
 
@@ -117,7 +119,19 @@ public partial class App : Application
         startupItem.Click += (s, e) => SetLaunchAtStartup(startupItem.IsChecked);
         _trayContextMenu.Items.Add(startupItem);
 
+        var settingsItem = new MenuItem { Header = "⚙️ Cài đặt…" };
+        settingsItem.Click += (s, e) => OpenSettings();
+        _trayContextMenu.Items.Add(settingsItem);
+
         _trayContextMenu.Items.Add(new Separator());
+
+        // Menu luôn hiển thị phím tắt & trạng thái mới nhất (có thể vừa đổi trong cửa sổ Cài đặt)
+        _trayContextMenu.Opened += (s, e) =>
+        {
+            var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
+            captureItem.InputGestureText = hotkeys.GetActiveGesture(HotkeyAction.Capture)?.DisplayText ?? string.Empty;
+            startupItem.IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled();
+        };
 
         var exitItem = new MenuItem { Header = "Thoát" };
         exitItem.Click += (s, e) => Shutdown();
@@ -136,26 +150,45 @@ public partial class App : Application
         };
     }
 
+    /// <summary>
+    /// Đăng ký phím tắt toàn cục theo cài đặt của người dùng (đổi được trong cửa sổ Cài đặt, có hiệu lực ngay).
+    /// </summary>
     private string InitializeGlobalHotkeys()
     {
-        var hotkeyService = Services.GetRequiredService<IHotkeyService>();
-        hotkeyService.HotkeyPressed += (s, e) => TriggerCapture();
+        var hotkeys = Services.GetRequiredService<IAppHotkeyManager>();
+        hotkeys.SetHandler(HotkeyAction.Capture, () => TriggerCapture());
+        hotkeys.SetHandler(HotkeyAction.CaptureAlternate, () => TriggerCapture());
+        hotkeys.Apply(Services.GetRequiredService<ISettingsService>().CurrentSettings);
 
-        var activeKeys = new List<string>();
-
-        // 1. Đăng ký phím tắt chính Ctrl + Shift + A (không bao giờ bị Windows 11 chặn)
-        if (hotkeyService.Register(Key.A, ModifierKeys.Control | ModifierKeys.Shift))
-        {
-            activeKeys.Add("Ctrl + Shift + A");
-        }
-
-        // 2. Đăng ký phím PrintScreen truyền thống
-        if (hotkeyService.Register(Key.PrintScreen, ModifierKeys.None))
-        {
-            activeKeys.Add("PrintScreen");
-        }
+        var activeKeys = new[] { HotkeyAction.Capture, HotkeyAction.CaptureAlternate }
+            .Select(action => hotkeys.GetActiveGesture(action)?.DisplayText)
+            .Where(text => text != null)
+            .ToList();
 
         return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
+    }
+
+    private SettingsWindow? _activeSettingsWindow;
+
+    private void OpenSettings()
+    {
+        try
+        {
+            if (_activeSettingsWindow != null && _activeSettingsWindow.IsLoaded)
+            {
+                _activeSettingsWindow.Activate();
+                return;
+            }
+
+            _activeSettingsWindow = Services.GetRequiredService<SettingsWindow>();
+            _activeSettingsWindow.Closed += (s, e) => _activeSettingsWindow = null;
+            _activeSettingsWindow.Show();
+            _activeSettingsWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở cửa sổ cài đặt: {ex.Message}");
+        }
     }
 
 #if DEBUG

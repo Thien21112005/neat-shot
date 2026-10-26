@@ -46,6 +46,15 @@ public partial class OverlayWindow : Window
         ViewModel.RequestClose += (s, e) => Close();
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
+        SelectionControl.SelectionCompleted += (s, e) =>
+        {
+            // Chế độ "Sao chép ngay khi thả chuột": bỏ qua bước chỉnh sửa, giống chụp nhanh
+            if (_settingsService?.CurrentSettings.AutoCopyOnCapture == true)
+            {
+                _ = ExecuteCopyAsync();
+            }
+        };
+
         SelectionControl.RegionMoved += (s, delta) =>
         {
             _isToolbarManuallyPositioned = false;
@@ -214,12 +223,14 @@ public partial class OverlayWindow : Window
                 ? defaultDir
                 : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
+            var preferredExtension = ImageEncoderFactory.ExtensionFor(_settingsService?.CurrentSettings.ImageFormat);
             var dialog = new SaveFileDialog
             {
                 Title = "Lưu ảnh chụp màn hình NeatShot",
-                Filter = "PNG Image (*.png)|*.png",
-                DefaultExt = ".png",
-                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}.png",
+                Filter = "Ảnh PNG (*.png)|*.png|Ảnh JPG (*.jpg)|*.jpg",
+                FilterIndex = preferredExtension == ".jpg" ? 2 : 1,
+                DefaultExt = preferredExtension,
+                FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}{preferredExtension}",
                 InitialDirectory = initialDir
             };
 
@@ -293,6 +304,7 @@ public partial class OverlayWindow : Window
     private async Task<string?> SaveToGalleryAsync(BitmapSource image)
     {
         if (_galleryService == null) return null;
+        if (_settingsService?.CurrentSettings.AutoSaveToGallery == false) return null;
 
         try
         {

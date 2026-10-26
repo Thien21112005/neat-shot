@@ -29,6 +29,11 @@ public partial class SelectionCanvas : UserControl
 
     public event EventHandler<Point>? RegionMoved;
 
+    /// <summary>
+    /// Phát ra khi người dùng thả chuột sau khi kéo xong một vùng chọn hợp lệ.
+    /// </summary>
+    public event EventHandler? SelectionCompleted;
+
     public static readonly DependencyProperty SelectedRegionProperty =
         DependencyProperty.Register(
             nameof(SelectedRegion),
@@ -262,12 +267,23 @@ public partial class SelectionCanvas : UserControl
                 }
             }
 
+            var finishedSelecting = _dragMode == DragMode.Select && SelectedRegion.IsValid;
             _dragMode = DragMode.None;
             ReleaseMouseCapture();
             UpdateHoverCursor(e.GetPosition(this));
             e.Handled = true;
+
+            if (finishedSelecting)
+            {
+                NotifySelectionCompleted();
+            }
         }
     }
+
+    /// <summary>
+    /// Báo cho overlay biết người dùng đã chọn xong vùng (dùng cho chế độ tự sao chép).
+    /// </summary>
+    public void NotifySelectionCompleted() => SelectionCompleted?.Invoke(this, EventArgs.Empty);
 
     private void UpdateVisuals(CaptureRegion region)
     {
