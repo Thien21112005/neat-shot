@@ -27,4 +27,10 @@ public class AppSettings
     /// Tự động copy ảnh vào Clipboard sau khi hoàn tất khoanh vùng.
     /// </summary>
     public bool AutoCopyOnCapture { get; set; } = false;
+
+    /// <summary>
+    /// Tự khởi động cùng Windows và chạy nền ở khay hệ thống.
+    /// null = người dùng chưa chọn (bản phát hành mặc định bật, giống Lightshot).
+    /// </summary>
+    public bool? LaunchAtStartup { get; set; }
 }

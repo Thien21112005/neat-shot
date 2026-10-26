@@ -44,6 +44,9 @@ public partial class App : Application
         ConfigureServices(services);
         Services = services.BuildServiceProvider();
 
+        Services.GetRequiredService<ISettingsService>().LoadSettings();
+        ApplyStartupPreference();
+
         InitializeTrayIcon();
         var activeHotkey = InitializeGlobalHotkeys();
 
@@ -68,6 +71,7 @@ public partial class App : Application
         services.AddSingleton<IBeautifyService, BeautifyService>();
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IScreenshotGalleryService, ScreenshotGalleryService>();
+        services.AddSingleton<IStartupService, WindowsStartupService>();
 
         // ViewModels
         services.AddTransient<OverlayViewModel>();
@@ -101,6 +105,17 @@ public partial class App : Application
         var folderItem = new MenuItem { Header = "📁 Mở thư mục ảnh NeatShot" };
         folderItem.Click += (s, e) => OpenScreenshotsFolder();
         _trayContextMenu.Items.Add(folderItem);
+
+        _trayContextMenu.Items.Add(new Separator());
+
+        var startupItem = new MenuItem
+        {
+            Header = "Khởi động cùng Windows",
+            IsCheckable = true,
+            IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled()
+        };
+        startupItem.Click += (s, e) => SetLaunchAtStartup(startupItem.IsChecked);
+        _trayContextMenu.Items.Add(startupItem);
 
         _trayContextMenu.Items.Add(new Separator());
 
@@ -141,6 +156,69 @@ public partial class App : Application
         }
 
         return activeKeys.Count > 0 ? string.Join(" hoặc ", activeKeys) : "Chưa đăng ký (bị chiếm dụng)";
+    }
+
+#if DEBUG
+    private const bool IsDebugBuild = true;
+#else
+    private const bool IsDebugBuild = false;
+#endif
+
+    /// <summary>
+    /// Đồng bộ đăng ký khởi động cùng Windows với lựa chọn của người dùng.
+    /// Lần đầu chạy bản phát hành sẽ tự bật (giống Lightshot); mỗi lần mở app đều cập nhật lại đường dẫn exe.
+    /// </summary>
+    private static void ApplyStartupPreference()
+    {
+        var exePath = Environment.ProcessPath;
+        if (string.IsNullOrEmpty(exePath)) return;
+
+        try
+        {
+            var startup = Services.GetRequiredService<IStartupService>();
+            var choice = Services.GetRequiredService<ISettingsService>().CurrentSettings.LaunchAtStartup;
+
+            if (choice == false)
+            {
+                startup.Disable();
+            }
+            else if (WindowsStartupService.ShouldLaunchAtStartup(choice, IsDebugBuild))
+            {
+                startup.Enable(exePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Không thể cập nhật khởi động cùng Windows: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Người dùng bật/tắt "Khởi động cùng Windows" từ menu khay hệ thống.
+    /// </summary>
+    private static void SetLaunchAtStartup(bool enabled)
+    {
+        var exePath = Environment.ProcessPath;
+        try
+        {
+            var startup = Services.GetRequiredService<IStartupService>();
+            if (enabled && !string.IsNullOrEmpty(exePath))
+            {
+                startup.Enable(exePath);
+            }
+            else
+            {
+                startup.Disable();
+            }
+
+            var settingsService = Services.GetRequiredService<ISettingsService>();
+            settingsService.CurrentSettings.LaunchAtStartup = enabled;
+            settingsService.SaveSettings(settingsService.CurrentSettings);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Không thể đổi khởi động cùng Windows: {ex.Message}");
+        }
     }
 
     private OverlayWindow? _activeOverlayWindow;

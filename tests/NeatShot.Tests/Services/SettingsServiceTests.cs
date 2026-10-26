@@ -165,4 +165,15 @@ public class SettingsServiceTests : IDisposable
         var expectedDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
         Assert.Equal(expectedDir, settings.DefaultSaveDirectory);
     }
+
+    [Fact]
+    public void LaunchAtStartup_IsUndecidedByDefault_AndPersistsTheUsersChoice()
+    {
+        var service = new SettingsService(_settingsFilePath);
+        Assert.Null(service.LoadSettings().LaunchAtStartup);
+
+        service.SaveSettings(new AppSettings { LaunchAtStartup = false });
+
+        Assert.False(new SettingsService(_settingsFilePath).LoadSettings().LaunchAtStartup);
+    }
 }
