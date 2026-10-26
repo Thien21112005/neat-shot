@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>NeatShot — Clean screenshots for Windows</title>
+<meta name="description" content="Free, open-source screenshot tool for Windows 10 and 11. Clean Shot across every monitor, annotate, beautify, pin to screen and extract text offline.">
+<meta name="theme-color" content="#0E0F12">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NeatShot — Clean screenshots for Windows">
+<meta property="og:description" content="Capture, mark up, pin and extract text without leaving the keyboard. Free, MIT, fully offline.">
+<meta property="og:url" content="https://thien21112005.github.io/neat-shot/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NeatShot — Clean screenshots for Windows">
+<meta name="twitter:description" content="Free, open-source screenshot tool for Windows. Fully offline.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230E0F12'/%3E%3Cpath d='M7 12V7h5M20 7h5v5M25 20v5h-5M12 25H7v-5' fill='none' stroke='%230078D4' stroke-width='2.5'/%3E%3Crect x='13' y='13' width='6' height='6' fill='%23E8EAED'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
+<style>
+:root{--bg:#0E0F12;--surface:#16181D;--surface-2:#1E2128;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16);--text:#E8EAED;--muted:#9AA0A6;--accent:#0078D4;--accent-hi:#3B9BEB;--mark-red:#FF3B30;--mark-yellow:#FFCC00;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--sans:"Be Vietnam Pro",system-ui,"Segoe UI",sans-serif}
+*,*::before,*::after{box-sizing:border-box}
+html{background:#0E0F12;scroll-behavior:smooth;scrollbar-gutter:stable}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent-hi);text-decoration:none}a:hover{color:#fff}
+:focus-visible{outline:2px solid var(--accent-hi);outline-offset:3px}
+::selection{background:#0078D4;color:#fff}
+@keyframes ants{to{background-position:8px 0}}
+@keyframes antsv{to{stroke-dashoffset:-20}}
+[data-lang-btn][aria-pressed="true"]{color:#E8EAED!important}
+kbd[data-on]{transform:translateY(2px)!important;box-shadow:0 1px 0 #07080A,0 0 0 1px #0078D4!important;background:#0D2A45!important;color:#fff!important}
+[data-tool][data-on]{border-color:#0078D4!important;background:#1E2128!important;color:#E8EAED!important}
+[data-tool][data-on] [data-h]{opacity:1!important}
+[data-tool][data-on] [data-tdesc]{color:#C9CDD2!important}
+[data-preset][aria-pressed="true"]{border-color:#0078D4!important;color:#E8EAED!important}
+[data-thumb]:hover [data-actions],[data-thumb]:focus-within [data-actions]{opacity:1!important;transform:none!important}
+[data-thumb]:hover [data-h],[data-thumb]:focus-within [data-h]{opacity:1!important}
+@media (max-width:860px){[data-hide-sm]{display:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</helmet>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+<defs>
+<symbol id="i-mark" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3"></path></symbol>
+<symbol id="i-highlighter" viewBox="0 0 24 24"><path d="M15 4l5 5-8 8H8v-4zM4 20h8"></path></symbol>
+<symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1.5"></rect></symbol>
+<symbol id="i-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6.5"></ellipse></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="M5 19L19 5"></path></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M10 5h9v9"></path></symbol>
+<symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6h14M12 6v13M9 19h6"></path></symbol>
+<symbol id="i-step" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M10.5 9.5L12.5 8v8"></path></symbol>
+<symbol id="i-pixel" viewBox="0 0 24 24"><path d="M4 4h5v5H4zM15 4h5v5h-5zM9.5 9.5h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"></path></symbol>
+<symbol id="i-blur" viewBox="0 0 24 24"><path d="M12 3.5c3.2 4.2 6 7.3 6 10.5a6 6 0 0 1-12 0c0-3.2 2.8-6.3 6-10.5zM9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"></path></symbol>
+<symbol id="i-dropper" viewBox="0 0 24 24"><path d="M16.5 4.5a2.1 2.1 0 0 1 3 3L17 10l-3-3zM14 7l-8.5 8.5L5 19l3.5-.5L17 10"></path></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H9.5a5.5 5.5 0 0 0 0 11H13"></path></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3.5h6M10 3.5V9l-3 4h10l-3-4V3.5M12 13v7.5"></path></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"></path></symbol>
+<symbol id="i-ocr" viewBox="0 0 24 24"><path d="M8 4H5v16h3M16 4h3v16h-3M9 8.5h6M12 8.5V16"></path></symbol>
+<symbol id="i-gallery" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"></rect><rect x="13" y="4" width="7" height="7" rx="1.5"></rect><rect x="4" y="13" width="7" height="7" rx="1.5"></rect><rect x="13" y="13" width="7" height="7" rx="1.5"></rect></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5"></path></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"></path></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="M8.5 7l-5 5 5 5M15.5 7l5 5-5 5"></path></symbol>
+<symbol id="i-min" viewBox="0 0 24 24"><path d="M6 12h12"></path></symbol>
+<symbol id="i-max" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"></rect></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></symbol>
+</defs>
+</svg>
+<div id="ns-root" style="background:#0E0F12;color:#E8EAED;font-family:var(--sans);min-height:100vh;overflow-x:clip">
+
+<a href="#main" style="position:absolute;left:12px;top:-60px;z-index:100;background:#0078D4;color:#fff;padding:10px 14px;border-radius:6px" style-focus="top:12px">Skip to content</a>
+
+<header style="position:sticky;top:0;z-index:60;background:rgba(14,15,18,.94);border-bottom:1px solid rgba(255,255,255,.08)">
+<nav aria-label="Primary" style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);height:64px;display:flex;align-items:center;gap:28px">
+<a href="#top" aria-label="NeatShot home" style="display:flex;align-items:center;gap:10px;color:#E8EAED;font-weight:700;font-size:17px;letter-spacing:-.01em">
+<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="fill:none;stroke:#0078D4;stroke-width:2"><use href="#i-mark"></use><rect x="9.5" y="9.5" width="5" height="5" style="fill:#E8EAED;stroke:none"></rect></svg>
+<span>NeatShot</span></a>
+<div data-hide-sm style="display:grid;grid-template-columns:92px 88px 124px 64px;gap:10px;margin-left:12px;font-size:14px;white-space:nowrap">
+<a href="#features" data-i18n="navFeat" style="color:#9AA0A6" style-hover="color:#E8EAED">Features</a>
+<a href="#shortcuts" data-i18n="navKeys" style="color:#9AA0A6" style-hover="color:#E8EAED">Shortcuts</a>
+<a href="#privacy" data-i18n="navPriv" style="color:#9AA0A6" style-hover="color:#E8EAED">Privacy</a>
+<a href="https://github.com/Thien21112005/neat-shot" style="color:#9AA0A6" style-hover="color:#E8EAED">GitHub</a>
+</div>
+<div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+<div role="group" aria-label="Language" style="position:relative;display:flex;border:1px solid rgba(255,255,255,.16);border-radius:7px;padding:2px;gap:2px;flex:none">
+<span id="lang-ind" aria-hidden="true" style="position:absolute;left:2px;top:2px;width:36px;height:calc(100% - 4px);background:#2A2E37;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(0,120,212,.6);transition:transform .35s cubic-bezier(.2,.8,.2,1)"></span>
+<button type="button" data-lang-btn="en" aria-pressed="true" style="position:relative;width:36px;font:500 12px/1 var(--mono);color:#9AA0A6;background:transparent;border:0;border-radius:5px;padding:7px 0;cursor:pointer;transition:color .25s">EN</button>
+<button type="button" data-lang-btn="vi" aria-pressed="false" style="position:relative;width:36px;font:500 12px/1 var(--mono);color:#9AA0A6;background:transparent;border:0;border-radius:5px;padding:7px 0;cursor:pointer;transition:color .25s">VI</button>
+</div>
+<a href="https://github.com/Thien21112005/neat-shot/releases/latest" style="display:flex;align-items:center;justify-content:center;gap:8px;width:124px;background:#0078D4;color:#fff;font-size:14px;font-weight:600;padding:9px 0;border-radius:7px;white-space:nowrap;flex:none" style-hover="background:#1A86DC;color:#fff">
+<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-save"></use></svg><span data-i18n="navDl">Download</span></a>
+</div>
+</nav>
+</header>
+
+<main id="main">
+<section id="top" aria-labelledby="hero-title" style="max-width:1440px;margin:0 auto;padding:clamp(48px,7vw,104px) clamp(20px,4vw,56px) clamp(64px,8vw,120px)">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(28px,4vw,72px);align-items:end">
+<div>
+<p style="display:flex;align-items:center;gap:10px;margin:0 0 28px;font:500 12px/1 var(--mono);color:#9AA0A6;letter-spacing:.04em"><span style="width:7px;height:7px;background:#0078D4"></span><span data-i18n="heroEyebrow">v1.0.0 · Free &amp; open source · Windows 10 / 11</span></p>
+<h1 id="hero-title" style="margin:0;font-size:clamp(40px,5.6vw,84px);line-height:1.02;letter-spacing:-.035em;font-weight:700;max-width:15ch"><span data-split data-i18n="h1a" style="display:block">Clean screenshots on every monitor.</span><span data-split data-i18n="h1b" style="display:block;color:#9AA0A6">Annotated in seconds.</span></h1>
+</div>
+<div style="max-width:54ch">
+<p data-i18n="heroSub" style="margin:0;font-size:18px;line-height:1.65;color:#B4B9BF;text-wrap:pretty">A free, open-source screenshot tool for Windows that stays out of your way — capture, mark up, pin and extract text without leaving the keyboard.</p>
+<div style="display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-start;margin-top:30px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<a data-magnetic href="https://github.com/Thien21112005/neat-shot/releases/latest" style="display:inline-flex;align-items:center;gap:10px;background:#0078D4;color:#fff;font-size:16px;font-weight:600;padding:15px 22px;border-radius:8px;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset" style-hover="background:#1A86DC;color:#fff">
+<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-save"></use></svg><span data-i18n="ctaDl">Download for Windows</span></a>
+<span data-i18n="ctaMeta" style="font:400 12px/1 var(--mono);color:#9AA0A6;padding-left:2px">v1.0.0 · 64 MB · no install</span>
+</div>
+<a href="https://github.com/Thien21112005/neat-shot" style="display:inline-flex;align-items:center;gap:10px;color:#E8EAED;font-size:16px;font-weight:500;padding:14px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.16)" style-hover="border-color:#0078D4;color:#fff">
+<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-code"></use></svg><span data-i18n="ctaSrc">View source on GitHub</span></a>
+</div>
+</div>
+</div>
+
+<div style="margin-top:clamp(40px,6vw,80px)">
+<div id="hero-fit" data-fit="1200" role="img" aria-label="Animated demo: a selection is dragged over a bug report, an arrow and step badges are added, an email is pixelated, and the shot is copied to the clipboard." style="position:relative;width:100%;aspect-ratio:1200/640;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;cursor:crosshair;background:#181B21">
+<div data-stage style="position:absolute;left:0;top:0;width:1200px;height:640px;transform-origin:0 0;background:linear-gradient(160deg,#20252F 0%,#161A20 55%,#111317 100%)">
+
+<div style="position:absolute;left:770px;top:92px;width:380px;height:360px;background:#1E2128;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;z-index:1">
+<div style="height:40px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:600;color:#E8EAED;border-bottom:1px solid rgba(255,255,255,.06)"># release-v1</div>
+<div style="display:flex;flex-direction:column;gap:16px;padding:16px 16px 0 50px;font-size:13px;line-height:1.5;color:#C9CDD2">
+<div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#5A7A9E;color:#fff;font:600 11px/26px var(--sans);text-align:center">HM</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Hà My</div>Checkout breaks on the 150% screen again.</div>
+<div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#7E6A4F;color:#fff;font:600 11px/26px var(--sans);text-align:center">Q</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Quang</div>Grab it with Ctrl + Shift + A and mark the button?</div>
+<div style="position:relative"><span style="position:absolute;left:-36px;top:2px;width:26px;height:26px;border-radius:50%;background:#5A7A9E;color:#fff;font:600 11px/26px var(--sans);text-align:center">HM</span><div style="font-size:12px;font-weight:600;color:#E8EAED">Hà My</div>Sending in a sec.</div>
+</div>
+<div style="position:absolute;left:12px;right:12px;bottom:12px;height:36px;background:#16181D;border-radius:6px;padding:0 12px;font:12px/36px var(--sans);color:#7A8089">Message #release-v1</div>
+</div>
+
+<div style="position:absolute;left:96px;top:44px;width:700px;height:536px;background:#F6F7F9;border-radius:8px;overflow:hidden;z-index:2;box-shadow:0 24px 60px rgba(0,0,0,.45);color:#1B1F24">
+<div style="height:34px;background:#E9ECEF;border-bottom:1px solid #D9DDE2;display:flex;align-items:center;padding-left:14px;font-size:12px;color:#4A525C">
+<span>Tracker — Issue #482</span>
+<span style="margin-left:auto;display:flex;color:#4A525C">
+<span style="width:44px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.5"><use href="#i-min"></use></svg></span>
+<span style="width:44px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.5"><use href="#i-max"></use></svg></span>
+<span style="width:44px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.5"><use href="#i-x"></use></svg></span>
+</span></div>
+<div style="position:absolute;left:0;top:34px;width:150px;bottom:0;background:#EEF0F3;border-right:1px solid #E1E4E8;padding:16px 8px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#4A525C">
+<span style="padding:7px 10px">Inbox</span><span style="padding:7px 10px;background:#DFE4EA;border-radius:5px;font-weight:600;color:#1B1F24">Issues</span><span style="padding:7px 10px">Releases</span><span style="padding:7px 10px">Settings</span>
+</div>
+<div style="position:absolute;left:186px;top:50px;font-size:17px;font-weight:700;letter-spacing:-.01em">Checkout button unresponsive at 150%</div>
+<div style="position:absolute;left:186px;top:76px;font-size:12px;color:#6B7480">#482 · opened by qa-bot · 2 min ago</div>
+<div style="position:absolute;left:186px;top:112px;width:380px;height:204px;background:#fff;border:1px solid #E1E4E8;border-radius:8px">
+<div style="position:absolute;left:18px;top:16px;font-size:11px;font-weight:600;color:#5B6470">Reporter</div>
+<div style="position:absolute;left:18px;top:36px;width:344px;height:34px;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font-size:13px;line-height:32px">linh.tran@acme.dev</div>
+<div style="position:absolute;left:18px;top:82px;font-size:11px;font-weight:600;color:#5B6470">Severity</div>
+<div style="position:absolute;left:18px;top:102px;display:flex;gap:6px;font-size:12px">
+<span style="width:44px;height:26px;border:1px solid #D5D9DF;border-radius:13px;text-align:center;line-height:24px">Low</span>
+<span style="width:64px;height:26px;border:1px solid #D5D9DF;border-radius:13px;text-align:center;line-height:24px">Medium</span>
+<span style="width:48px;height:26px;background:#1B1F24;color:#fff;border-radius:13px;text-align:center;line-height:26px">High</span>
+</div>
+<div style="position:absolute;left:18px;top:162px;font-size:11px;color:#8A929C">Draft saved</div>
+<div style="position:absolute;left:232px;top:152px;width:130px;height:34px;background:#0078D4;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-align:center;line-height:34px">Submit report</div>
+</div>
+<div style="position:absolute;left:590px;top:112px;font-size:11px;font-weight:600;color:#5B6470">Labels</div>
+<div style="position:absolute;left:590px;top:132px;display:flex;flex-direction:column;gap:6px;font-size:11px">
+<span style="padding:3px 8px;background:#FDE7E7;color:#9B1C1C;border-radius:4px">bug</span><span style="padding:3px 8px;background:#E3EEFA;color:#0B4A85;border-radius:4px">dpi</span>
+</div>
+<div style="position:absolute;left:186px;top:418px;font-size:13px;font-weight:600">Steps to reproduce</div>
+<div style="position:absolute;left:186px;top:442px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#3D454F">
+<span>1. Set display scale to 150%</span><span>2. Open the cart and click Checkout</span><span>3. Nothing happens, no error shown</span>
+</div>
+</div>
+
+<div style="position:absolute;left:0;right:0;top:596px;height:44px;background:#101216;border-top:1px solid rgba(255,255,255,.06)">
+<div style="position:absolute;left:50%;top:7px;transform:translateX(-50%);display:flex;gap:6px">
+<span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.14);box-shadow:inset 0 -2px 0 #3B9BEB"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span><span style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.07)"></span>
+</div>
+<div style="position:absolute;right:14px;top:0;height:44px;display:flex;align-items:center;gap:14px;font:11px/1.25 var(--sans);color:#C9CDD2">
+<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#3B9BEB;stroke-width:2.2"><use href="#i-mark"></use></svg>
+<span style="color:#9AA0A6">ENG</span>
+<span style="text-align:right">14:32<br>25/10/2026</span>
+</div>
+</div>
+
+<div id="hero-hint" style="position:absolute;left:50%;top:16px;transform:translateX(-50%);z-index:6;opacity:0;font:500 12px/1 var(--mono);color:#E8EAED;background:rgba(14,15,18,.9);border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:6px;white-space:nowrap">Desktop frozen · drag to select</div>
+
+<div id="hero-sel" style="position:absolute;left:266px;top:140px;width:412px;height:236px;border:1px solid #0078D4;box-shadow:0 0 0 2400px rgba(5,6,8,.58);z-index:5">
+<span style="position:absolute;left:0;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:50%;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:100%;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:0;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:100%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:0;top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:50%;top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<span style="position:absolute;left:100%;top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1px solid #0078D4"></span>
+<div style="position:absolute;left:44px;top:60px;width:140px;display:flex;flex-wrap:wrap">
+<sc-for list="{{ heroCells }}" as="c" hint-placeholder-count="28"><span data-hcell style="width:10px;height:9px;background:{{ c.c }}"></span></sc-for>
+</div>
+<svg viewBox="0 0 412 236" width="412" height="236" aria-hidden="true" style="position:absolute;left:0;top:0;overflow:visible;fill:none;stroke:#FF3B30;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round">
+<path id="hero-arrow" d="M112 214 C 150 222, 200 206, 242 188"></path>
+<path id="hero-head" d="M228.2 186.3 L242 188 L233.8 199.1"></path>
+</svg>
+<span data-hstep style="position:absolute;left:367px;top:41px;width:22px;height:22px;border-radius:50%;background:#FF3B30;color:#fff;font:700 12px/22px var(--sans);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35)">1</span>
+<span data-hstep style="position:absolute;left:191px;top:107px;width:22px;height:22px;border-radius:50%;background:#FF3B30;color:#fff;font:700 12px/22px var(--sans);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35)">2</span>
+</div>
+
+<div id="hero-badge" style="position:absolute;left:266px;top:112px;z-index:6;font:500 12px/1 var(--mono);color:#fff;background:#0078D4;padding:6px 8px;border-radius:4px"><span id="hero-w">412</span> × <span id="hero-h">236</span></div>
+
+<div id="hero-toolbar" style="position:absolute;left:266px;top:388px;z-index:6;display:flex;align-items:center;gap:2px;padding:4px;background:#16181D;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#C9CDD2;box-shadow:0 10px 30px rgba(0,0,0,.45)">
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pencil"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-highlighter"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-rect"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-ellipse"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-line"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center;background:#0078D4;color:#fff;border-radius:5px"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-arrow"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-text"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-step"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pixel"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-blur"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-dropper"></use></svg></span>
+<span style="width:1px;height:20px;background:rgba(255,255,255,.12);margin:0 4px"></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-undo"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-redo"></use></svg></span>
+<span style="width:1px;height:20px;background:rgba(255,255,255,.12);margin:0 4px"></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pin"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-ocr"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-copy"></use></svg></span>
+<span style="width:30px;height:30px;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="17" height="17" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-save"></use></svg></span>
+</div>
+
+<div id="hero-toast" style="position:absolute;right:20px;bottom:60px;z-index:7;display:flex;align-items:center;gap:10px;padding:12px 16px 12px 12px;background:#16181D;border:1px solid rgba(255,255,255,.12);border-radius:8px;font-size:13px;color:#E8EAED;box-shadow:0 12px 30px rgba(0,0,0,.5)">
+<span style="width:22px;height:22px;border-radius:50%;background:#0078D4;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="13" height="13" style="fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><use href="#i-check"></use></svg></span>
+<span>Copied to clipboard · saved to <span style="font-family:var(--mono);font-size:12px;color:#C9CDD2">Pictures\NeatShot</span></span>
+</div>
+
+<div id="hero-cursor" style="position:absolute;left:0;top:0;z-index:8;width:24px;height:24px;margin:-12px 0 0 -12px;transform:translate(678px,376px);opacity:0;pointer-events:none">
+<svg viewBox="0 0 24 24" width="24" height="24" style="fill:none;stroke-linecap:square;overflow:visible"><path d="M12 0v9M12 15v9M0 12h9M15 12h9" style="stroke:#000;stroke-width:3.5"></path><path d="M12 0v9M12 15v9M0 12h9M15 12h9" style="stroke:#fff;stroke-width:1.5"></path></svg>
+</div>
+
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:14px;font:400 12px/1.4 var(--mono);color:#9AA0A6">
+<span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+<kbd data-key="control" style="display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 7px;font:500 11.5px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A;transition:transform .08s,box-shadow .08s">Ctrl</kbd><span>+</span>
+<kbd data-key="shift" style="display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 7px;font:500 11.5px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A;transition:transform .08s,box-shadow .08s">Shift</kbd><span>+</span>
+<kbd data-key="a" style="display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 7px;font:500 11.5px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A;transition:transform .08s,box-shadow .08s">A</kbd>
+<span data-i18n="or" style="margin:0 4px">or</span>
+<kbd data-key="printscreen" style="display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 7px;font:500 11.5px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A;transition:transform .08s,box-shadow .08s">PrtSc</kbd>
+</span>
+<span data-i18n="heroHint">Hover the desktop to replay</span>
+</div>
+</div>
+</section>
+
+<section id="features" aria-labelledby="annoy-title" style="max-width:1440px;margin:0 auto;padding:clamp(64px,8vw,120px) clamp(20px,4vw,56px)">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 36px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">02</span><span data-i18n="eyAnnoy">Before / after</span><span style="flex:1;height:1px;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 4px,transparent 4px 8px);background-size:8px 1px;animation:ants 1.2s linear infinite"></span><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px clamp(28px,4vw,72px);align-items:end;margin-bottom:clamp(40px,5vw,72px)">
+<h2 id="annoy-title" data-i18n="annoyTitle" data-reveal style="margin:0;font-size:clamp(32px,4.2vw,60px);line-height:1.04;letter-spacing:-.03em;font-weight:700;max-width:14ch;text-wrap:balance">The three things that annoy you</h2>
+<p data-i18n="annoyLead" data-reveal style="margin:0;font-size:17px;line-height:1.65;color:#9AA0A6;max-width:52ch;text-wrap:pretty">Most screenshot tools capture pixels and call it done. These are the small failures that make you take the shot again.</p>
+</div>
+
+<div style="display:flex;flex-direction:column">
+
+<div data-annoy="tray" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px clamp(20px,2.4vw,36px);padding:32px 0;border-top:1px solid rgba(255,255,255,.08)">
+<div style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+<span style="font:500 13px/1 var(--mono);color:#3B9BEB">01</span>
+<h3 data-i18n="a1t" style="margin:0;font-size:24px;line-height:1.2;letter-spacing:-.015em;font-weight:600">The tray menu ends up in the shot</h3>
+<p data-i18n="a1d" style="margin:0;font-size:16px;line-height:1.65;color:#9AA0A6;max-width:40ch">Clean Shot closes tray flyouts and popups before capturing, so they never end up in the screenshot.</p>
+</div>
+<figure data-side="before" style="margin:0;background:#16181D;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#9AA0A6;border-bottom:1px solid rgba(255,255,255,.06)"><span data-i18n="lblBefore">Before</span><span>372 × 190</span></figcaption>
+<div data-fit="400" role="img" aria-label="Capture that still contains an open tray menu" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<div style="position:absolute;left:26px;top:22px;width:250px;height:168px;background:#F4F5F7;border-radius:6px;overflow:hidden"><div style="height:20px;background:#E3E6EA"></div><div style="margin:16px;display:flex;flex-direction:column;gap:9px"><span style="width:70%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="width:90%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:55%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:40%;height:22px;background:#0078D4;border-radius:4px;margin-top:10px"></span></div></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:26px;background:#101216"><span style="position:absolute;right:56px;top:9px;width:9px;height:9px;background:#5F6670;border-radius:2px"></span><span style="position:absolute;right:42px;top:9px;width:9px;height:9px;background:#3B9BEB;border-radius:2px"></span><span style="position:absolute;right:10px;top:8px;font:9px/1 var(--mono);color:#9AA0A6">14:32</span></div>
+<div data-menu style="position:absolute;left:236px;top:88px;width:148px;height:112px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px;display:flex;flex-direction:column;font-size:11px;color:#D7DAE0;box-shadow:0 10px 24px rgba(0,0,0,.5)"><span style="padding:5px 8px">Sync now</span><span style="padding:5px 8px;background:rgba(255,255,255,.08);border-radius:4px">Pause syncing</span><span style="padding:5px 8px">Settings</span><span style="padding:5px 8px">Quit</span></div>
+<div style="position:absolute;left:14px;top:12px;width:372px;height:190px;border:1px dashed #3B9BEB"></div>
+<div data-flash style="position:absolute;inset:0;background:#fff;opacity:0"></div>
+</div></div>
+</figure>
+<figure data-side="after" style="margin:0;background:#16181D;border:1px solid rgba(0,120,212,.45);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#E8EAED;border-bottom:1px solid rgba(255,255,255,.06)"><span>NeatShot · Clean Shot</span><span>372 × 190</span></figcaption>
+<div data-fit="400" role="img" aria-label="The same capture with the tray menu closed before capture" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<div style="position:absolute;left:26px;top:22px;width:250px;height:168px;background:#F4F5F7;border-radius:6px;overflow:hidden"><div style="height:20px;background:#E3E6EA"></div><div style="margin:16px;display:flex;flex-direction:column;gap:9px"><span style="width:70%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="width:90%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:55%;height:8px;background:#DDE1E6;border-radius:2px"></span><span style="width:40%;height:22px;background:#0078D4;border-radius:4px;margin-top:10px"></span></div></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:26px;background:#101216"><span style="position:absolute;right:56px;top:9px;width:9px;height:9px;background:#5F6670;border-radius:2px"></span><span style="position:absolute;right:42px;top:9px;width:9px;height:9px;background:#3B9BEB;border-radius:2px"></span><span style="position:absolute;right:10px;top:8px;font:9px/1 var(--mono);color:#9AA0A6">14:32</span></div>
+<div data-menu style="position:absolute;left:236px;top:88px;width:148px;height:112px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px;display:flex;flex-direction:column;font-size:11px;color:#D7DAE0;opacity:0"><span style="padding:5px 8px">Sync now</span><span style="padding:5px 8px">Pause syncing</span><span style="padding:5px 8px">Settings</span><span style="padding:5px 8px">Quit</span></div>
+<div style="position:absolute;left:14px;top:12px;width:372px;height:190px;border:1px solid #0078D4"></div>
+<div data-flash style="position:absolute;inset:0;background:#fff;opacity:0"></div>
+<span data-ok style="position:absolute;left:290px;top:24px;display:flex;align-items:center;gap:5px;font:500 10px/1 var(--mono);color:#fff;background:#0078D4;padding:5px 7px;border-radius:3px"><svg viewBox="0 0 24 24" width="10" height="10" style="fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round"><use href="#i-check"></use></svg>popups closed</span>
+</div></div>
+</figure>
+</div>
+
+<div data-annoy="keys" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px clamp(20px,2.4vw,36px);padding:32px 0;border-top:1px solid rgba(255,255,255,.08)">
+<div style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+<span style="font:500 13px/1 var(--mono);color:#3B9BEB">02</span>
+<h3 data-i18n="a2t" style="margin:0;font-size:24px;line-height:1.2;letter-spacing:-.015em;font-weight:600">Another app hijacked PrtSc</h3>
+<p data-i18n="a2d" style="margin:0;font-size:16px;line-height:1.65;color:#9AA0A6;max-width:40ch">NeatShot listens to PrtSc, and Ctrl + Shift + A always works — even when something else grabs the key first.</p>
+</div>
+<figure data-side="before" style="margin:0;background:#16181D;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#9AA0A6;border-bottom:1px solid rgba(255,255,255,.06)"><span data-i18n="lblBefore">Before</span><span>PrtSc</span></figcaption>
+<div data-fit="400" role="img" aria-label="Pressing PrtSc opens a different app" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<span data-press style="position:absolute;left:150px;top:34px;width:100px;height:56px;display:grid;place-items:center;font:500 18px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">PrtSc</span>
+<div data-pop style="position:absolute;left:86px;top:122px;width:228px;padding:14px 16px;background:#2B2F36;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,.5)">
+<div style="display:flex;justify-content:space-between;font:500 10px/1 var(--mono);color:#9AA0A6"><span>some-other-app.exe</span><svg viewBox="0 0 24 24" width="10" height="10" style="fill:none;stroke:#9AA0A6;stroke-width:2.5"><use href="#i-x"></use></svg></div>
+<div style="margin-top:10px;font-size:13px;color:#E8EAED">Took over Print Screen.</div>
+<div style="margin-top:4px;font-size:11px;color:#9AA0A6">Your capture didn't start.</div>
+</div>
+</div></div>
+</figure>
+<figure data-side="after" style="margin:0;background:#16181D;border:1px solid rgba(0,120,212,.45);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#E8EAED;border-bottom:1px solid rgba(255,255,255,.06)"><span>NeatShot</span><span>Ctrl + Shift + A</span></figcaption>
+<div data-fit="400" role="img" aria-label="Ctrl + Shift + A starts a NeatShot selection" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<div style="position:absolute;left:0;top:34px;width:400px;display:flex;justify-content:center;align-items:center;gap:8px;font:500 14px/1 var(--mono);color:#9AA0A6">
+<span data-press style="width:76px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">Ctrl</span><span>+</span>
+<span data-press style="width:82px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">Shift</span><span>+</span>
+<span data-press style="width:50px;height:50px;display:grid;place-items:center;color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 4px 0 #07080A">A</span>
+</div>
+<div data-pop style="position:absolute;left:96px;top:116px;width:208px;height:96px;border:1px solid #0078D4;box-shadow:0 0 0 400px rgba(5,6,8,.5)">
+<span style="position:absolute;left:-4px;top:-4px;width:7px;height:7px;background:#fff;border:1px solid #0078D4"></span><span style="position:absolute;right:-4px;top:-4px;width:7px;height:7px;background:#fff;border:1px solid #0078D4"></span><span style="position:absolute;left:-4px;bottom:-4px;width:7px;height:7px;background:#fff;border:1px solid #0078D4"></span><span style="position:absolute;right:-4px;bottom:-4px;width:7px;height:7px;background:#fff;border:1px solid #0078D4"></span>
+<span data-ok style="position:absolute;left:-1px;top:-24px;font:500 10px/1 var(--mono);color:#fff;background:#0078D4;padding:5px 7px;border-radius:3px">208 × 96</span>
+</div>
+</div></div>
+</figure>
+</div>
+
+<div data-annoy="dpi" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px clamp(20px,2.4vw,36px);padding:32px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
+<div style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+<span style="font:500 13px/1 var(--mono);color:#3B9BEB">03</span>
+<h3 data-i18n="a3t" style="margin:0;font-size:24px;line-height:1.2;letter-spacing:-.015em;font-weight:600">The selection drifts on a 150% monitor</h3>
+<p data-i18n="a3d" style="margin:0;font-size:16px;line-height:1.65;color:#9AA0A6;max-width:40ch">Per-Monitor DPI aware across mixed scaling — 100%, 125%, 150% — so what you select is exactly what you get.</p>
+</div>
+<figure data-side="before" style="margin:0;background:#16181D;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#9AA0A6;border-bottom:1px solid rgba(255,255,255,.06)"><span data-i18n="lblBefore">Before</span><span>Display 2 · 150%</span></figcaption>
+<div data-fit="400" role="img" aria-label="On a 150% display the captured area is offset from the selection" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<div style="position:absolute;left:100px;top:64px;width:200px;height:110px;background:#F4F5F7;border-radius:6px;padding:16px"><span style="display:block;width:60%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="display:block;width:80%;height:8px;background:#DDE1E6;border-radius:2px;margin-top:9px"></span><span style="display:block;width:76px;height:26px;background:#0078D4;border-radius:4px;margin-top:20px"></span></div>
+<div style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px dashed #3B9BEB"></div>
+<div data-shift style="position:absolute;left:120px;top:74px;width:216px;height:126px;border:2px solid #9AA0A6;transform:translate(0,0)"></div>
+<div style="position:absolute;left:14px;bottom:12px;display:flex;gap:14px;font:500 10px/1 var(--mono);color:#9AA0A6"><span style="display:flex;align-items:center;gap:5px"><span style="width:14px;border-top:1px dashed #3B9BEB"></span>selected</span><span style="display:flex;align-items:center;gap:5px"><span style="width:14px;border-top:2px solid #9AA0A6"></span>captured</span></div>
+</div></div>
+</figure>
+<figure data-side="after" style="margin:0;background:#16181D;border:1px solid rgba(0,120,212,.45);border-radius:10px;overflow:hidden">
+<figcaption style="display:flex;justify-content:space-between;padding:10px 14px;font:500 11px/1 var(--mono);color:#E8EAED;border-bottom:1px solid rgba(255,255,255,.06)"><span>NeatShot · Per-Monitor DPI</span><span>150%</span></figcaption>
+<div data-fit="400" role="img" aria-label="With NeatShot the captured area matches the selection exactly" style="position:relative;aspect-ratio:400/240;overflow:hidden;background:#1B1E24">
+<div data-stage style="position:absolute;left:0;top:0;width:400px;height:240px;transform-origin:0 0">
+<div style="position:absolute;left:100px;top:64px;width:200px;height:110px;background:#F4F5F7;border-radius:6px;padding:16px"><span style="display:block;width:60%;height:8px;background:#C9CED6;border-radius:2px"></span><span style="display:block;width:80%;height:8px;background:#DDE1E6;border-radius:2px;margin-top:9px"></span><span style="display:block;width:76px;height:26px;background:#0078D4;border-radius:4px;margin-top:20px"></span></div>
+<div style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px dashed #3B9BEB"></div>
+<div data-shift style="position:absolute;left:92px;top:56px;width:216px;height:126px;border:1px solid #0078D4"></div>
+<span data-ok style="position:absolute;left:92px;top:190px;font:500 10px/1 var(--mono);color:#fff;background:#0078D4;padding:5px 7px;border-radius:3px">324 × 189 px · pixel-exact</span>
+</div></div>
+</figure>
+</div>
+
+</div>
+</section>
+
+<section id="annotate" aria-labelledby="ann-title" style="background:#16181D;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
+<div id="annotate-pin" style="min-height:100vh;display:flex;align-items:center;padding:clamp(72px,9vh,104px) 0 clamp(32px,5vh,56px)">
+<div style="max-width:1440px;width:100%;margin:0 auto;padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:clamp(28px,4vw,64px);align-items:center">
+<div style="flex:1 1 300px;max-width:400px">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 22px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">03</span><span data-i18n="eyAnn">Annotate</span></div>
+<h2 id="ann-title" data-i18n="annTitle" style="margin:0;font-size:clamp(30px,3.4vw,46px);line-height:1.06;letter-spacing:-.03em;font-weight:700;text-wrap:balance">Mark it up before you paste it.</h2>
+<p data-i18n="annLead" style="margin:14px 0 24px;font-size:16px;line-height:1.6;color:#9AA0A6;text-wrap:pretty">Every tool you need to explain a screenshot, and two for hiding what shouldn't be in it.</p>
+<ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px">
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-arrow"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tArrow" style="font-size:15px;font-weight:600">Arrow</span><span data-tdesc data-i18n="dArrow" style="font-size:13px;color:#7D838B">Point at the exact button.</span></span></li>
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-rect"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tRect" style="font-size:15px;font-weight:600">Rectangle</span><span data-tdesc data-i18n="dRect" style="font-size:13px;color:#7D838B">Frame the field that matters.</span></span></li>
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-text"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tText" style="font-size:15px;font-weight:600">Text</span><span data-tdesc data-i18n="dText" style="font-size:13px;color:#7D838B">Type a note right on the capture.</span></span></li>
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-step"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tStep" style="font-size:15px;font-weight:600">Step badges</span><span data-tdesc data-i18n="dStep" style="font-size:13px;color:#7D838B">Click to drop 1, 2, 3… in order.</span></span></li>
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-pixel"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tPix" style="font-size:15px;font-weight:600">Pixelate</span><span data-tdesc data-i18n="dPix" style="font-size:13px;color:#7D838B">Hide tokens, keys and emails.</span></span></li>
+<li data-tool style="position:relative;display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid transparent;color:#9AA0A6;transition:background .2s,border-color .2s,color .2s"><span data-h style="position:absolute;left:-3px;top:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><span data-h style="position:absolute;right:-3px;bottom:-3px;width:5px;height:5px;background:#0078D4;opacity:0"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none"><use href="#i-blur"></use></svg><span style="display:flex;flex-direction:column;gap:2px"><span data-tname data-i18n="tBlur" style="font-size:15px;font-weight:600">Blur</span><span data-tdesc data-i18n="dBlur" style="font-size:13px;color:#7D838B">Soften faces and avatars.</span></span></li>
+</ol>
+<div style="display:flex;align-items:center;gap:10px;margin-top:22px;color:#7D838B;flex-wrap:wrap">
+<span style="display:flex;gap:8px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pencil"></use></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-highlighter"></use></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-ellipse"></use></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-line"></use></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-dropper"></use></svg><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-undo"></use></svg></span>
+<span data-i18n="annAlso" style="font-size:13px;line-height:1.5;color:#9AA0A6">Also: pencil, highlighter, ellipse, line, eyedropper, undo / redo.</span>
+</div>
+</div>
+
+<div style="flex:3 1 520px;min-width:0;display:flex;flex-direction:column;gap:12px;align-items:stretch">
+<div style="width:100%;max-width:min(100%,calc((100vh - 200px) * 1.565));margin-left:auto">
+<div id="ann-canvas" data-fit="720" role="img" aria-label="A webhook settings page annotated with an arrow, a rectangle, a text label, numbered steps, a pixelated secret and a blurred avatar" style="position:relative;width:100%;aspect-ratio:720/460;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#F6F7F9;cursor:crosshair">
+<div data-stage style="position:absolute;left:0;top:0;width:720px;height:460px;transform-origin:0 0;color:#1B1F24">
+<div style="height:34px;background:#ECEEF1;border-bottom:1px solid #DDE1E6;padding-left:14px;font-size:12px;line-height:34px;color:#5B6470">Acme Console — Settings</div>
+<div style="position:absolute;left:32px;top:50px;font-size:20px;font-weight:700;letter-spacing:-.01em">Webhooks</div>
+<div style="position:absolute;left:32px;top:96px;font-size:12px;font-weight:600;color:#5B6470">Webhook URL</div>
+<div style="position:absolute;left:32px;top:116px;width:420px;height:38px;background:#fff;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font:13px/36px var(--mono)">https://hooks.acme.dev/v1/orders</div>
+<div style="position:absolute;left:32px;top:172px;font-size:12px;font-weight:600;color:#5B6470">Signing secret</div>
+<div style="position:absolute;left:32px;top:192px;width:420px;height:38px;background:#fff;border:1px solid #D5D9DF;border-radius:6px;padding-left:12px;font:13px/36px var(--mono)">whsec_4f9b2c71e0a8d3</div>
+<div style="position:absolute;left:42px;top:201px;width:160px;display:flex;flex-wrap:wrap">
+<sc-for list="{{ tokCells }}" as="c" hint-placeholder-count="32"><span data-acell style="width:10px;height:10px;background:{{ c.c }}"></span></sc-for>
+</div>
+<div style="position:absolute;left:32px;top:248px;font-size:12px;font-weight:600;color:#5B6470">Events</div>
+<div style="position:absolute;left:32px;top:270px;display:flex;flex-direction:column;gap:10px;font:13px/16px var(--mono);color:#3D454F">
+<span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;background:#0078D4;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="11" height="11" style="fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round"><use href="#i-check"></use></svg></span>order.created</span>
+<span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;background:#0078D4;display:grid;place-items:center"><svg viewBox="0 0 24 24" width="11" height="11" style="fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round"><use href="#i-check"></use></svg></span>order.paid</span>
+<span style="display:flex;gap:10px;align-items:center"><span style="width:16px;height:16px;border-radius:4px;border:1px solid #B9BFC7;background:#fff"></span>order.refunded</span>
+</div>
+<div style="position:absolute;left:32px;top:368px;width:140px;height:38px;background:#0078D4;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-align:center;line-height:38px">Save changes</div>
+<div style="position:absolute;left:184px;top:368px;width:96px;height:38px;border:1px solid #D5D9DF;border-radius:6px;font-size:13px;text-align:center;line-height:36px;color:#3D454F">Cancel</div>
+<div style="position:absolute;left:500px;top:96px;width:196px;height:164px;background:#fff;border:1px solid #E1E4E8;border-radius:8px">
+<span style="position:absolute;left:16px;top:16px;width:36px;height:36px;border-radius:50%;background:#C98A3E;color:#fff;font:600 13px/36px var(--sans);text-align:center">MA</span>
+<span style="position:absolute;left:62px;top:18px;font-size:13px;font-weight:600">Minh Anh</span>
+<span style="position:absolute;left:62px;top:36px;font-size:11px;color:#6B7480">2 min ago</span>
+<span style="position:absolute;left:16px;top:66px;width:166px;font-size:13px;line-height:1.45;color:#3D454F">Staging webhook keeps failing. Switch to the v2 URL before release.</span>
+</div>
+<div id="ann-blur" style="position:absolute;left:508px;top:104px;width:150px;height:56px;border-radius:8px;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);background:rgba(240,241,243,.35)"></div>
+<div id="ann-label" style="position:absolute;left:250px;top:58px;font-size:19px;font-weight:700;color:#FF3B30;letter-spacing:-.01em">Use the v2 URL</div>
+<svg viewBox="0 0 720 460" width="720" height="460" aria-hidden="true" style="position:absolute;left:0;top:0;overflow:visible;fill:none;stroke:#FF3B30;stroke-width:3;stroke-linecap:round;stroke-linejoin:round">
+<path id="ann-rect" d="M28 106 H456 Q460 106 460 110 V160 Q460 164 456 164 H28 Q24 164 24 160 V110 Q24 106 28 106 Z"></path>
+<path id="ann-arrow" d="M352 438 C 300 440, 230 424, 180 394"></path>
+<path id="ann-head" d="M193.9 394.2 L180 394 L186.7 406.2"></path>
+</svg>
+<span data-astep style="position:absolute;left:466px;top:124px;width:22px;height:22px;border-radius:50%;background:#FF3B30;color:#fff;font:700 12px/22px var(--sans);text-align:center">1</span>
+<span data-astep style="position:absolute;left:466px;top:200px;width:22px;height:22px;border-radius:50%;background:#FF3B30;color:#fff;font:700 12px/22px var(--sans);text-align:center">2</span>
+<span data-astep style="position:absolute;left:292px;top:376px;width:22px;height:22px;border-radius:50%;background:#FF3B30;color:#fff;font:700 12px/22px var(--sans);text-align:center">3</span>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;gap:12px;margin-top:12px;font:500 12px/1 var(--mono);color:#9AA0A6"><span id="ann-step">6 / 6 · Blur</span><span>720 × 460</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="beautify" aria-labelledby="bf-title" style="max-width:1440px;margin:0 auto;padding:clamp(80px,10vw,140px) clamp(20px,4vw,56px)">
+<div style="display:flex;flex-wrap:wrap;flex-direction:row-reverse;gap:clamp(32px,5vw,80px);align-items:center">
+<div style="flex:1 1 300px;max-width:440px">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 22px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">04</span><span data-i18n="eyBf">Beautify</span></div>
+<h2 id="bf-title" data-i18n="bfTitle" data-reveal style="margin:0;font-size:clamp(30px,3.6vw,50px);line-height:1.06;letter-spacing:-.03em;font-weight:700;text-wrap:balance">Ready for the slide, the README, the post.</h2>
+<p data-i18n="bfLead" data-reveal style="margin:16px 0 28px;font-size:16px;line-height:1.65;color:#9AA0A6;text-wrap:pretty">Add a gradient background, padding, rounded corners and a soft shadow in one step. Pick a preset:</p>
+<div role="group" aria-label="Background presets" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+<button type="button" data-preset="pink" aria-pressed="true" style="display:flex;flex-direction:column;gap:8px;padding:8px;background:#16181D;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#9AA0A6;font:500 12px/1 var(--sans);cursor:pointer;text-align:left" style-hover="border-color:rgba(255,255,255,.3)"><span style="display:block;aspect-ratio:1.4;border-radius:4px;background:linear-gradient(135deg,#FA709A,#FEE140)"></span><span data-i18n="pPink">Pink</span></button>
+<button type="button" data-preset="ocean" aria-pressed="false" style="display:flex;flex-direction:column;gap:8px;padding:8px;background:#16181D;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#9AA0A6;font:500 12px/1 var(--sans);cursor:pointer;text-align:left" style-hover="border-color:rgba(255,255,255,.3)"><span style="display:block;aspect-ratio:1.4;border-radius:4px;background:linear-gradient(135deg,#0093E9,#80D0C7)"></span><span data-i18n="pOcean">Ocean</span></button>
+<button type="button" data-preset="mint" aria-pressed="false" style="display:flex;flex-direction:column;gap:8px;padding:8px;background:#16181D;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#9AA0A6;font:500 12px/1 var(--sans);cursor:pointer;text-align:left" style-hover="border-color:rgba(255,255,255,.3)"><span style="display:block;aspect-ratio:1.4;border-radius:4px;background:linear-gradient(135deg,#43E97B,#38F9D7)"></span><span data-i18n="pMint">Mint</span></button>
+<button type="button" data-preset="graphite" aria-pressed="false" style="display:flex;flex-direction:column;gap:8px;padding:8px;background:#16181D;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#9AA0A6;font:500 12px/1 var(--sans);cursor:pointer;text-align:left" style-hover="border-color:rgba(255,255,255,.3)"><span style="display:block;aspect-ratio:1.4;border-radius:4px;background:linear-gradient(135deg,#5B6270,#1C1F25)"></span><span data-i18n="pGraph">Graphite</span></button>
+</div>
+<dl style="margin:24px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.08)">
+<div style="padding:14px 0;display:flex;flex-direction:column;gap:6px"><dt data-i18n="lPad" style="font-size:12px;color:#9AA0A6">Padding</dt><dd id="bf-pad" style="margin:0;font:500 15px/1 var(--mono)">64px</dd></div>
+<div style="padding:14px 0;display:flex;flex-direction:column;gap:6px"><dt data-i18n="lRad" style="font-size:12px;color:#9AA0A6">Corners</dt><dd id="bf-rad" style="margin:0;font:500 15px/1 var(--mono)">14px</dd></div>
+<div style="padding:14px 0;display:flex;flex-direction:column;gap:6px"><dt data-i18n="lShadow" style="font-size:12px;color:#9AA0A6">Shadow</dt><dd id="bf-shv" style="margin:0;font:500 15px/1 var(--mono)">soft</dd></div>
+</dl>
+</div>
+<div style="flex:2 1 520px;min-width:0">
+<div id="bf-fit" data-fit="760" role="img" aria-label="A chat screenshot gains padding, rounded corners, a soft shadow and a gradient background" style="position:relative;width:100%;aspect-ratio:760/500;border-radius:12px;overflow:hidden;background:#23262D">
+<div data-stage style="position:absolute;left:0;top:0;width:760px;height:500px;transform-origin:0 0">
+<div id="bf-grads" style="position:absolute;inset:0">
+<div data-grad="pink" style="position:absolute;inset:0;background:linear-gradient(135deg,#FA709A,#FEE140);opacity:1"></div>
+<div data-grad="ocean" style="position:absolute;inset:0;background:linear-gradient(135deg,#0093E9,#80D0C7);opacity:0"></div>
+<div data-grad="mint" style="position:absolute;inset:0;background:linear-gradient(135deg,#43E97B,#38F9D7);opacity:0"></div>
+<div data-grad="graphite" style="position:absolute;inset:0;background:linear-gradient(135deg,#5B6270,#1C1F25);opacity:0"></div>
+</div>
+<div id="bf-shot" style="position:absolute;inset:0;transform:scale(.8)">
+<div id="bf-shadow-l" style="position:absolute;inset:0;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,.32),0 8px 18px rgba(0,0,0,.18)"></div>
+<div id="bf-card" style="position:absolute;inset:0;border-radius:14px;overflow:hidden;background:#FAFBFC;color:#1B1F24">
+<div style="height:52px;background:#fff;border-bottom:1px solid #E6E8EB;display:flex;align-items:center;gap:10px;padding:0 22px;font-size:16px;font-weight:600"># design-review<span style="margin-left:auto;font-size:12px;font-weight:400;color:#6B7480">4 members</span></div>
+<div style="padding:24px 22px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;gap:14px"><span style="flex:none;width:38px;height:38px;border-radius:50%;background:#4F7CAC;color:#fff;font:600 13px/38px var(--sans);text-align:center">L</span><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:600">Linh <span style="font-weight:400;font-size:12px;color:#6B7480">10:42</span></span><span style="font-size:15px;color:#3D454F">Here's the new empty state for the Gallery.</span>
+<div style="width:330px;height:150px;border:1px solid #E1E4E8;border-radius:8px;background:#fff;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><span style="background:#EEF0F3;border-radius:4px"></span><span style="background:#EEF0F3;border-radius:4px"></span><span style="background:#EEF0F3;border-radius:4px"></span><span style="grid-column:span 3;height:10px;width:60%;background:#DDE1E6;border-radius:2px;align-self:end"></span></div></div></div>
+<div style="display:flex;gap:14px"><span style="flex:none;width:38px;height:38px;border-radius:50%;background:#8A6D47;color:#fff;font:600 13px/38px var(--sans);text-align:center">B</span><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:600">Bảo <span style="font-weight:400;font-size:12px;color:#6B7480">10:44</span></span><span style="font-size:15px;color:#3D454F">Looks right. Ship it after the copy pass.</span></div></div>
+</div>
+<div style="position:absolute;left:22px;right:22px;bottom:20px;height:42px;border:1px solid #DDE1E6;border-radius:8px;background:#fff;padding:0 14px;font:14px/40px var(--sans);color:#8A929C">Message #design-review</div>
+</div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:12px;font:500 12px/1 var(--mono);color:#9AA0A6"><span>preset · <span id="bf-name">pink</span></span><span>760 × 500</span></div>
+</div>
+</div>
+</section>
+
+<section id="pin" aria-labelledby="pin-title" style="background:#0B0C0F;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:clamp(80px,10vw,140px) 0">
+<div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px)">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 36px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">05</span><span data-i18n="eyPin">Pin to screen</span><span style="flex:1;height:1px;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 4px,transparent 4px 8px);background-size:8px 1px;animation:ants 1.2s linear infinite"></span><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:24px clamp(28px,4vw,72px);align-items:end;margin-bottom:clamp(36px,4vw,56px)">
+<div>
+<h2 id="pin-title" data-i18n="pinTitle" data-reveal style="margin:0;font-size:clamp(32px,4.2vw,60px);line-height:1.04;letter-spacing:-.03em;font-weight:700">Pin it. Keep working.</h2>
+<p data-i18n="pinLead" data-reveal style="margin:16px 0 0;font-size:17px;line-height:1.65;color:#9AA0A6;max-width:50ch;text-wrap:pretty">The capture floats above every window. Keep an error message, a spec or a reference in view while you code.</p>
+</div>
+<ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border-top:1px solid rgba(255,255,255,.08)">
+<li style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-right:20px"><span data-i18n="pZoom" style="font-size:15px">Zoom</span><kbd style="display:inline-flex;align-items:center;height:28px;padding:0 9px;font:500 12px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A" data-i18n="kWheel">Wheel</kbd></li>
+<li style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-right:20px"><span data-i18n="pOpac" style="font-size:15px">Opacity</span><span style="display:flex;gap:5px;align-items:center;color:#9AA0A6;font:12px var(--mono)"><kbd style="display:inline-flex;align-items:center;height:28px;padding:0 9px;font:500 12px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A">Ctrl</kbd>+<kbd style="display:inline-flex;align-items:center;height:28px;padding:0 9px;font:500 12px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:5px;box-shadow:0 2px 0 #07080A" data-i18n="kWheel">Wheel</kbd></span></li>
+<li style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-right:20px"><span data-i18n="pDraw" style="font-size:15px">Draw directly on the pin</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#9AA0A6;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pencil"></use></svg></li>
+<li style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-right:20px"><span data-i18n="pMany" style="font-size:15px">Many pins at once</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#9AA0A6;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pin"></use></svg></li>
+</ul>
+</div>
+
+<div id="pin-fit" data-fit="1200" role="img" aria-label="Three pinned captures float over a code editor; the main pin zooms in, turns semi-transparent and gets a pen circle drawn on it" style="position:relative;width:100%;aspect-ratio:1200/600;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;background:#121418">
+<div data-stage style="position:absolute;left:0;top:0;width:1200px;height:600px;transform-origin:0 0;font-family:var(--mono)">
+<div style="position:absolute;left:0;top:0;bottom:24px;width:44px;background:#0F1114;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px"><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.18)"></span><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.08)"></span><span style="width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.08)"></span></div>
+<div style="position:absolute;left:44px;top:0;bottom:24px;width:200px;background:#15171B;border-right:1px solid rgba(255,255,255,.05);padding:14px 0;font-size:12px;line-height:26px;color:#9AA0A6">
+<div style="padding:0 16px;font-size:10px;letter-spacing:.08em">EXPLORER</div>
+<div style="padding:0 16px">src/</div><div style="padding:0 28px">cart/</div><div style="padding:0 40px;background:#1E2128;color:#E8EAED">checkout.ts</div><div style="padding:0 40px">totals.ts</div><div style="padding:0 28px">api/</div><div style="padding:0 40px">client.ts</div><div style="padding:0 28px">tests/</div>
+</div>
+<div style="position:absolute;left:244px;right:0;top:0;height:36px;background:#15171B;display:flex;font-size:12px"><span style="padding:0 18px;line-height:36px;background:#121418;color:#E8EAED;box-shadow:inset 0 1px 0 #0078D4">checkout.ts</span><span style="padding:0 18px;line-height:36px;color:#7D838B">totals.ts</span></div>
+<div style="position:absolute;left:244px;top:50px;width:52px;text-align:right;font-size:13px;line-height:24px;color:#4B5260">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19</div>
+<div style="position:absolute;left:244px;right:0;top:290px;height:24px;background:rgba(255,255,255,.04)"></div>
+<div style="position:absolute;left:316px;top:50px;font-size:13.5px;line-height:24px;color:#C9CDD2;white-space:pre"><span style="color:#7FB4E6">import</span> { getCart } <span style="color:#7FB4E6">from</span> <span style="color:#B5D19A">"../api/client"</span>;
+<span style="color:#7FB4E6">import</span> { formatPrice } <span style="color:#7FB4E6">from</span> <span style="color:#B5D19A">"./totals"</span>;
+
+<span style="color:#7FB4E6">export async function</span> <span style="color:#E6C07B">checkout</span>(userId: <span style="color:#7FB4E6">string</span>) {
+  <span style="color:#7FB4E6">const</span> cart = <span style="color:#7FB4E6">await</span> <span style="color:#E6C07B">getCart</span>(userId);
+  <span style="color:#7FB4E6">if</span> (!cart.items.length) {
+    <span style="color:#7FB4E6">throw new</span> <span style="color:#E6C07B">Error</span>(<span style="color:#B5D19A">"Cart is empty"</span>);
+  }
+
+  <span style="color:#6B7280">// totals can be missing on 150% layout</span>
+  <span style="color:#7FB4E6">const</span> label = <span style="color:#E6C07B">formatPrice</span>(cart.totals.total);
+
+  <span style="color:#7FB4E6">return</span> {
+    id: cart.id,
+    label,
+    items: cart.items.<span style="color:#E6C07B">map</span>((i) =&gt; i.sku),
+  };
+}
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:24px;background:#0F1114;padding:0 14px;font-size:11px;line-height:24px;color:#7D838B">TypeScript · UTF-8 · Ln 11, Col 31</div>
+
+<div data-pin-other style="position:absolute;left:560px;top:404px;width:220px;height:130px;background:#0B0C0E;border:1px solid rgba(255,255,255,.2);border-radius:4px;box-shadow:0 18px 40px rgba(0,0,0,.55);padding:12px 14px;font-size:11.5px;line-height:20px;color:#C9CDD2">$ npm test<br><span style="color:#7BC47F">PASS</span> totals.spec.ts<br><span style="color:#E5484D">FAIL</span> checkout.spec.ts<br><span style="color:#7D838B">Tests: 1 failed, 11 passed</span></div>
+<div data-pin-other style="position:absolute;left:760px;top:376px;width:300px;height:150px;background:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;box-shadow:0 18px 40px rgba(0,0,0,.55);padding:16px;display:flex;gap:16px;color:#1B1F24;font-size:12px">
+<span style="width:64px;height:64px;border-radius:6px;background:#0078D4;flex:none"></span>
+<span style="display:flex;flex-direction:column;gap:6px;line-height:1.3"><b style="font-family:var(--sans);font-size:13px">Button / primary</b><span>fill #0078D4</span><span>radius 6 · height 36</span><span>label 13 / 600</span></span>
+</div>
+<div id="pin-hud" style="position:absolute;left:648px;top:50px;z-index:3;font-size:12px;line-height:1;color:#fff;background:#0078D4;padding:6px 8px;border-radius:4px">Zoom 120% · Opacity 75%</div>
+<div id="pin-main" style="position:absolute;left:690px;top:110px;width:420px;height:210px;background:#fff;border:1px solid rgba(255,255,255,.25);border-radius:4px;box-shadow:0 24px 60px rgba(0,0,0,.6);overflow:hidden;transform:scale(1.2);opacity:.75;z-index:2;color:#1B1F24">
+<div style="height:28px;background:#F1F3F5;border-bottom:1px solid #E1E4E8;padding:0 12px;font:600 11px/28px var(--sans);color:#4A525C">Console</div>
+<div style="padding:10px 12px 0 30px;font-size:12px;line-height:20px;position:relative;white-space:nowrap">
+<span style="position:absolute;left:12px;top:15px;width:10px;height:10px;border-radius:50%;background:#D93025"></span>
+<div style="color:#B3261E">Uncaught TypeError: Cannot read properties of</div>
+<div style="color:#B3261E">undefined (reading 'total')</div>
+<div style="color:#5B6470;margin-top:4px">at checkout (checkout.ts:11:31)</div>
+<div style="color:#5B6470">at async onClick (CartButton.tsx:24:5)</div>
+<div style="border-top:1px solid #EEF0F3;margin:10px 0 0 -18px;padding:8px 0 0 18px;color:#1B1F24">&gt; cart.totals</div>
+<div style="color:#9AA0A6">undefined</div>
+</div>
+<svg viewBox="0 0 420 210" width="420" height="210" aria-hidden="true" style="position:absolute;left:0;top:0;fill:none;stroke:#FF3B30;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
+<path id="pin-pen" d="M92 68 C 92 48, 236 46, 238 64 C 240 84, 98 88, 89 72 C 86 65, 96 58, 110 56" style="stroke-width:3"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="ocr" aria-labelledby="ocr-title" style="max-width:1440px;margin:0 auto;padding:clamp(80px,10vw,140px) clamp(20px,4vw,56px)">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 36px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">06</span><span data-i18n="eyOcr">Text extraction</span><span style="flex:1;height:1px;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 4px,transparent 4px 8px);background-size:8px 1px;animation:ants 1.2s linear infinite"></span><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px clamp(28px,4vw,72px);align-items:end;margin-bottom:clamp(36px,4vw,56px)">
+<h2 id="ocr-title" data-i18n="ocrTitle" data-reveal style="margin:0;font-size:clamp(32px,4.2vw,60px);line-height:1.04;letter-spacing:-.03em;font-weight:700;max-width:15ch;text-wrap:balance">Copy the text, not the picture of it.</h2>
+<p data-i18n="ocrLead" data-reveal style="margin:0;font-size:17px;line-height:1.65;color:#9AA0A6;max-width:52ch;text-wrap:pretty">Windows OCR reads the selection on your machine, 100% offline. Line breaks stay where they were, and Vietnamese diacritics come through intact.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:20px;align-items:stretch">
+<div style="flex:3 1 460px;min-width:0">
+<div id="ocr-fit" data-fit="620" role="img" aria-label="A scan line passes over a captured release checklist, including a Vietnamese line" style="position:relative;width:100%;aspect-ratio:620/400;border-radius:10px;overflow:hidden;background:#FBFBF9;border:1px solid rgba(255,255,255,.1)">
+<div data-stage style="position:absolute;left:0;top:0;width:620px;height:400px;transform-origin:0 0;color:#1B1F24">
+<div style="position:absolute;left:36px;top:36px;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:34px">Release checklist — v1.0.0<span data-obox data-y="36" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;top:100px;font-size:18px;line-height:26px;color:#3D454F">1. Build the x64 zip and check the hash<span data-obox data-y="100" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;top:142px;font-size:18px;line-height:26px;color:#3D454F">2. Test at 100%, 125% and 150% scaling<span data-obox data-y="142" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;top:184px;font-size:18px;line-height:26px;color:#3D454F">3. Confirm zero network requests<span data-obox data-y="184" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;top:244px;font-size:24px;font-weight:600;line-height:32px;letter-spacing:-.01em">Trích xuất chữ hoàn toàn offline<span data-obox data-y="244" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;top:290px;font-size:18px;line-height:26px;color:#3D454F">Giữ nguyên dấu và xuống dòng.<span data-obox data-y="290" style="position:absolute;inset:-5px -8px;border:1px dashed #0078D4"></span></div>
+<div style="position:absolute;left:36px;bottom:22px;font:11px/1 var(--mono);color:#8A929C">docs/release.md · page 1</div>
+<div id="ocr-scan" style="position:absolute;left:0;right:0;top:0;height:2px;background:#0078D4;opacity:0"><span style="position:absolute;left:0;right:0;bottom:2px;height:44px;background:linear-gradient(to bottom,rgba(0,120,212,0),rgba(0,120,212,.14))"></span></div>
+</div>
+</div>
+</div>
+<div style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;background:#16181D;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#3B9BEB;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-ocr"></use></svg>
+<span data-i18n="ocrPanel" style="font-size:14px;font-weight:600">Extracted text</span>
+<span style="margin-left:auto;font:500 11px/1 var(--mono);color:#9AA0A6;border:1px solid rgba(255,255,255,.12);padding:5px 7px;border-radius:4px">Windows OCR · offline</span>
+</div>
+<div lang="vi" style="flex:1;padding:18px;display:flex;flex-direction:column;gap:8px;font:400 14px/1.55 var(--mono);color:#E8EAED;min-height:240px">
+<div data-oline>Release checklist — v1.0.0</div>
+<div data-oline style="color:#C9CDD2">1. Build the x64 zip and check the hash</div>
+<div data-oline style="color:#C9CDD2">2. Test at 100%, 125% and 150% scaling</div>
+<div data-oline style="color:#C9CDD2">3. Confirm zero network requests</div>
+<div data-oline style="margin-top:8px">Trích xuất chữ hoàn toàn offline</div>
+<div data-oline style="color:#C9CDD2">Giữ nguyên dấu và xuống dòng.</div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);font:500 12px/1 var(--mono);color:#9AA0A6">
+<span data-i18n="ocrFoot">6 lines · line breaks kept</span>
+<span style="display:flex;align-items:center;gap:6px;color:#E8EAED;font-family:var(--sans);font-size:13px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-copy"></use></svg><span data-i18n="ocrCopy">Copy</span></span>
+</div>
+</div>
+</div>
+</section>
+
+<section id="gallery" aria-labelledby="gal-title" style="background:#16181D;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:clamp(80px,10vw,140px) 0">
+<div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px)">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px 48px;margin-bottom:clamp(32px,4vw,48px)">
+<div style="max-width:640px">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 22px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">07</span><span data-i18n="eyGal">Gallery</span></div>
+<h2 id="gal-title" data-i18n="galTitle" data-reveal style="margin:0;font-size:clamp(30px,3.6vw,50px);line-height:1.06;letter-spacing:-.03em;font-weight:700;text-wrap:balance">Every copy and pin is already saved.</h2>
+<p data-i18n="galLead" data-reveal style="margin:16px 0 0;font-size:17px;line-height:1.65;color:#9AA0A6;max-width:52ch">Copied and pinned shots auto-save to your Pictures folder. Browse them, re-pin, copy or delete.</p>
+</div>
+<div style="display:flex;align-items:center;gap:10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#0E0F12;border:1px solid rgba(255,255,255,.1);padding:10px 12px;border-radius:6px">
+<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#3B9BEB;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-gallery"></use></svg>Pictures\NeatShot<span style="color:#9AA0A6">· 8</span></div>
+</div>
+<div id="gal-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:16px">
+<sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="8">
+<div data-thumb style="position:relative;background:#0E0F12;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px;transition:border-color .2s" style-hover="border-color:rgba(59,155,235,.7)">
+<div style="position:relative;aspect-ratio:16/10;border-radius:6px;overflow:hidden;cursor:crosshair">
+<sc-if value="{{ t.isCode }}"><div style="position:absolute;inset:0;background:#15171B;padding:14px;display:flex;flex-direction:column;gap:7px"><span style="width:44%;height:6px;background:#7FB4E6;border-radius:2px;opacity:.8"></span><span style="width:70%;height:6px;background:#3A3F48;border-radius:2px"></span><span style="width:58%;height:6px;background:#B5D19A;border-radius:2px;opacity:.7;margin-left:14px"></span><span style="width:64%;height:6px;background:#3A3F48;border-radius:2px;margin-left:14px"></span><span style="width:38%;height:6px;background:#E6C07B;border-radius:2px;opacity:.7;margin-left:28px"></span><span style="width:20%;height:6px;background:#3A3F48;border-radius:2px"></span></div></sc-if>
+<sc-if value="{{ t.isForm }}"><div style="position:absolute;inset:0;background:#F4F5F7;padding:14px;display:flex;flex-direction:column;gap:8px"><span style="width:30%;height:5px;background:#9AA1AB;border-radius:2px"></span><span style="height:16px;background:#fff;border:1px solid #D5D9DF;border-radius:3px"></span><span style="width:24%;height:5px;background:#9AA1AB;border-radius:2px"></span><span style="height:16px;background:#fff;border:1px solid #D5D9DF;border-radius:3px"></span><span style="width:34%;height:16px;background:#0078D4;border-radius:3px;align-self:flex-end"></span></div></sc-if>
+<sc-if value="{{ t.isChart }}"><div style="position:absolute;inset:0;background:#FAFAFA;padding:14px 16px 12px;display:flex;align-items:flex-end;gap:8px"><sc-for list="{{ t.bars }}" as="b" hint-placeholder-count="6"><span style="flex:1;height:{{ b.h }};background:{{ b.c }};border-radius:2px 2px 0 0"></span></sc-for></div></sc-if>
+<sc-if value="{{ t.isChat }}"><div style="position:absolute;inset:0;background:#fff;padding:14px;display:flex;flex-direction:column;gap:8px"><span style="width:58%;height:18px;background:#EEF0F3;border-radius:9px"></span><span style="width:42%;height:18px;background:#0078D4;border-radius:9px;align-self:flex-end"></span><span style="width:66%;height:18px;background:#EEF0F3;border-radius:9px"></span><span style="width:30%;height:18px;background:#0078D4;border-radius:9px;align-self:flex-end"></span></div></sc-if>
+<span data-h style="position:absolute;left:0;top:0;width:7px;height:7px;background:#fff;border:1px solid #0078D4;opacity:0;transition:opacity .2s"></span><span data-h style="position:absolute;right:0;top:0;width:7px;height:7px;background:#fff;border:1px solid #0078D4;opacity:0;transition:opacity .2s"></span><span data-h style="position:absolute;left:0;bottom:0;width:7px;height:7px;background:#fff;border:1px solid #0078D4;opacity:0;transition:opacity .2s"></span><span data-h style="position:absolute;right:0;bottom:0;width:7px;height:7px;background:#fff;border:1px solid #0078D4;opacity:0;transition:opacity .2s"></span>
+</div>
+<div data-actions style="position:absolute;top:16px;right:16px;display:flex;gap:4px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s">
+<button type="button" aria-label="Pin to screen" style="width:32px;height:32px;display:grid;place-items:center;background:rgba(14,15,18,.92);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:#E8EAED;cursor:pointer" style-hover="background:#0078D4"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-pin"></use></svg></button>
+<button type="button" aria-label="Copy" style="width:32px;height:32px;display:grid;place-items:center;background:rgba(14,15,18,.92);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:#E8EAED;cursor:pointer" style-hover="background:#0078D4"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-copy"></use></svg></button>
+<button type="button" aria-label="Delete" style="width:32px;height:32px;display:grid;place-items:center;background:rgba(14,15,18,.92);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:#E8EAED;cursor:pointer" style-hover="background:#2A2E37"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-trash"></use></svg></button>
+</div>
+<div style="display:flex;justify-content:space-between;gap:8px;padding:10px 4px 2px;font:400 11px/1.3 var(--mono);color:#9AA0A6"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.name }}</span><span style="flex:none">{{ t.size }}</span></div>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section id="shortcuts" aria-labelledby="keys-title" style="max-width:1440px;margin:0 auto;padding:clamp(80px,10vw,140px) clamp(20px,4vw,56px)">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 36px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">08</span><span data-i18n="eyKeys">Shortcuts</span><span style="flex:1;height:1px;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 4px,transparent 4px 8px);background-size:8px 1px;animation:ants 1.2s linear infinite"></span><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px clamp(28px,4vw,72px);align-items:end;margin-bottom:clamp(36px,4vw,56px)">
+<h2 id="keys-title" data-i18n="keysTitle" data-reveal style="margin:0;font-size:clamp(32px,4.2vw,60px);line-height:1.04;letter-spacing:-.03em;font-weight:700;max-width:14ch">Keep your hands on the keys.</h2>
+<p data-i18n="keysLead" data-reveal style="margin:0;font-size:17px;line-height:1.65;color:#9AA0A6;max-width:52ch">Try it: press Ctrl, Shift, A or PrtSc and watch the keys light up.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px clamp(24px,3vw,48px)">
+
+<div>
+<h3 style="display:flex;justify-content:space-between;margin:0 0 4px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#3B9BEB"><span data-i18n="gGlobal">Global</span><span style="color:#7D838B">02</span></h3>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kCapture" style="font-size:15px">Capture a region</span><span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;color:#7D838B;font:12px var(--mono)">
+<kbd data-key="control" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Ctrl</kbd>+<kbd data-key="shift" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Shift</kbd>+<kbd data-key="a" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">A</kbd></span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)"><span data-i18n="kCaptureAlt" style="font-size:15px">Capture a region (alternative)</span><kbd data-key="printscreen" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">PrtSc</kbd></div>
+</div>
+
+<div>
+<h3 style="display:flex;justify-content:space-between;margin:0 0 4px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#3B9BEB"><span data-i18n="gCapture">Capture</span><span style="color:#7D838B">05</span></h3>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kSelect" style="font-size:15px">Select an area</span><kbd data-i18n="kDrag" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:crosshair" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Drag</kbd></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kResize" style="font-size:15px">Resize with 8 handles</span><kbd data-i18n="kDragHandle" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:nwse-resize" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Drag a handle</kbd></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kUndo" style="font-size:15px">Undo</span><span style="display:flex;align-items:center;gap:6px;color:#7D838B;font:12px var(--mono)"><kbd data-key="control" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Ctrl</kbd>+<kbd data-key="z" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Z</kbd></span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kRedo" style="font-size:15px">Redo</span><span style="display:flex;align-items:center;gap:6px;color:#7D838B;font:12px var(--mono)"><kbd data-key="control" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Ctrl</kbd>+<kbd data-key="y" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Y</kbd></span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)"><span data-i18n="kCancel" style="font-size:15px">Cancel</span><kbd data-key="escape" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Esc</kbd></div>
+</div>
+
+<div>
+<h3 style="display:flex;justify-content:space-between;margin:0 0 4px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#3B9BEB"><span data-i18n="gPin">Pin</span><span style="color:#7D838B">02</span></h3>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span data-i18n="kZoom" style="font-size:15px">Zoom the pin</span><kbd data-i18n="kWheel" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Wheel</kbd></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)"><span data-i18n="kOpac" style="font-size:15px">Change opacity</span><span style="display:flex;align-items:center;gap:6px;color:#7D838B;font:12px var(--mono)"><kbd data-key="control" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Ctrl</kbd>+<kbd data-i18n="kWheel" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;padding:0 10px;font:500 13px/1 var(--mono);color:#E8EAED;background:#22252C;border:1px solid rgba(255,255,255,.12);border-radius:6px;box-shadow:0 3px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06);transition:transform .08s,box-shadow .08s;cursor:default" style-hover="transform:translateY(2px);box-shadow:0 1px 0 #07080A,inset 0 1px 0 rgba(255,255,255,.06)">Wheel</kbd></span></div>
+</div>
+
+</div>
+</section>
+
+<section id="privacy" aria-labelledby="priv-title" style="border-top:1px solid rgba(255,255,255,.08);padding:clamp(80px,10vw,140px) 0">
+<div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:clamp(36px,5vw,80px);align-items:flex-start">
+<div style="flex:3 1 420px">
+<div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:0 0 22px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#9AA0A6"><span style="width:7px;height:7px;border:1px solid #0078D4;flex:none"></span><span style="color:#3B9BEB">09</span><span data-i18n="eyPriv">Privacy &amp; open source</span></div>
+<h2 id="priv-title" data-i18n="privTitle" data-reveal style="margin:0;font-size:clamp(36px,5vw,72px);line-height:1.02;letter-spacing:-.035em;font-weight:700;max-width:13ch">Nothing leaves your machine.</h2>
+<p data-i18n="privLead" data-reveal style="margin:20px 0 40px;font-size:18px;line-height:1.65;color:#9AA0A6;max-width:52ch">NeatShot makes no network calls. Your captures, your text and your settings stay on this PC.</p>
+<dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:0 32px">
+<div style="padding:18px 0;border-top:1px solid rgba(255,255,255,.1)"><dt data-i18n="f1t" style="font-size:16px;font-weight:600">Fully offline</dt><dd data-i18n="f1d" style="margin:6px 0 0;font-size:15px;line-height:1.6;color:#9AA0A6">OCR runs on Windows itself. Nothing is uploaded.</dd></div>
+<div style="padding:18px 0;border-top:1px solid rgba(255,255,255,.1)"><dt data-i18n="f2t" style="font-size:16px;font-weight:600">No account</dt><dd data-i18n="f2d" style="margin:6px 0 0;font-size:15px;line-height:1.6;color:#9AA0A6">Download, unzip, press Ctrl + Shift + A.</dd></div>
+<div style="padding:18px 0;border-top:1px solid rgba(255,255,255,.1)"><dt data-i18n="f3t" style="font-size:16px;font-weight:600">No telemetry</dt><dd data-i18n="f3d" style="margin:6px 0 0;font-size:15px;line-height:1.6;color:#9AA0A6">No analytics, no usage pings, nothing sent home.</dd></div>
+<div style="padding:18px 0;border-top:1px solid rgba(255,255,255,.1)"><dt data-i18n="f4t" style="font-size:16px;font-weight:600">MIT licensed</dt><dd data-i18n="f4d" style="margin:6px 0 0;font-size:15px;line-height:1.6;color:#9AA0A6">Read the code, fork it, build on it.</dd></div>
+</dl>
+</div>
+<div style="flex:2 1 320px;max-width:520px;background:#0A0B0D;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:var(--mono)" aria-label="Session readout: network requests 0, no account, no telemetry, MIT license" role="group">
+<div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px;letter-spacing:.06em;color:#9AA0A6"><span>SESSION READOUT</span><span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#3B9BEB"></span>local</span></div>
+<div style="padding:24px 16px 8px"><div style="font-size:12px;color:#9AA0A6">network requests</div><div style="font-size:clamp(56px,7vw,88px);font-weight:500;line-height:1;margin-top:8px;letter-spacing:-.04em">0</div></div>
+<div style="padding:8px 16px 18px;font-size:13px;line-height:1">
+<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="color:#9AA0A6">account</span><span style="flex:1;border-bottom:1px dotted rgba(255,255,255,.15)"></span><span>none</span></div>
+<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="color:#9AA0A6">telemetry</span><span style="flex:1;border-bottom:1px dotted rgba(255,255,255,.15)"></span><span>none</span></div>
+<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="color:#9AA0A6">ocr</span><span style="flex:1;border-bottom:1px dotted rgba(255,255,255,.15)"></span><span>Windows OCR, local</span></div>
+<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="color:#9AA0A6">saves to</span><span style="flex:1;border-bottom:1px dotted rgba(255,255,255,.15)"></span><span>Pictures\NeatShot</span></div>
+<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="color:#9AA0A6">license</span><span style="flex:1;border-bottom:1px dotted rgba(255,255,255,.15)"></span><a href="https://github.com/Thien21112005/neat-shot" style="color:#3B9BEB">MIT</a></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="download" aria-labelledby="dl-title" style="max-width:1440px;margin:0 auto;padding:clamp(48px,6vw,80px) clamp(20px,4vw,56px) clamp(80px,10vw,140px)">
+<div id="dl-box" style="position:relative;background:#16181D;border-radius:2px;padding:clamp(28px,4vw,56px)">
+<svg aria-hidden="true" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible;pointer-events:none"><rect x="0" y="0" width="100%" height="100%" style="fill:none;stroke:#0078D4;stroke-width:1;stroke-dasharray:6 4;animation:antsv 1s linear infinite"></rect></svg>
+<span id="dl-size" aria-hidden="true" style="position:absolute;left:-1px;top:-30px;font:500 12px/1 var(--mono);color:#fff;background:#0078D4;padding:6px 8px;border-radius:3px">1328 × 420</span>
+<span aria-hidden="true" style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;left:calc(50% - 4px);top:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;right:-4px;top:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;left:-4px;top:calc(50% - 4px);width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;right:-4px;top:calc(50% - 4px);width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;left:-4px;bottom:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;left:calc(50% - 4px);bottom:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span><span aria-hidden="true" style="position:absolute;right:-4px;bottom:-4px;width:8px;height:8px;background:#0E0F12;border:1px solid #0078D4"></span>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:36px clamp(28px,4vw,64px);align-items:start">
+<div>
+<h2 id="dl-title" data-i18n="dlTitle" style="margin:0;font-size:clamp(30px,3.4vw,46px);line-height:1.06;letter-spacing:-.03em;font-weight:700">Get NeatShot for Windows</h2>
+<h3 data-i18n="reqTitle" style="margin:28px 0 10px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#3B9BEB">Requirements</h3>
+<ul style="list-style:none;margin:0;padding:0;font:400 14px/1.5 var(--mono);color:#C9CDD2">
+<li data-i18n="r1" style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">Windows 10 (2004+) or Windows 11</li>
+<li style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">x64</li>
+<li data-i18n="r3" style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">~64 MB zip · no installer</li>
+<li data-i18n="r4" style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">No .NET runtime needed</li>
+</ul>
+</div>
+<div>
+<h3 data-i18n="stepsTitle" style="margin:6px 0 14px;font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#3B9BEB">Install in three steps</h3>
+<ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px">
+<li style="display:flex;gap:14px"><span style="flex:none;width:24px;height:24px;border-radius:50%;border:1px solid #0078D4;color:#3B9BEB;font:600 12px/22px var(--mono);text-align:center">1</span><span data-i18n="s1" style="font-size:16px;line-height:1.5">Download the zip from GitHub Releases.</span></li>
+<li style="display:flex;gap:14px"><span style="flex:none;width:24px;height:24px;border-radius:50%;border:1px solid #0078D4;color:#3B9BEB;font:600 12px/22px var(--mono);text-align:center">2</span><span data-i18n="s2" style="font-size:16px;line-height:1.5">Extract it anywhere and run NeatShot.</span></li>
+<li style="display:flex;gap:14px"><span style="flex:none;width:24px;height:24px;border-radius:50%;border:1px solid #0078D4;color:#3B9BEB;font:600 12px/22px var(--mono);text-align:center">3</span><span data-i18n="s3" style="font-size:16px;line-height:1.5">It sits in the system tray. Press Ctrl + Shift + A.</span></li>
+</ol>
+<div style="margin-top:24px;padding:14px 16px;background:#0E0F12;border:1px solid rgba(255,255,255,.08);border-radius:8px">
+<div data-i18n="ssTitle" style="font-size:14px;font-weight:600">About SmartScreen</div>
+<p data-i18n="ssBody" style="margin:6px 0 0;font-size:14px;line-height:1.6;color:#9AA0A6">This build isn't code-signed yet, so Windows may show a SmartScreen prompt the first time. Choose More info → Run anyway. The source is public if you'd like to read it first.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start;align-self:center">
+<a href="https://github.com/Thien21112005/neat-shot/releases/latest" style="display:inline-flex;align-items:center;gap:12px;background:#0078D4;color:#fff;font-size:20px;font-weight:600;padding:20px 28px;border-radius:8px" style-hover="background:#1A86DC;color:#fff"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-save"></use></svg><span data-i18n="dlBtn">Download v1.0.0</span></a>
+<span style="font:400 12px/1.5 var(--mono);color:#9AA0A6">zip · 64 MB · x64</span>
+<a href="https://github.com/Thien21112005/neat-shot" style="font-size:14px" data-i18n="ctaSrc">View source on GitHub</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<footer style="border-top:1px solid rgba(255,255,255,.08)">
+<div style="max-width:1440px;margin:0 auto;padding:32px clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;font-size:14px;color:#9AA0A6">
+<span style="display:flex;align-items:center;gap:10px;color:#E8EAED;font-weight:700"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:#0078D4;stroke-width:2"><use href="#i-mark"></use><rect x="9.5" y="9.5" width="5" height="5" style="fill:#E8EAED;stroke:none"></rect></svg>NeatShot <span style="font:400 12px var(--mono);color:#9AA0A6">v1.0.0</span></span>
+<nav aria-label="Footer" style="display:flex;flex-wrap:wrap;gap:12px 24px">
+<a href="https://github.com/Thien21112005/neat-shot" style="color:#9AA0A6" style-hover="color:#E8EAED">GitHub</a>
+<a href="https://github.com/Thien21112005/neat-shot/blob/main/LICENSE" data-i18n="fLic" style="color:#9AA0A6" style-hover="color:#E8EAED">MIT License</a>
+<a href="https://github.com/Thien21112005/neat-shot/releases" data-i18n="fLog" style="color:#9AA0A6" style-hover="color:#E8EAED">Changelog</a>
+</nav>
+<span data-i18n="fMade" style="margin-left:auto;font:400 12px var(--mono)">Made for Windows</span>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;loopHero&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;scrubLength&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2600,&quot;min&quot;:1400,&quot;max&quot;:4200,&quot;step&quot;:100,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const VI = {
+  navFeat:'Tính năng', navKeys:'Phím tắt', navPriv:'Quyền riêng tư', navDl:'Tải về',
+  heroEyebrow:'v1.0.0 · Miễn phí & mã nguồn mở · Windows 10 / 11',
+  h1a:'Ảnh chụp sạch trên mọi màn hình.', h1b:'Chú thích trong vài giây.',
+  heroSub:'Công cụ chụp màn hình miễn phí, mã nguồn mở cho Windows, không chen ngang công việc của bạn — chụp, đánh dấu, ghim và trích xuất chữ mà không cần rời bàn phím.',
+  ctaDl:'Tải về cho Windows', ctaMeta:'v1.0.0 · 64 MB · không cần cài đặt', ctaSrc:'Xem mã nguồn trên GitHub',
+  or:'hoặc', heroHint:'Rê chuột lên màn hình để xem lại',
+  eyAnnoy:'Trước / sau', annoyTitle:'Ba điều khiến bạn bực mình',
+  annoyLead:'Phần lớn công cụ chỉ chụp điểm ảnh rồi thôi. Đây là những lỗi nhỏ khiến bạn phải chụp lại lần nữa.',
+  a1t:'Menu khay hệ thống lọt vào ảnh', a1d:'Clean Shot đóng các menu và bảng bật lên ở khay hệ thống trước khi chụp, nên chúng không bao giờ lọt vào ảnh.',
+  a2t:'PrtSc bị ứng dụng khác chiếm mất', a2d:'NeatShot nhận phím PrtSc, và Ctrl + Shift + A luôn hoạt động — kể cả khi ứng dụng khác đã giành phím trước.',
+  a3t:'Vùng chọn bị lệch trên màn hình 150%', a3d:'Hỗ trợ DPI theo từng màn hình với tỉ lệ khác nhau — 100%, 125%, 150% — chọn vùng nào, nhận đúng vùng đó.',
+  lblBefore:'Trước',
+  eyAnn:'Chú thích', annTitle:'Đánh dấu xong rồi hẵng dán.', annLead:'Đủ công cụ để giải thích một ảnh chụp, và hai công cụ để che những gì không nên lộ ra.',
+  tArrow:'Mũi tên', tRect:'Hình chữ nhật', tText:'Chữ', tStep:'Số thứ tự', tPix:'Pixel hoá', tBlur:'Làm mờ',
+  dArrow:'Chỉ đúng vào nút cần bấm.', dRect:'Khoanh vùng ô cần chú ý.', dText:'Gõ ghi chú ngay trên ảnh.', dStep:'Bấm để đặt 1, 2, 3… theo thứ tự.', dPix:'Che token, khoá và email.', dBlur:'Làm mờ khuôn mặt và ảnh đại diện.',
+  annAlso:'Ngoài ra: bút chì, bút dạ quang, hình elip, đường thẳng, hút màu, hoàn tác / làm lại.',
+  eyBf:'Làm đẹp', bfTitle:'Sẵn sàng cho slide, README hay bài đăng.', bfLead:'Thêm nền gradient, khoảng đệm, bo góc và bóng đổ nhẹ chỉ trong một bước. Chọn một mẫu:',
+  pPink:'Hồng', pOcean:'Đại dương', pMint:'Bạc hà', pGraph:'Than chì', lPad:'Khoảng đệm', lRad:'Bo góc', lShadow:'Bóng đổ',
+  eyPin:'Ghim lên màn hình', pinTitle:'Ghim lại. Làm tiếp.', pinLead:'Ảnh chụp nổi trên mọi cửa sổ. Giữ thông báo lỗi, bản thiết kế hay tài liệu tham khảo trong tầm mắt khi bạn viết code.',
+  pZoom:'Phóng to', pOpac:'Độ trong suốt', pDraw:'Vẽ trực tiếp lên ảnh ghim', pMany:'Ghim nhiều ảnh cùng lúc', kWheel:'Con lăn',
+  eyOcr:'Trích xuất chữ', ocrTitle:'Sao chép chữ, không phải ảnh của chữ.', ocrLead:'Windows OCR đọc vùng chọn ngay trên máy bạn, hoàn toàn offline. Xuống dòng được giữ nguyên, dấu tiếng Việt không bị mất.',
+  ocrPanel:'Chữ đã trích xuất', ocrFoot:'6 dòng · giữ nguyên xuống dòng', ocrCopy:'Sao chép',
+  eyGal:'Thư viện', galTitle:'Ảnh đã sao chép hay ghim đều được lưu sẵn.', galLead:'Ảnh đã sao chép và ghim tự lưu vào thư mục Pictures. Xem lại, ghim lại, sao chép hoặc xoá.',
+  eyKeys:'Phím tắt', keysTitle:'Tay luôn trên bàn phím.', keysLead:'Thử xem: nhấn Ctrl, Shift, A hoặc PrtSc và xem phím sáng lên.',
+  gGlobal:'Toàn cục', gCapture:'Khi chụp', gPin:'Ảnh ghim',
+  kCapture:'Chụp một vùng', kCaptureAlt:'Chụp một vùng (phím thay thế)', kSelect:'Chọn vùng', kDrag:'Kéo', kResize:'Đổi kích thước bằng 8 tay nắm', kDragHandle:'Kéo tay nắm',
+  kUndo:'Hoàn tác', kRedo:'Làm lại', kCancel:'Huỷ', kZoom:'Phóng to ảnh ghim', kOpac:'Đổi độ trong suốt',
+  eyPriv:'Quyền riêng tư & mã nguồn mở', privTitle:'Không gì rời khỏi máy bạn.', privLead:'NeatShot không gửi bất kỳ yêu cầu mạng nào. Ảnh chụp, chữ và cài đặt của bạn ở yên trên máy này.',
+  f1t:'Hoàn toàn offline', f1d:'OCR chạy bằng chính Windows. Không tải lên thứ gì.',
+  f2t:'Không cần tài khoản', f2d:'Tải về, giải nén, nhấn Ctrl + Shift + A.',
+  f3t:'Không thu thập dữ liệu', f3d:'Không phân tích, không theo dõi sử dụng, không gửi gì về máy chủ.',
+  f4t:'Giấy phép MIT', f4d:'Đọc mã, fork, xây tiếp trên đó.',
+  dlTitle:'Tải NeatShot cho Windows', reqTitle:'Yêu cầu', r1:'Windows 10 (2004 trở lên) hoặc Windows 11', r3:'File zip ~64 MB · không cần trình cài đặt', r4:'Không cần cài .NET runtime',
+  stepsTitle:'Cài đặt trong ba bước', s1:'Tải file zip từ GitHub Releases.', s2:'Giải nén vào bất kỳ đâu và chạy NeatShot.', s3:'Biểu tượng nằm ở khay hệ thống. Nhấn Ctrl + Shift + A.',
+  ssTitle:'Về SmartScreen', ssBody:'Bản này chưa được ký số, nên lần đầu Windows có thể hiện cảnh báo SmartScreen. Chọn More info → Run anyway. Mã nguồn công khai nếu bạn muốn xem trước.',
+  dlBtn:'Tải v1.0.0', fLic:'Giấy phép MIT', fLog:'Nhật ký thay đổi', fMade:'Làm cho Windows'
+};
+const BLUE = ['#0078D4','#3B9BEB','#9CC8EF'];
+const THUMBS = [
+  { name:'NeatShot_2026-10-24_142305.png', size:'412 × 236', isForm:true },
+  { name:'NeatShot_2026-10-24_143012.png', size:'1280 × 720', isCode:true },
+  { name:'NeatShot_2026-10-24_150844.png', size:'640 × 360', isChart:true, bars:[40,65,52,80,58,92].map((h,i)=>({h:h+'%',c:BLUE[i%3]})) },
+  { name:'NeatShot_2026-10-23_091520.png', size:'388 × 512', isChat:true },
+  { name:'NeatShot_2026-10-23_101147.png', size:'960 × 540', isCode:true },
+  { name:'NeatShot_2026-10-22_173402.png', size:'720 × 405', isChart:true, bars:[78,54,66,38,72,48].map((h,i)=>({h:h+'%',c:BLUE[(i+1)%3]})) },
+  { name:'NeatShot_2026-10-22_112958.png', size:'412 × 236', isForm:true },
+  { name:'NeatShot_2026-10-21_164233.png', size:'540 × 300', isChat:true }
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const g = ['#C9CED6','#AEB4BD','#DDE1E6','#9AA1AB','#BFC5CD','#D0D4DA','#A7AEB8','#B8BEC6'];
+    const cells = n => Array.from({ length: n }, (_, i) => ({ c: g[(i * 7 + ((i * i) >> 1)) % 8] }));
+    return { heroCells: cells(28), tokCells: cells(32), thumbs: THUMBS };
+  }
+  $(s) { return this.root.querySelector(s); }
+  $$(s) { return Array.from(this.root.querySelectorAll(s)); }
+  on(el, ev, fn) { el.addEventListener(ev, fn); this.offs.push(() => el.removeEventListener(ev, fn)); }
+  componentDidMount() {
+    this.root = document.getElementById('ns-root');
+    if (!this.root) return;
+    this.offs = []; this.splits = [];
+    this.initLang(); this.initFit(); this.initKeys(); this.initPresets(); this.initDlSize();
+    let n = 0;
+    const wait = () => { if (window.gsap && window.ScrollTrigger) this.initMotion(); else if (n++ < 100) this.t = setTimeout(wait, 60); };
+    wait();
+  }
+  componentWillUnmount() { clearTimeout(this.t); (this.offs || []).forEach(f => f()); this.mm && this.mm.revert(); }
+
+  initLang() {
+    this.$$('[data-i18n]').forEach(el => { if (el.dataset.en == null) el.dataset.en = el.textContent; });
+    let l = null; try { l = localStorage.getItem('neatshot-lang'); } catch (e) {}
+    if (l !== 'en' && l !== 'vi') l = (navigator.language || '').toLowerCase().startsWith('vi') ? 'vi' : 'en';
+    this.setLang(l, false);
+    this.$$('[data-lang-btn]').forEach(b => this.on(b, 'click', () => { if (b.dataset.langBtn !== this.lang) this.switchLang(b.dataset.langBtn); }));
+  }
+  switchLang(l) {
+    const g = window.gsap;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.moveInd(l);
+    if (!g || reduce) { this.setLang(l, true); return; }
+    const vh = window.innerHeight;
+    const vis = this.$$('[data-i18n]').filter(el => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < vh && r.width > 0; });
+    if (this.langTl) this.langTl.progress(1).kill();
+    this.langTl = g.timeline()
+      .to(vis, { opacity: 0, y: -4, duration: .16, ease: 'power2.in', stagger: .004 })
+      .add(() => this.setLang(l, true))
+      .fromTo(vis, { opacity: 0, y: 5 }, { opacity: 1, y: 0, duration: .34, ease: 'power3.out', stagger: .008, clearProps: 'transform' });
+  }
+  moveInd(l) { const ind = this.$('#lang-ind'); if (ind) ind.style.transform = l === 'vi' ? 'translateX(38px)' : 'translateX(0)'; }
+  setLang(l, save) {
+    this.lang = l; this.moveInd(l);
+    (this.splits || []).forEach(s => s.revert()); this.splits = [];
+    this.$$('[data-i18n]').forEach(el => { const k = el.dataset.i18n; el.textContent = (l === 'vi' && VI[k] != null) ? VI[k] : el.dataset.en; });
+    document.documentElement.lang = l;
+    this.$$('[data-lang-btn]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.langBtn === l)));
+    if (save) { try { localStorage.setItem('neatshot-lang', l); } catch (e) {} }
+    this.setTool(this.tool == null ? -1 : this.tool);
+  }
+  initFit() {
+    const fits = this.$$('[data-fit]');
+    const apply = el => { const st = el.querySelector('[data-stage]'); if (st) st.style.transform = 'scale(' + (el.clientWidth / +el.dataset.fit) + ')'; };
+    fits.forEach(apply);
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(es => es.forEach(e => apply(e.target)));
+      fits.forEach(f => ro.observe(f)); this.offs.push(() => ro.disconnect());
+    }
+  }
+  initKeys() {
+    const map = { control:'control', shift:'shift', a:'a', printscreen:'printscreen', escape:'escape', z:'z', y:'y' };
+    const set = (k, on) => this.$$('[data-key="' + k + '"]').forEach(el => on ? el.setAttribute('data-on', '') : el.removeAttribute('data-on'));
+    const key = e => map[(e.key || '').toLowerCase()];
+    this.on(window, 'keydown', e => { const k = key(e); if (k) set(k, true); });
+    this.on(window, 'keyup', e => { const k = key(e); if (!k) return; if (k === 'printscreen') { set(k, true); setTimeout(() => set(k, false), 240); } else set(k, false); });
+    this.on(window, 'blur', () => Object.values(map).forEach(k => set(k, false)));
+  }
+  initPresets() {
+    const btns = this.$$('[data-preset]'), layers = this.$$('[data-grad]'), name = this.$('#bf-name');
+    const pick = p => {
+      btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === p)));
+      layers.forEach(l => { const o = l.dataset.grad === p ? 1 : 0; if (window.gsap) gsap.to(l, { opacity: o, duration: .45, ease: 'power2.out', overwrite: true }); else l.style.opacity = o; });
+      if (name) name.textContent = p;
+    };
+    btns.forEach(b => this.on(b, 'click', () => pick(b.dataset.preset)));
+  }
+  initDlSize() {
+    const box = this.$('#dl-box'), out = this.$('#dl-size');
+    if (!box || !out || !('ResizeObserver' in window)) return;
+    const ro = new ResizeObserver(() => { out.textContent = Math.round(box.offsetWidth) + ' × ' + Math.round(box.offsetHeight); });
+    ro.observe(box); this.offs.push(() => ro.disconnect());
+  }
+  setTool(i) {
+    this.tool = i;
+    const items = this.$$('[data-tool]');
+    items.forEach((li, j) => j === i ? li.setAttribute('data-on', '') : li.removeAttribute('data-on'));
+    const out = this.$('#ann-step'); const k = i < 0 ? 5 : i;
+    if (out && items[k]) out.textContent = (k + 1) + ' / 6 · ' + items[k].querySelector('[data-tname]').textContent;
+  }
+  drawSet(el) {
+    if (!el) return;
+    if (this.hasDraw) gsap.set(el, { drawSVG: '0%' });
+    else { const L = el.getTotalLength(); gsap.set(el, { strokeDasharray: L, strokeDashoffset: L }); }
+  }
+  drawTo(v) { return Object.assign(this.hasDraw ? { drawSVG: '100%' } : { strokeDashoffset: 0 }, v || {}); }
+
+  initMotion() {
+    const g = window.gsap;
+    g.registerPlugin(ScrollTrigger);
+    this.hasDraw = !!window.DrawSVGPlugin; if (this.hasDraw) g.registerPlugin(DrawSVGPlugin);
+    this.hasSplit = !!window.SplitText; if (this.hasSplit) g.registerPlugin(SplitText);
+    g.defaults({ ease: 'power3.out', duration: .6 });
+    const fr = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    fr.then(() => this.startMotion());
+  }
+  startMotion() {
+    const g = window.gsap;
+    if (!this.root || !document.body.contains(this.root)) return;
+    this.mm = g.matchMedia();
+    this.mm.add({ motion: '(prefers-reduced-motion: no-preference)', desktop: '(min-width: 900px)', hover: '(hover: hover)' }, ctx => {
+      const c = ctx.conditions;
+      if (!c.motion) { this.setTool(-1); return; }
+      const fns = [];
+      const safe = f => { try { const r = f(); if (typeof r === 'function') fns.push(r); } catch (e) { console.warn('[NeatShot motion]', e); } };
+      safe(() => this.headline()); safe(() => this.hero()); safe(() => this.annoy());
+      safe(() => this.annotate(c.desktop)); safe(() => this.beautify()); safe(() => this.pin());
+      safe(() => this.ocr()); safe(() => this.gallery()); safe(() => this.reveals());
+      if (c.hover) safe(() => this.magnetic());
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+      return () => fns.forEach(f => f());
+    });
+  }
+  headline() {
+    if (!this.hasSplit) return;
+    this.splits = this.$$('[data-split]').map(el => SplitText.create(el, { type: 'lines,words', mask: 'lines' }));
+    this.splits.forEach(s => { if (s.masks && s.masks.length) gsap.set(s.masks, { paddingBottom: '0.14em', marginBottom: '-0.14em' }); });
+    gsap.from(this.splits.flatMap(s => s.words), { yPercent: 110, duration: .8, stagger: .035, delay: .05 });
+    return () => { this.splits.forEach(s => s.revert()); this.splits = []; };
+  }
+  hero() {
+    const g = gsap, $ = s => this.$(s);
+    const stage = $('#hero-fit'), sel = $('#hero-sel'), cur = $('#hero-cursor'), badge = $('#hero-badge'), tb = $('#hero-toolbar'), toast = $('#hero-toast'), hint = $('#hero-hint');
+    const arrow = $('#hero-arrow'), head = $('#hero-head'), steps = this.$$('[data-hstep]'), cells = this.$$('[data-hcell]');
+    const wEl = $('#hero-w'), hEl = $('#hero-h');
+    const S = { x: 266, y: 140, w: 412, h: 236 }, sz = { w: 0, h: 0 };
+    const txt = () => { wEl.textContent = Math.round(sz.w); hEl.textContent = Math.round(sz.h); };
+    g.set(sel, { width: 0, height: 0, opacity: 0 }); g.set(badge, { opacity: 0 });
+    g.set(tb, { opacity: 0, y: -10, scale: .97, transformOrigin: '0 0' });
+    this.drawSet(arrow); g.set(head, { opacity: 0 }); g.set(steps, { scale: 0, transformOrigin: '50% 50%' }); g.set(cells, { opacity: 0 });
+    g.set(toast, { opacity: 0, y: 16 }); g.set(hint, { opacity: 0, y: -6 }); g.set(cur, { x: 640, y: 560, opacity: 0 }); txt();
+    const tl = g.timeline({ paused: true });
+    if (this.props.loopHero) tl.repeat(-1).repeatDelay(1.2);
+    tl.to(cur, { opacity: 1, duration: .2 })
+      .to(cur, { x: S.x, y: S.y, duration: .7, ease: 'power2.inOut' }, '<')
+      .to(hint, { opacity: 1, y: 0, duration: .3 })
+      .set(sel, { opacity: 1 }, '<')
+      .to(badge, { opacity: 1, duration: .15 }, '<')
+      .addLabel('drag')
+      .to(sel, { width: S.w, height: S.h, duration: .9, ease: 'power3.inOut' }, 'drag')
+      .to(cur, { x: S.x + S.w, y: S.y + S.h, duration: .9, ease: 'power3.inOut' }, 'drag')
+      .to(sz, { w: S.w, h: S.h, duration: .9, ease: 'power3.inOut', onUpdate: txt }, 'drag')
+      .to(tb, { opacity: 1, y: 0, scale: 1, duration: .45, ease: 'back.out(1.4)' }, '+=.08')
+      .to(hint, { opacity: 0, duration: .3 }, '<')
+      .to(cur, { x: S.x + 112, y: S.y + 214, duration: .5, ease: 'power2.inOut' })
+      .addLabel('arrow')
+      .to(arrow, this.drawTo({ duration: .55, ease: 'power2.inOut' }), 'arrow')
+      .to(cur, { x: S.x + 242, y: S.y + 188, duration: .55, ease: 'power2.inOut' }, 'arrow')
+      .to(head, { opacity: 1, duration: .12 })
+      .to(steps, { scale: 1, duration: .3, ease: 'back.out(1.7)', stagger: .2 }, '+=.15')
+      .to(cur, { opacity: 0, duration: .3 }, '+=.1')
+      .to(cells, { opacity: 1, duration: .15, stagger: { each: .01, from: 'random' } }, '<')
+      .to(toast, { opacity: 1, y: 0, duration: .45 }, '+=.25')
+      .to(toast, { opacity: 0, y: 8, duration: .4 }, '+=2.6');
+    const d = g.delayedCall(.6, () => tl.play(0));
+    const enter = () => { if (!tl.isActive()) tl.restart(); };
+    stage.addEventListener('mouseenter', enter);
+    return () => { stage.removeEventListener('mouseenter', enter); d.kill(); tl.kill(); };
+  }
+  annoy() {
+    this.$$('[data-annoy]').forEach(row => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 75%', once: true } });
+      const B = row.querySelector('[data-side="before"]'), A = row.querySelector('[data-side="after"]');
+      const q = (el, s) => Array.from(el.querySelectorAll(s));
+      const k = row.dataset.annoy;
+      if (k === 'tray') {
+        tl.fromTo(q(B, '[data-flash]'), { opacity: .7 }, { opacity: 0, duration: .5 }, .3)
+          .fromTo(q(A, '[data-menu]'), { opacity: 1, scale: 1 }, { opacity: 0, scale: .96, duration: .3, transformOrigin: '100% 100%' }, .3)
+          .fromTo(q(A, '[data-flash]'), { opacity: .7 }, { opacity: 0, duration: .5 }, .75)
+          .from(q(A, '[data-ok]'), { opacity: 0, scale: .8, duration: .35, ease: 'back.out(1.7)' }, 1);
+      } else if (k === 'keys') {
+        tl.to(q(B, '[data-press]'), { y: 3, duration: .08, yoyo: true, repeat: 1 }, .3)
+          .from(q(B, '[data-pop]'), { opacity: 0, y: 10, duration: .4 }, .55)
+          .to(q(A, '[data-press]'), { y: 3, duration: .08, yoyo: true, repeat: 1, stagger: .12 }, .3)
+          .from(q(A, '[data-pop]'), { opacity: 0, scale: .92, duration: .4, ease: 'back.out(1.4)' }, .85)
+          .from(q(A, '[data-ok]'), { opacity: 0, duration: .3 }, 1.15);
+      } else {
+        tl.from(q(B, '[data-shift]'), { x: -28, y: -18, duration: .7, ease: 'power2.inOut' }, .3)
+          .from(q(A, '[data-shift]'), { x: 28, y: 18, duration: .6 }, .3)
+          .from(q(A, '[data-ok]'), { opacity: 0, scale: .8, duration: .35, ease: 'back.out(1.7)' }, .95);
+      }
+    });
+  }
+  annotate(desktop) {
+    const $ = s => this.$(s);
+    const arrow = $('#ann-arrow'), head = $('#ann-head'), rect = $('#ann-rect'), label = $('#ann-label'), blur = $('#ann-blur');
+    const steps = this.$$('[data-astep]'), cells = this.$$('[data-acell]');
+    this.drawSet(arrow); this.drawSet(rect);
+    gsap.set(head, { opacity: 0 }); gsap.set(label, { opacity: 0, y: 8 }); gsap.set(steps, { scale: 0, transformOrigin: '50% 50%' });
+    gsap.set(cells, { opacity: 0 }); gsap.set(blur, { opacity: 0 });
+    this.setTool(0);
+    const len = this.props.scrubLength ?? 2600;
+    const tl = gsap.timeline(desktop
+      ? { defaults: { ease: 'none' }, scrollTrigger: { trigger: '#annotate-pin', start: 'top top', end: '+=' + len, pin: true, scrub: .6, anticipatePin: 1, onUpdate: s => { const i = Math.min(5, Math.floor(s.progress * 6)); if (i !== this.tool) this.setTool(i); } } }
+      : { scrollTrigger: { trigger: '#ann-canvas', start: 'top 70%', once: true } });
+    const D = desktop ? 1 : .5;
+    tl.to(arrow, this.drawTo({ duration: .75 * D }), 0).to(head, { opacity: 1, duration: .1 * D }, .75 * D)
+      .to(rect, this.drawTo({ duration: .8 * D }), 1 * D)
+      .to(label, { opacity: 1, y: 0, duration: .6 * D }, 2 * D)
+      .to(steps, { scale: 1, duration: .25 * D, stagger: .25 * D }, 3 * D)
+      .to(cells, { opacity: 1, duration: .1 * D, stagger: { each: .025 * D, from: 'random' } }, 4 * D)
+      .to(blur, { opacity: 1, duration: .7 * D }, 5 * D)
+      .to({}, { duration: .3 * D }, 5.7 * D);
+    if (!desktop) for (let i = 0; i < 6; i++) tl.call(() => this.setTool(i), null, i * D);
+    return () => this.setTool(-1);
+  }
+  beautify() {
+    const grads = this.$('#bf-grads'), shot = this.$('#bf-shot'), sh = this.$('#bf-shadow-l'), card = this.$('#bf-card');
+    const pad = this.$('#bf-pad'), rad = this.$('#bf-rad'), shv = this.$('#bf-shv');
+    const p = { pad: 0, rad: 0 };
+    const upd = () => { pad.textContent = Math.round(p.pad) + 'px'; rad.textContent = Math.round(p.rad) + 'px'; };
+    gsap.set(grads, { xPercent: -100 }); gsap.set(shot, { scale: 1 }); gsap.set([sh, card], { borderRadius: 0 }); gsap.set(sh, { opacity: 0 });
+    upd(); shv.textContent = 'none';
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#bf-fit', start: 'top 70%', once: true } });
+    tl.to(shot, { scale: .8, duration: .8, ease: 'power3.inOut' }, 0)
+      .to(p, { pad: 64, duration: .8, ease: 'power3.inOut', onUpdate: upd }, 0)
+      .to([sh, card], { borderRadius: 14, duration: .5 }, .7)
+      .to(p, { rad: 14, duration: .5, onUpdate: upd }, .7)
+      .to(sh, { opacity: 1, duration: .6 }, 1.1)
+      .call(() => { shv.textContent = 'soft'; }, null, 1.1)
+      .to(grads, { xPercent: 0, duration: .8 }, 1.4);
+    return () => { shv.textContent = 'soft'; p.pad = 64; p.rad = 14; upd(); };
+  }
+  pin() {
+    const fit = this.$('#pin-fit'), main = this.$('#pin-main'), hud = this.$('#pin-hud'), pen = this.$('#pin-pen');
+    const p = { z: 100, o: 100 };
+    const upd = () => { gsap.set(main, { scale: p.z / 100, opacity: p.o / 100 }); hud.textContent = 'Zoom ' + Math.round(p.z) + '% · Opacity ' + Math.round(p.o) + '%'; };
+    upd(); this.drawSet(pen);
+    gsap.from(this.$$('[data-pin-other]'), { opacity: 0, y: 30, duration: .6, stagger: .15, scrollTrigger: { trigger: fit, start: 'top 75%', once: true } });
+    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: fit, start: 'top 70%', end: 'bottom 40%', scrub: .6 } });
+    tl.to(p, { z: 120, duration: 1, onUpdate: upd }).to(p, { o: 75, duration: 1, onUpdate: upd }).to(pen, this.drawTo({ duration: 1 }));
+    return () => { hud.textContent = 'Zoom 120% · Opacity 75%'; };
+  }
+  ocr() {
+    const scan = this.$('#ocr-scan'), boxes = this.$$('[data-obox]'), outs = this.$$('[data-oline]'), H = 400, T = 2.4;
+    gsap.set(boxes, { opacity: 0 });
+    const splits = outs.map(o => this.hasSplit ? SplitText.create(o, { type: 'chars' }) : null);
+    outs.forEach((o, i) => { if (splits[i]) gsap.set(splits[i].chars, { opacity: 0 }); else gsap.set(o, { opacity: 0, x: -6 }); });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#ocr-fit', start: 'top 65%', once: true } });
+    tl.fromTo(scan, { y: 0, opacity: 1 }, { y: H, duration: T, ease: 'none' }, 0).to(scan, { opacity: 0, duration: .3 });
+    boxes.forEach((b, i) => {
+      const t = (+b.dataset.y / H) * T;
+      tl.to(b, { opacity: 1, duration: .2 }, t);
+      if (splits[i]) tl.to(splits[i].chars, { opacity: 1, duration: .01, stagger: .014 }, t);
+      else if (outs[i]) tl.to(outs[i], { opacity: 1, x: 0, duration: .3 }, t);
+    });
+    return () => splits.forEach(s => s && s.revert());
+  }
+  gallery() {
+    gsap.from(this.$$('[data-thumb]'), { opacity: 0, y: 24, scale: .97, duration: .6, stagger: .06, scrollTrigger: { trigger: '#gal-grid', start: 'top 80%', once: true } });
+  }
+  reveals() {
+    const els = this.$$('[data-reveal]');
+    gsap.set(els, { opacity: 0, y: 20 });
+    ScrollTrigger.batch(els, { start: 'top 88%', once: true, onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: .7, stagger: .08, overwrite: true }) });
+  }
+  magnetic() {
+    const offs = [];
+    this.$$('[data-magnetic]').forEach(el => {
+      const xTo = gsap.quickTo(el, 'x', { duration: .4, ease: 'power3.out' }), yTo = gsap.quickTo(el, 'y', { duration: .4, ease: 'power3.out' });
+      const mv = e => { const r = el.getBoundingClientRect(); xTo((e.clientX - r.left - r.width / 2) * .22); yTo((e.clientY - r.top - r.height / 2) * .3); };
+      const lv = () => { xTo(0); yTo(0); };
+      el.addEventListener('mousemove', mv); el.addEventListener('mouseleave', lv);
+      offs.push(() => { el.removeEventListener('mousemove', mv); el.removeEventListener('mouseleave', lv); });
+    });
+    return () => offs.forEach(f => f());
+  }
+}
+</script>
+</body>
+</html>

@@ -24,9 +24,11 @@ public partial class PinViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ScaledWidth))]
     [NotifyPropertyChangedFor(nameof(ScaledHeight))]
+    [NotifyPropertyChangedFor(nameof(HudText))]
     private double _scale = 1.0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HudText))]
     private double _opacity = 1.0;
 
     [ObservableProperty]
@@ -39,6 +41,13 @@ public partial class PinViewModel : ObservableObject
 
     public double ScaledWidth => Math.Max(1.0, OriginalWidth * Scale);
     public double ScaledHeight => Math.Max(1.0, OriginalHeight * Scale);
+
+    /// <summary>
+    /// Nhãn trạng thái hiển thị tạm thời khi người dùng zoom hoặc đổi độ trong suốt.
+    /// </summary>
+    public string HudText => string.Create(
+        System.Globalization.CultureInfo.InvariantCulture,
+        $"Zoom {Math.Round(Scale * 100)}% · Opacity {Math.Round(Opacity * 100)}%");
 
     public event EventHandler? RequestClose;
 

@@ -22,6 +22,11 @@ public partial class OverlayWindow : Window
     private bool _isToolbarManuallyPositioned;
     public OverlayViewModel ViewModel { get; }
 
+    /// <summary>
+    /// Phát ra sau khi ảnh đã được sao chép vào Clipboard; tham số là đường dẫn file đã lưu (null nếu không lưu được).
+    /// </summary>
+    public event EventHandler<string?>? CaptureCopied;
+
     public OverlayWindow(
         OverlayViewModel viewModel,
         IExportService exportService,
@@ -163,8 +168,9 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
-            await SaveToGalleryAsync(finalImage);
+            var savedPath = await SaveToGalleryAsync(finalImage);
             await _exportService.CopyToClipboardAsync(finalImage);
+            CaptureCopied?.Invoke(this, savedPath);
             Close();
         }
         catch (Exception ex)
@@ -283,17 +289,19 @@ public partial class OverlayWindow : Window
     /// <summary>
     /// Tự động lưu ảnh chụp vào thư viện Pictures\NeatShot. Lỗi lưu không được chặn thao tác Copy/Ghim.
     /// </summary>
-    private async Task SaveToGalleryAsync(BitmapSource image)
+    /// <returns>Đường dẫn file đã lưu, hoặc null nếu không lưu được.</returns>
+    private async Task<string?> SaveToGalleryAsync(BitmapSource image)
     {
-        if (_galleryService == null) return;
+        if (_galleryService == null) return null;
 
         try
         {
-            await _galleryService.SaveScreenshotAsync(image);
+            return await _galleryService.SaveScreenshotAsync(image);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi tự động lưu ảnh vào thư viện: {ex.Message}");
+            return null;
         }
     }
 
@@ -365,18 +373,32 @@ public partial class OverlayWindow : Window
         }
     }
 
-    private void ShowOcrResult(string text)
+    internal void ShowOcrResult(string text)
     {
         OcrResultTextBox.Text = text;
+        OcrResultMetaText.Text = DescribeOcrText(text);
+        OcrCopiedText.Text = "Đã sao chép toàn bộ văn bản vào Clipboard";
         OcrResultCard.Visibility = Visibility.Visible;
 
-        var cardWidth = OcrResultCard.Width > 0 ? OcrResultCard.Width : 480;
-        var cardHeight = 290;
+        OcrResultCard.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var cardWidth = OcrResultCard.Width > 0 ? OcrResultCard.Width : 580;
+        var cardHeight = OcrResultCard.DesiredSize.Height > 0 ? OcrResultCard.DesiredSize.Height : 340;
         var screenW = ActualWidth > 0 ? ActualWidth : 1920;
         var screenH = ActualHeight > 0 ? ActualHeight : 1080;
 
         Canvas.SetLeft(OcrResultCard, Math.Max(20, (screenW - cardWidth) / 2));
         Canvas.SetTop(OcrResultCard, Math.Max(20, (screenH - cardHeight) / 2));
+    }
+
+    /// <summary>
+    /// Thống kê ngắn gọn cho footer thẻ kết quả, ví dụ "2 dòng · 16 ký tự".
+    /// </summary>
+    private static string DescribeOcrText(string text)
+    {
+        var normalized = text.Replace("\r\n", "\n");
+        var lines = normalized.Split('\n').Count(l => !string.IsNullOrWhiteSpace(l));
+        var characters = normalized.Count(c => c != '\n');
+        return $"{lines} dòng · {characters} ký tự";
     }
 
     private void OnOcrCloseClick(object sender, RoutedEventArgs e)
@@ -389,6 +411,8 @@ public partial class OverlayWindow : Window
         if (!string.IsNullOrEmpty(OcrResultTextBox.Text))
         {
             CopyTextToClipboardWithRetry(OcrResultTextBox.Text);
+            OcrCopiedText.Text = "Đã sao chép lại văn bản (gồm cả phần đã sửa)";
+            OcrResultMetaText.Text = DescribeOcrText(OcrResultTextBox.Text);
         }
     }
 
@@ -467,6 +491,7 @@ public partial class OverlayWindow : Window
     {
         if (e.PropertyName == nameof(OverlayViewModel.SelectedRegion))
         {
+            SelectionHint.Visibility = ViewModel.SelectedRegion.IsValid ? Visibility.Collapsed : Visibility.Visible;
             _isToolbarManuallyPositioned = false;
             UpdateBeautifyPreview(ViewModel.SelectedRegion);
             UpdateToolbarPosition(ViewModel.SelectedRegion);
@@ -552,11 +577,24 @@ public partial class OverlayWindow : Window
         Show();
         Activate();
         Focus();
+        PositionSelectionHint(virtualBounds);
 
         if (selectFullScreen)
         {
             SelectFullScreen(virtualBounds);
         }
+    }
+
+    /// <summary>
+    /// Căn gợi ý ở giữa phía trên màn hình chính (overlay phủ cả màn hình ảo nên gốc toạ độ có thể âm).
+    /// </summary>
+    private void PositionSelectionHint(Rect virtualBounds)
+    {
+        SelectionHint.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var primaryWidth = SystemParameters.PrimaryScreenWidth > 0 ? SystemParameters.PrimaryScreenWidth : virtualBounds.Width;
+        var left = -virtualBounds.Left + (primaryWidth - SelectionHint.DesiredSize.Width) / 2;
+        Canvas.SetLeft(SelectionHint, Math.Max(0, left));
+        Canvas.SetTop(SelectionHint, Math.Max(0, -virtualBounds.Top) + 16);
     }
 
     /// <summary>

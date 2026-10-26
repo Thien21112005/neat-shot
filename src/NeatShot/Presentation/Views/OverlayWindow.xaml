@@ -16,6 +16,146 @@
         KeyDown="OnWindowKeyDown"
         MouseRightButtonDown="OnWindowMouseRightButtonDown">
 
+    <Window.Resources>
+        <!-- Bộ icon nét mảnh (24×24) dùng chung cho thẻ kết quả trích xuất chữ -->
+        <Geometry x:Key="CardIconOcr">M8,4 H5 V20 H8 M16,4 H19 V20 H16 M9,8.5 H15 M12,8.5 V16</Geometry>
+        <Geometry x:Key="CardIconCopy">M10,8 H18 A2,2 0 0 1 20,10 V18 A2,2 0 0 1 18,20 H10 A2,2 0 0 1 8,18 V10 A2,2 0 0 1 10,8 Z M16,8 V6 A2,2 0 0 0 14,4 H6 A2,2 0 0 0 4,6 V14 A2,2 0 0 0 6,16 H8</Geometry>
+        <Geometry x:Key="CardIconPencil">M4,20 L5,16 L16,5 L19,8 L8,19 Z M14,7 L17,10</Geometry>
+        <Geometry x:Key="CardIconCheck">M5,12.5 L9.5,17 L19,7.5</Geometry>
+        <Geometry x:Key="CardIconCheckCircle">M3.5,12 A8.5,8.5 0 1 0 20.5,12 A8.5,8.5 0 1 0 3.5,12 Z M8.5,12.3 L11,14.8 L15.8,9.6</Geometry>
+        <Geometry x:Key="CardIconClose">M6,6 L18,18 M18,6 L6,18</Geometry>
+
+        <Style x:Key="CardIconPath" TargetType="Path">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Stretch" Value="None" />
+            <Setter Property="StrokeThickness" Value="1.9" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
+            <Setter Property="Stroke" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+        </Style>
+
+        <!-- Nút phụ: viền mảnh, nền tối -->
+        <Style x:Key="CardGhostButton" TargetType="Button">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#E8EAED" />
+            <Setter Property="Background" Value="#0FFFFFFF" />
+            <Setter Property="BorderBrush" Value="#29FFFFFF" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1FFFFFFF" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#4DFFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2EFFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Nút chính: nền xanh -->
+        <Style x:Key="CardPrimaryButton" TargetType="Button" BasedOn="{StaticResource CardGhostButton}">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#0078D4" />
+            <Setter Property="BorderBrush" Value="#0078D4" />
+            <Setter Property="Padding" Value="16,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1A86DC" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#006CBE" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Nút icon tròn nhỏ (đóng thẻ) -->
+        <Style x:Key="CardIconButton" TargetType="Button">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="#9AA0A6" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="6" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1FFFFFFF" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Ô văn bản kết quả: nền tối, font monospace, không phụ thuộc theme -->
+        <Style x:Key="CardTextBox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="#E8EAED" />
+            <Setter Property="Background" Value="#0E0F12" />
+            <Setter Property="BorderBrush" Value="#1FFFFFFF" />
+            <Setter Property="CaretBrush" Value="White" />
+            <Setter Property="SelectionBrush" Value="#0078D4" />
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1">
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#660078D4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <!-- Ảnh màn hình đóng băng làm nền -->
         <Image Source="{Binding BackgroundImage}"
@@ -36,6 +176,27 @@
 
         <!-- Thanh công cụ nổi cạnh vùng chọn và các lớp overlay tương tác -->
         <Canvas x:Name="OverlayCanvas">
+            <!-- Gợi ý khi vừa mở màn hình chụp (ẩn khi đã có vùng chọn) -->
+            <Border x:Name="SelectionHint"
+                    IsHitTestVisible="False"
+                    Canvas.Top="16"
+                    Background="#E60E0F12"
+                    BorderBrush="#1FFFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12,8">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Màn hình đã đóng băng · Kéo để chọn vùng"
+                               FontFamily="Consolas"
+                               FontSize="12"
+                               Foreground="#E8EAED" />
+                    <TextBlock Text="  ·  Esc để thoát"
+                               FontFamily="Consolas"
+                               FontSize="12"
+                               Foreground="#9AA0A6" />
+                </StackPanel>
+            </Border>
+
             <!-- Khung xem trước hiệu ứng Làm đẹp ảnh trực tiếp (Live Beautify Preview Frame) -->
             <Border x:Name="BeautifyPreviewFrame"
                     Visibility="Collapsed"
@@ -82,101 +243,121 @@
             <controls:AnnotationToolbar x:Name="Toolbar"
                                         Visibility="Collapsed" />
 
-            <!-- Bảng kết quả Trích xuất chữ trực quan (Text Extraction Result Card) -->
+            <!-- Thẻ kết quả Trích xuất chữ (cùng phong cách với panel "Extracted text" trên landing page) -->
             <Border x:Name="OcrResultCard"
                     Visibility="Collapsed"
-                    Width="480"
-                    Background="#F51E1E1E"
-                    BorderBrush="#0078D4"
-                    BorderThickness="1.5"
-                    CornerRadius="12"
-                    Padding="16"
-                    Effect="{DynamicResource {x:Static SystemParameters.DropShadow}}">
+                    Width="580"
+                    Background="#F716181D"
+                    BorderBrush="#24FFFFFF"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="36" ShadowDepth="12" Direction="270" Opacity="0.55" Color="Black" />
+                </Border.Effect>
                 <StackPanel>
-                    <!-- Header -->
-                    <Grid Margin="0,0,0,10">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🔍" FontSize="16" Margin="0,0,6,0" VerticalAlignment="Center" />
-                            <TextBlock Text="Kết quả Trích xuất chữ"
-                                       FontWeight="Bold"
-                                       FontSize="14"
-                                       Foreground="White"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                        <!-- Nút đóng nhanh [X] -->
-                        <Button x:Name="OcrCloseIconButton"
-                                HorizontalAlignment="Right"
-                                Width="26"
-                                Height="26"
-                                Padding="0"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Foreground="#A0FFFFFF"
-                                ToolTip="Đóng kết quả trích xuất chữ (Esc)"
-                                Click="OnOcrCloseClick">
-                            <TextBlock Text="✕" FontSize="12" FontWeight="Bold" />
-                        </Button>
-                    </Grid>
+                    <!-- Header: icon + tiêu đề + nhãn offline + nút đóng -->
+                    <Border Padding="16,12,10,12" BorderBrush="#12FFFFFF" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="30" Height="30" CornerRadius="7" Background="#1F0078D4" VerticalAlignment="Center">
+                                <Viewbox Width="17" Height="17" TextElement.Foreground="#3B9BEB">
+                                    <Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconOcr}" />
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Chữ đã trích xuất" FontSize="14" FontWeight="SemiBold" Foreground="#E8EAED" />
+                                <TextBlock Text="Có thể sửa trực tiếp trước khi sao chép lại" FontSize="11.5" Foreground="#9AA0A6" Margin="0,1,0,0" />
+                            </StackPanel>
+                            <Border Grid.Column="2" Margin="12,0,8,0" Padding="7,4" CornerRadius="4"
+                                    BorderBrush="#26FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                                <TextBlock Text="Windows OCR · offline" FontFamily="Consolas" FontSize="11" Foreground="#9AA0A6" />
+                            </Border>
+                            <Button x:Name="OcrCloseIconButton"
+                                    Grid.Column="3"
+                                    Style="{StaticResource CardIconButton}"
+                                    ToolTip="Đóng kết quả trích xuất chữ (Esc)"
+                                    Click="OnOcrCloseClick">
+                                <Viewbox Width="14" Height="14">
+                                    <Path Style="{StaticResource CardIconPath}" StrokeThickness="2.2" Data="{StaticResource CardIconClose}" />
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </Border>
 
-                    <!-- Thông báo đã copy vào Clipboard -->
-                    <Border Background="#26107C41"
-                            BorderBrush="#40107C41"
-                            BorderThickness="1"
-                            CornerRadius="6"
-                            Padding="8,5"
-                            Margin="0,0,0,10">
+                    <!-- Trạng thái: đã sao chép vào Clipboard -->
+                    <Border Margin="16,12,16,0" Padding="10,7" CornerRadius="6"
+                            Background="#1A22C55E" BorderBrush="#3322C55E" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✅ " FontSize="12" />
-                            <TextBlock Text="Đã tự động sao chép toàn bộ văn bản vào Clipboard!"
-                                       FontSize="12"
+                            <Viewbox Width="15" Height="15" TextElement.Foreground="#4ADE80" VerticalAlignment="Center">
+                                <Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconCheckCircle}" />
+                            </Viewbox>
+                            <TextBlock x:Name="OcrCopiedText"
+                                       Text="Đã sao chép toàn bộ văn bản vào Clipboard"
+                                       Margin="8,0,0,0"
+                                       FontSize="12.5"
                                        FontWeight="SemiBold"
-                                       Foreground="#4ADE80" />
+                                       Foreground="#A7F3D0"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                     </Border>
 
-                    <!-- Khung văn bản TextBox cuộn được -->
+                    <!-- Văn bản đã nhận diện (sửa được) -->
                     <TextBox x:Name="OcrResultTextBox"
-                             Height="160"
-                             Background="#FF2A2A2A"
-                             Foreground="White"
-                             BorderBrush="#33FFFFFF"
-                             BorderThickness="1"
-                             Padding="8"
-                             FontFamily="Segoe UI"
-                             FontSize="12"
+                             Style="{StaticResource CardTextBox}"
+                             Margin="16,10,16,0"
+                             Height="190"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Disabled"
                              IsReadOnly="False" />
 
-                    <!-- Footer Buttons -->
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Margin="0,12,0,0">
-                        <!-- Nút Sao chép lại -->
-                        <Button x:Name="OcrCopyAgainButton"
-                                Content="📋 Sao chép lại"
-                                Margin="0,0,8,0"
-                                Padding="12,5"
-                                Click="OnOcrCopyAgainClick" />
-
-                        <!-- Nút Đóng để tiếp tục vẽ/chỉnh sửa -->
-                        <Button x:Name="OcrContinueButton"
-                                Content="Tiếp tục chỉnh sửa"
-                                Margin="0,0,8,0"
-                                Padding="12,5"
-                                Click="OnOcrCloseClick" />
-
-                        <!-- Nút Hoàn tất (Đóng overlay) -->
-                        <Button x:Name="OcrDoneButton"
-                                Content="Xong &amp; Thoát"
-                                Background="#0078D4"
-                                Foreground="White"
-                                FontWeight="SemiBold"
-                                Padding="14,5"
-                                Click="OnOcrDoneClick" />
-                    </StackPanel>
+                    <!-- Footer: thống kê + các nút thao tác -->
+                    <Grid Margin="16,12,16,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="OcrResultMetaText"
+                                   VerticalAlignment="Center"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   Foreground="#7D838B" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button x:Name="OcrCopyAgainButton"
+                                    Style="{StaticResource CardGhostButton}"
+                                    ToolTip="Sao chép lại văn bản (kể cả phần bạn vừa sửa)"
+                                    Click="OnOcrCopyAgainClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox Width="15" Height="15"><Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconCopy}" /></Viewbox>
+                                    <TextBlock Text="Sao chép lại" Margin="7,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="OcrContinueButton"
+                                    Style="{StaticResource CardGhostButton}"
+                                    ToolTip="Đóng thẻ này và tiếp tục chú thích ảnh"
+                                    Click="OnOcrCloseClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox Width="15" Height="15"><Path Style="{StaticResource CardIconPath}" Data="{StaticResource CardIconPencil}" /></Viewbox>
+                                    <TextBlock Text="Tiếp tục chỉnh sửa" Margin="7,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="OcrDoneButton"
+                                    Style="{StaticResource CardPrimaryButton}"
+                                    ToolTip="Hoàn tất và đóng màn hình chụp"
+                                    Click="OnOcrDoneClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox Width="15" Height="15"><Path Style="{StaticResource CardIconPath}" StrokeThickness="2.4" Data="{StaticResource CardIconCheck}" /></Viewbox>
+                                    <TextBlock Text="Xong" Margin="7,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
 

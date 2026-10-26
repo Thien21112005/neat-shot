@@ -506,37 +506,23 @@ public partial class AnnotationToolbar : UserControl
         }
     }
 
-    private static void SetButtonActive(Button? btn, bool isActive)
-    {
-        if (btn == null) return;
-        if (isActive)
-        {
-            btn.Background = new SolidColorBrush(Color.FromRgb(0, 120, 212));
-            btn.BorderBrush = new SolidColorBrush(Colors.White);
-            btn.BorderThickness = new Thickness(1.5);
-        }
-        else
-        {
-            btn.ClearValue(Button.BackgroundProperty);
-            btn.ClearValue(Button.BorderBrushProperty);
-            btn.ClearValue(Button.BorderThicknessProperty);
-        }
-    }
+    private static void SetButtonActive(Button? btn, bool isActive) => SetControlActive(btn, isActive);
 
+    /// <summary>
+    /// Công cụ đang chọn: nền xanh đặc + icon trắng (đồng bộ phong cách với landing page).
+    /// </summary>
     private static void SetControlActive(Control? ctrl, bool isActive)
     {
         if (ctrl == null) return;
         if (isActive)
         {
             ctrl.Background = new SolidColorBrush(Color.FromRgb(0, 120, 212));
-            ctrl.BorderBrush = new SolidColorBrush(Colors.White);
-            ctrl.BorderThickness = new Thickness(1.5);
+            ctrl.Foreground = new SolidColorBrush(Colors.White);
         }
         else
         {
             ctrl.ClearValue(Control.BackgroundProperty);
-            ctrl.ClearValue(Control.BorderBrushProperty);
-            ctrl.ClearValue(Control.BorderThicknessProperty);
+            ctrl.ClearValue(Control.ForegroundProperty);
         }
     }
 
@@ -871,6 +857,11 @@ public partial class AnnotationToolbar : UserControl
             item.Tag is string tag &&
             Enum.TryParse<BeautifyPreset>(tag, out var preset))
         {
+            // Ô chọn hiển thị gradient của preset đang dùng (null = "Gốc" -> hiện icon ✦)
+            BeautifyComboBox.Tag = preset == BeautifyPreset.None
+                ? null
+                : TryFindResource($"BeautifySwatch{preset}") as Brush;
+
             if (preset == BeautifyPreset.None)
             {
                 SelectedBeautifyOptions = null;

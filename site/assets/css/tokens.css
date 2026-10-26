@@ -1,0 +1,30 @@
+/* Design tokens — màu, font và nhịp khoảng cách dùng chung toàn site */
+:root {
+  --bg: #0E0F12;
+  --bg-deep: #0B0C0F;
+  --surface: #16181D;
+  --surface-2: #1E2128;
+  --surface-3: #22252C;
+  --line: rgba(255, 255, 255, .08);
+  --line-2: rgba(255, 255, 255, .16);
+
+  --text: #E8EAED;
+  --text-2: #C9CDD2;
+  --muted: #9AA0A6;
+  --muted-2: #7D838B;
+
+  --accent: #0078D4;
+  --accent-hi: #3B9BEB;
+  --accent-hover: #1A86DC;
+  --mark-red: #FF3B30;
+  --mark-yellow: #FFCC00;
+
+  --sans: "Be Vietnam Pro", system-ui, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --container: 1440px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --section-y: clamp(80px, 10vw, 140px);
+
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}

@@ -1,17 +1,21 @@
 using NeatShot.Common.Helpers;
 using NeatShot.Core.Models;
 using NeatShot.Presentation.ViewModels;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace NeatShot.Presentation.Views;
 
 public partial class PinWindow : Window
 {
     public PinViewModel ViewModel { get; }
+
+    private readonly DispatcherTimer _hudTimer = new() { Interval = TimeSpan.FromSeconds(1.2) };
 
     public PinWindow(PinViewModel viewModel)
     {
@@ -21,6 +25,13 @@ public partial class PinWindow : Window
         DataContext = ViewModel;
 
         ViewModel.RequestClose += (s, e) => Close();
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        Closed += (s, e) => _hudTimer.Stop();
+        _hudTimer.Tick += (s, e) =>
+        {
+            _hudTimer.Stop();
+            PinHud.Visibility = Visibility.Collapsed;
+        };
 
         AnnotationToolbar.ToolSelected += (s, tool) =>
         {
@@ -48,6 +59,18 @@ public partial class PinWindow : Window
         {
             ToggleAllControls(false);
         };
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(PinViewModel.Scale) or nameof(PinViewModel.Opacity))
+        {
+            // Hiện nhãn trạng thái ngay, cập nhật chữ đồng bộ rồi tự ẩn sau một khoảng ngắn
+            PinHudText.Text = ViewModel.HudText;
+            PinHud.Visibility = Visibility.Visible;
+            _hudTimer.Stop();
+            _hudTimer.Start();
+        }
     }
 
     public void SetImage(BitmapSource image, Point initialPosition)
