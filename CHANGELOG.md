@@ -11,10 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Capture overlay shows a "drag to select" hint until a region is selected.
 - Copying a capture shows a toast confirming the copy and where the file was saved.
 - Pinned captures show a temporary "Zoom · Opacity" badge while you scroll to adjust them.
+- **Start with Windows:** NeatShot registers itself to run in the tray at sign-in (on by default, like Lightshot);
+  toggle it from the tray menu ("Khởi động cùng Windows").
 
 ### Changed
 - Annotation toolbar redesigned to match the website: thin-line vector icons instead of emoji,
   solid accent highlight for the active tool, dark rounded bars and an icon-based action bar.
+- Redesigned the text extraction result card and the Beautify preset selector.
+
+### Fixed
+- The Beautify selector could not be clicked (the WPF-UI theme shrank its hit area to ~2px).
 
 ## [1.0.0] - 2026-10-25
 

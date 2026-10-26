@@ -108,7 +108,9 @@ dotnet build
 dotnet run --project src/NeatShot
 ```
 
-NeatShot starts in the system tray. Left-click the tray icon to capture, or right-click it to open the menu (full-screen capture, gallery, screenshots folder, exit). Only one instance can run at a time.
+NeatShot starts in the system tray. Left-click the tray icon to capture, or right-click it to open the menu (full-screen capture, gallery, screenshots folder, start with Windows, exit). Only one instance can run at a time.
+
+**Start with Windows:** like Lightshot, NeatShot registers itself to start in the tray when you sign in, so `Ctrl + Shift + A` is always ready. Turn it off with the tray menu item *Khởi động cùng Windows* (or in *Task Manager → Startup apps*). If you move the NeatShot folder, just run it once from the new location.
 
 **Package a release build:** `./scripts/publish.ps1` runs the tests and produces `artifacts/NeatShot-v<version>-win-x64.zip`. See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 
@@ -252,7 +254,9 @@ dotnet build
 dotnet run --project src/NeatShot
 ```
 
-Ứng dụng chạy ngầm dưới khay hệ thống. Click trái vào icon để chụp; click phải để mở menu (chụp toàn màn hình, thư viện ảnh, thư mục ảnh, thoát). Mỗi lúc chỉ chạy được một phiên bản.
+Ứng dụng chạy ngầm dưới khay hệ thống. Click trái vào icon để chụp; click phải để mở menu (chụp toàn màn hình, thư viện ảnh, thư mục ảnh, khởi động cùng Windows, thoát). Mỗi lúc chỉ chạy được một phiên bản.
+
+**Khởi động cùng Windows:** giống Lightshot, NeatShot tự đăng ký chạy nền mỗi khi bạn đăng nhập Windows nên `Ctrl + Shift + A` luôn sẵn sàng. Muốn tắt, bỏ chọn mục *Khởi động cùng Windows* trong menu khay (hoặc trong *Task Manager → Startup apps*). Nếu di chuyển thư mục NeatShot, chỉ cần mở app một lần ở vị trí mới.
 
 **Đóng gói bản phát hành:** `./scripts/publish.ps1` sẽ chạy test rồi tạo `artifacts/NeatShot-v<version>-win-x64.zip`. Ghi chú các phiên bản xem tại [CHANGELOG.md](./CHANGELOG.md).
 
