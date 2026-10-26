@@ -18,7 +18,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 | # | Tính năng | Nhóm | Độ khó | Ưu tiên |
 |---|---|---|---|---|
 | 1 | ✅ Cửa sổ Cài đặt + đổi phím tắt | Nền tảng | 🟡 | ⭐⭐⭐ |
-| 2 | Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
+| 2 | ✅ Tự nhận diện cửa sổ khi rê chuột | Chụp | 🟡 | ⭐⭐⭐ |
 | 3 | Ghim ảnh từ Clipboard | Ghim | 🟢 | ⭐⭐⭐ |
 | 4 | Chụp hẹn giờ (3s / 5s) | Chụp | 🟢 | ⭐⭐ |
 | 5 | Chụp lại vùng vừa chụp | Chụp | 🟢 | ⭐⭐ |
@@ -59,7 +59,7 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 
 ---
 
-### 2. Tự nhận diện cửa sổ khi rê chuột 🟡
+### 2. Tự nhận diện cửa sổ khi rê chuột 🟡 ✅ Đã xong
 
 **Vấn đề:** Muốn chụp đúng một cửa sổ, người dùng phải kéo tay khớp từng mép. Snipaste/ShareX tự viền cửa sổ dưới con trỏ.
 
@@ -69,9 +69,9 @@ Mỗi mục gồm: vấn đề cần giải quyết, phạm vi, tiêu chí hoàn
 - Liệt kê cửa sổ **trước khi** hiện overlay (`EnumWindows` + `DwmGetWindowAttribute(DWMWA_EXTENDED_FRAME_BOUNDS)` để bỏ phần bóng đổ).
 
 **Tiêu chí hoàn thành:**
-- [ ] Bỏ qua cửa sổ ẩn, thu nhỏ, cửa sổ của chính NeatShot.
-- [ ] Toạ độ đúng trên đa màn hình và DPI hỗn hợp (100% / 125% / 150%).
-- [ ] Unit test cho thuật toán chọn hình chữ nhật nhỏ nhất chứa con trỏ.
+- [x] Bỏ qua cửa sổ ẩn, thu nhỏ, cửa sổ của chính NeatShot.
+- [x] Toạ độ đúng trên đa màn hình và DPI hỗn hợp (100% / 125% / 150%).
+- [x] Unit test cho thuật toán chọn hình chữ nhật nhỏ nhất chứa con trỏ.
 
 **Liên quan:** `Core/Interop/NativeMethods.cs`, `Presentation/Controls/SelectionCanvas.xaml.cs`, `Common/Helpers/DpiHelper.cs`.
 

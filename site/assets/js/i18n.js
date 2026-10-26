@@ -31,6 +31,8 @@ export const VI = {
   kCopy: 'Sao chép & đóng', kSave: 'Lưu file PNG', kOcr: 'Trích xuất chữ', kPinClose: 'Đóng ảnh ghim',
   eyEvery: 'Mỗi ngày', everyTitle: 'Những điều nhỏ giúp bạn tiết kiệm thời gian.', everyLead: 'Những chi tiết bạn chỉ nhận ra khi công cụ khác không có.',
   fSetT: 'Cài đặt có hiệu lực ngay', fSetD: 'Đổi phím tắt ngay lập tức — NeatShot cảnh báo nếu phím đã bị ứng dụng khác dùng. Chọn thư mục lưu, PNG hoặc JPG, tự lưu và khởi động cùng Windows.', fSetM: 'Khay hệ thống → Cài đặt…',
+  fWinT: 'Click để chọn cửa sổ', fWinD: 'Rê chuột là NeatShot viền sẵn cửa sổ — hoặc panel, nút bên trong — dưới con trỏ. Một cú click chọn đúng vùng đó, không dính bóng đổ.', fWinM: 'Rê chuột · Click',
+  kWindow: 'Chọn một cửa sổ', kClick: 'Click',
   eyPriv: 'Quyền riêng tư & mã nguồn mở', privTitle: 'Không gì rời khỏi máy bạn.', privLead: 'NeatShot không gửi bất kỳ yêu cầu mạng nào. Ảnh chụp, chữ và cài đặt của bạn ở yên trên máy này.',
   f1t: 'Hoàn toàn offline', f1d: 'OCR chạy bằng chính Windows. Không tải lên thứ gì.',
   f2t: 'Không cần tài khoản', f2d: 'Tải về, giải nén, nhấn Ctrl + Shift + A.',

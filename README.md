@@ -51,6 +51,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 **Capture**
 - **Clean Shot:** dismisses tray flyouts and popups, then waits 250 ms for Windows animations to finish before capturing with GDI `BitBlt` (`CAPTUREBLT` included for layered windows).
 - **Freeze overlay** that spans every monitor, with a resizable and movable selection (8 handles plus a live `W × H` badge).
+- **Window detection:** hover to outline the window (or the panel/button) under the cursor, then click once to select exactly that area — no more dragging edge to edge.
 - **Full-screen capture** from the tray menu, with the whole virtual screen already selected.
 - Per-Monitor V2 DPI awareness, so selections map exactly to physical pixels.
 
@@ -77,6 +78,7 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Context | Shortcut | Action |
 |---|---|---|
 | Global | `Ctrl + Shift + A` / `PrtSc` | Start a capture (both keys can be changed in Settings) |
+| Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
 | Overlay | `Ctrl + S` | Save as PNG / JPG… |
 | Overlay | `Ctrl + O` | Extract text (OCR) |
@@ -199,6 +201,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 **Chụp ảnh**
 - **Chụp sạch (Clean Shot):** đóng flyout/popup, chờ 250 ms cho animation của Windows kết thúc rồi mới chụp bằng GDI `BitBlt`.
 - **Màn hình đóng băng** trải trên mọi màn hình. Vùng chọn kéo giãn và di chuyển được (8 tay nắm, hiển thị kích thước `W × H`).
+- **Tự nhận diện cửa sổ:** rê chuột để viền sẵn cửa sổ (hoặc panel/nút) dưới con trỏ, click một lần là chọn đúng vùng đó — không cần kéo từng mép.
 - **Chụp toàn màn hình** từ menu khay, toàn bộ màn hình được chọn sẵn.
 - Hỗ trợ Per-Monitor DPI V2, toạ độ khớp chính xác với pixel vật lý.
 
@@ -225,6 +228,7 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Ngữ cảnh | Phím tắt | Chức năng |
 |---|---|---|
 | Toàn cục | `Ctrl + Shift + A` / `PrtSc` | Bắt đầu chụp (đổi được cả hai phím trong Cài đặt) |
+| Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
 | Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
 | Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
