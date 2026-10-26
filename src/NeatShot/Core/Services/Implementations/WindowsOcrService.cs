@@ -1,7 +1,8 @@
 using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Core.Services.Interfaces;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 using Windows.Graphics.Imaging;
 using Windows.Media.Ocr;
 using Windows.Security.Cryptography;
@@ -39,7 +40,7 @@ public class WindowsOcrService : IOcrService
         var engine = GetOcrEngine();
         if (engine == null)
         {
-            throw new InvalidOperationException("Không tìm thấy gói ngôn ngữ OCR nào được hỗ trợ trên thiết bị. Vui lòng cài đặt gói ngôn ngữ (Language Pack) trong Windows Settings.");
+            throw new InvalidOperationException(Loc.T("Ocr.NoLanguagePack"));
         }
 
         BitmapSource effectiveImage = image;

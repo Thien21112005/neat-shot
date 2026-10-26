@@ -1,8 +1,10 @@
 using Microsoft.Win32;
+using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Presentation.ViewModels;
 using System.IO;
-using System.Windows;
 using System.Windows.Input;
+using System.Windows;
 
 namespace NeatShot.Presentation.Views;
 
@@ -21,6 +23,15 @@ public partial class SettingsWindow : Window
         DataContext = ViewModel;
         ViewModel.RequestClose += (s, e) => Close();
 
+        // Không bao giờ cao hơn vùng làm việc (trừ taskbar); phần thân tự cuộn khi thiếu chỗ
+        MaxHeight = SystemParameters.WorkArea.Height;
+
+        ApplyTheme();
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(SettingsViewModel.Theme)) ApplyTheme();
+        };
+
         // Đang gán phím mới: tạm nhả phím tắt toàn cục để Windows không "nuốt" tổ hợp đó
         foreach (var box in HotkeyBoxes)
         {
@@ -30,6 +41,22 @@ public partial class SettingsWindow : Window
 
         Closed += (s, e) => ViewModel.EndHotkeyRecording();
         PreviewKeyDown += OnWindowPreviewKeyDown;
+    }
+
+    private const int ThemeDictionaryIndex = 1;
+
+    /// <summary>
+    /// Thay bảng màu (Window.Resources → MergedDictionaries[1]) theo lựa chọn Hệ thống / Sáng / Tối.
+    /// Mọi màu trong cửa sổ dùng DynamicResource nên đổi ngay, không cần mở lại.
+    /// </summary>
+    private void ApplyTheme()
+    {
+        var light = AppTheme.IsLight(ViewModel.Theme, AppTheme.WindowsUsesLightTheme());
+        var name = light ? "SettingsTheme.Light.xaml" : "SettingsTheme.Dark.xaml";
+        Resources.MergedDictionaries[ThemeDictionaryIndex] = new ResourceDictionary
+        {
+            Source = new Uri($"pack://application:,,,/NeatShot;component/Presentation/Themes/{name}", UriKind.Absolute)
+        };
     }
 
     private IEnumerable<Controls.HotkeyBox> HotkeyBoxes =>
@@ -64,7 +91,7 @@ public partial class SettingsWindow : Window
     {
         var dialog = new OpenFolderDialog
         {
-            Title = "Chọn thư mục lưu ảnh NeatShot",
+            Title = Loc.T("Settings.ChooseFolderTitle"),
             InitialDirectory = Directory.Exists(ViewModel.SaveDirectory) ? ViewModel.SaveDirectory : string.Empty
         };
 

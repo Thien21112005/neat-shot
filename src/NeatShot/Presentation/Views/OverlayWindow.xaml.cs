@@ -1,14 +1,15 @@
 using Microsoft.Win32;
 using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services.Interfaces;
 using NeatShot.Presentation.ViewModels;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using System.Windows;
 
 namespace NeatShot.Presentation.Views;
 
@@ -26,6 +27,11 @@ public partial class OverlayWindow : Window
     /// Phát ra sau khi ảnh đã được sao chép vào Clipboard; tham số là đường dẫn file đã lưu (null nếu không lưu được).
     /// </summary>
     public event EventHandler<string?>? CaptureCopied;
+
+    /// <summary>
+    /// Ảnh đã được lưu thành file (nút Lưu / Ctrl + S); tham số là đường dẫn file.
+    /// </summary>
+    public event EventHandler<string>? CaptureSaved;
 
     public OverlayWindow(
         OverlayViewModel viewModel,
@@ -155,6 +161,7 @@ public partial class OverlayWindow : Window
         Toolbar.CloseRequested += (s, e) => ViewModel.CancelCommand.Execute(null);
         Toolbar.CopyRequested += async (s, e) => await ExecuteCopyAsync();
         Toolbar.SaveRequested += async (s, e) => await ExecuteSaveAsync();
+        Toolbar.SaveAsRequested += async (s, e) => await ExecuteSaveAsync(chooseLocation: true);
         Toolbar.PinRequested += async (s, e) => await ExecutePinAsync();
         Toolbar.OcrRequested += async (s, e) => await ExecuteOcrAsync();
         Toolbar.BeautifyChanged += (s, options) =>
@@ -189,7 +196,11 @@ public partial class OverlayWindow : Window
         }
     }
 
-    private async Task ExecuteSaveAsync()
+    /// <summary>
+    /// Lưu ảnh. Mặc định lưu thẳng vào thư mục ảnh NeatShot (không hỏi);
+    /// <paramref name="chooseLocation"/> = true (Ctrl + Shift + S / Shift + click) mở hộp thoại "Lưu thành…".
+    /// </summary>
+    private async Task ExecuteSaveAsync(bool chooseLocation = false)
     {
         if (ViewModel.BackgroundImage == null || !ViewModel.SelectedRegion.IsValid)
             return;
@@ -202,33 +213,27 @@ public partial class OverlayWindow : Window
                 DrawingControl.UndoStack.Items,
                 Toolbar.SelectedBeautifyOptions);
 
-            var defaultDir = _settingsService?.CurrentSettings.DefaultSaveDirectory;
-            if (string.IsNullOrWhiteSpace(defaultDir))
+            if (!chooseLocation && _galleryService != null)
             {
-                defaultDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "NeatShot");
+                var savedPath = await _galleryService.SaveScreenshotAsync(finalImage);
+                RememberRegion();
+                CaptureSaved?.Invoke(this, savedPath);
+                Close();
+                return;
             }
 
-            try
+            var initialDir = _galleryService?.GetScreenshotsDirectory()
+                ?? _settingsService?.CurrentSettings.DefaultSaveDirectory;
+            if (string.IsNullOrWhiteSpace(initialDir) || !System.IO.Directory.Exists(initialDir))
             {
-                if (!System.IO.Directory.Exists(defaultDir))
-                {
-                    System.IO.Directory.CreateDirectory(defaultDir);
-                }
+                initialDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             }
-            catch
-            {
-                // Fallback gracefully if directory cannot be created
-            }
-
-            var initialDir = System.IO.Directory.Exists(defaultDir)
-                ? defaultDir
-                : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
             var preferredExtension = ImageEncoderFactory.ExtensionFor(_settingsService?.CurrentSettings.ImageFormat);
             var dialog = new SaveFileDialog
             {
-                Title = "Lưu ảnh chụp màn hình NeatShot",
-                Filter = "Ảnh PNG (*.png)|*.png|Ảnh JPG (*.jpg)|*.jpg",
+                Title = Loc.T("Overlay.SaveDialogTitle"),
+                Filter = Loc.T("Overlay.SaveDialogFilter"),
                 FilterIndex = preferredExtension == ".jpg" ? 2 : 1,
                 DefaultExt = preferredExtension,
                 FileName = $"NeatShot_{DateTime.Now:yyyyMMdd_HHmmss}{preferredExtension}",
@@ -249,12 +254,14 @@ public partial class OverlayWindow : Window
 
                 await _exportService.SaveToFileAsync(finalImage, dialog.FileName);
                 RememberRegion();
+                CaptureSaved?.Invoke(this, dialog.FileName);
                 Close();
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Lỗi lưu file ảnh: {ex.Message}");
+            ToastWindow.Show(Loc.T("Toast.SaveFailed"), ex.Message, ToastKind.Warning);
         }
     }
 
@@ -338,8 +345,8 @@ public partial class OverlayWindow : Window
             {
                 MessageBox.Show(
                     this,
-                    "Không phát hiện thấy ký tự văn bản nào trong vùng chọn.",
-                    "NeatShot - Trích xuất chữ",
+                    Loc.T("Ocr.NoText"),
+                    Loc.T("Ocr.DialogTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 return;
@@ -354,7 +361,7 @@ public partial class OverlayWindow : Window
             MessageBox.Show(
                 this,
                 ex.Message,
-                "NeatShot - Trích xuất chữ",
+                Loc.T("Ocr.DialogTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }
@@ -363,8 +370,8 @@ public partial class OverlayWindow : Window
             System.Diagnostics.Debug.WriteLine($"Lỗi Trích xuất chữ: {ex.Message}");
             MessageBox.Show(
                 this,
-                $"Đã xảy ra lỗi trong quá trình trích xuất chữ: {ex.Message}",
-                "NeatShot - Trích xuất chữ",
+                Loc.F("Ocr.Error", ex.Message),
+                Loc.T("Ocr.DialogTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
@@ -392,7 +399,7 @@ public partial class OverlayWindow : Window
     {
         OcrResultTextBox.Text = text;
         OcrResultMetaText.Text = DescribeOcrText(text);
-        OcrCopiedText.Text = "Đã sao chép toàn bộ văn bản vào Clipboard";
+        OcrCopiedText.Text = Loc.T("Ocr.CopiedAll");
         OcrResultCard.Visibility = Visibility.Visible;
 
         OcrResultCard.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -413,7 +420,7 @@ public partial class OverlayWindow : Window
         var normalized = text.Replace("\r\n", "\n");
         var lines = normalized.Split('\n').Count(l => !string.IsNullOrWhiteSpace(l));
         var characters = normalized.Count(c => c != '\n');
-        return $"{lines} dòng · {characters} ký tự";
+        return Loc.F("Ocr.Stats", lines, characters);
     }
 
     private void OnOcrCloseClick(object sender, RoutedEventArgs e)
@@ -426,7 +433,7 @@ public partial class OverlayWindow : Window
         if (!string.IsNullOrEmpty(OcrResultTextBox.Text))
         {
             CopyTextToClipboardWithRetry(OcrResultTextBox.Text);
-            OcrCopiedText.Text = "Đã sao chép lại văn bản (gồm cả phần đã sửa)";
+            OcrCopiedText.Text = Loc.T("Ocr.CopiedEdited");
             OcrResultMetaText.Text = DescribeOcrText(OcrResultTextBox.Text);
         }
     }
@@ -815,7 +822,7 @@ public partial class OverlayWindow : Window
 
         if (key == Key.S && (modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
-            _ = ExecuteSaveAsync();
+            _ = ExecuteSaveAsync(chooseLocation: (modifiers & ModifierKeys.Shift) == ModifierKeys.Shift);
             return true;
         }
 

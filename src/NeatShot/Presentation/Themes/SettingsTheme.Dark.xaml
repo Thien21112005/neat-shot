@@ -1,0 +1,27 @@
+<!-- Bảng màu tối của cửa sổ Cài đặt. Nền đặc (không trong suốt) và chữ sáng để đủ tương phản. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="StWindowBg" Color="#1C1E23" />
+    <SolidColorBrush x:Key="StWindowBorder" Color="#3A3D45" />
+    <SolidColorBrush x:Key="StDivider" Color="#2E3138" />
+    <SolidColorBrush x:Key="StCardBg" Color="#24272D" />
+    <SolidColorBrush x:Key="StCardBorder" Color="#30333A" />
+    <SolidColorBrush x:Key="StText" Color="#F1F3F4" />
+    <SolidColorBrush x:Key="StMuted" Color="#B4BAC1" />
+    <SolidColorBrush x:Key="StSection" Color="#5AAEF0" />
+    <SolidColorBrush x:Key="StControlBg" Color="#2D3037" />
+    <SolidColorBrush x:Key="StControlBorder" Color="#43474F" />
+    <SolidColorBrush x:Key="StControlHoverBg" Color="#373A42" />
+    <SolidColorBrush x:Key="StControlHoverBorder" Color="#5C616B" />
+    <SolidColorBrush x:Key="StInputBg" Color="#17191D" />
+    <SolidColorBrush x:Key="StTrackOff" Color="#3A3E46" />
+    <SolidColorBrush x:Key="StThumbOff" Color="#D5D9DE" />
+    <SolidColorBrush x:Key="StIconHoverBg" Color="#2D3037" />
+    <SolidColorBrush x:Key="StHeaderIconBg" Color="#260078D4" />
+    <SolidColorBrush x:Key="StHeaderIcon" Color="#5AAEF0" />
+    <SolidColorBrush x:Key="StAccentText" Color="#5AAEF0" />
+    <SolidColorBrush x:Key="StSuccess" Color="#4ADE80" />
+    <SolidColorBrush x:Key="StError" Color="#F87171" />
+    <SolidColorBrush x:Key="StWarning" Color="#FBBF24" />
+    <Color x:Key="StShadowColor">#000000</Color>
+</ResourceDictionary>

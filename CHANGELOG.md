@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   start-with-Windows uses a Windows startup task (manageable in *Settings → Apps → Startup*).
 - **Privacy policy** page (`site/privacy.html`, EN/VI) and a GitHub Pages workflow that publishes the site.
 - **App icon:** the exe, tray and Store package now use the NeatShot logo instead of a generic camera.
+- **English interface:** every screen is available in Vietnamese (default) or English; switch in *Settings → General → Language*.
+- **Full annotation toolbar on pinned captures:** same icons and tools as the capture screen (highlighter, ellipse, line,
+  pixelate, blur, redo added), floating below the pin, with tool letters and `Ctrl + Z` / `Ctrl + Y` shortcuts.
 - **Settings window** (tray → *Cài đặt…*): configurable capture hotkeys that apply instantly (keeps the old key and warns
   when another app owns the new one), save folder, PNG/JPG with quality, auto-save to the gallery, start with Windows,
   and "copy as soon as the selection is released".
@@ -31,9 +34,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Annotation toolbar redesigned to match the website: thin-line vector icons instead of emoji,
   solid accent highlight for the active tool, dark rounded bars and an icon-based action bar.
 - Redesigned the text extraction result card and the Beautify preset selector.
+- **Save** (button / `Ctrl + S`) writes straight to the screenshots folder and shows a toast; `Ctrl + Shift + S`
+  or Shift + click opens *Save as…*.
+- Settings window: light, dark or system theme, higher contrast, and a scrolling body so it always fits the screen.
+- "Trích xuất chữ" is now an outlined button with an icon, clearly separate from Pin.
+- Pinned captures no longer show a pencil button (clicking the image already toggles annotation).
 
 ### Fixed
 - The Beautify selector could not be clicked (the WPF-UI theme shrank its hit area to ~2px).
+- Saving failed with "File not found" and the gallery / "open folder" items did nothing when Windows
+  *Controlled folder access* blocked `Pictures`; NeatShot now falls back to `%USERPROFILE%\NeatShot` and still shows a normal "saved" toast.
+- The tray menu stayed on screen after clicking elsewhere.
 
 ## [1.0.0] - 2026-10-25
 

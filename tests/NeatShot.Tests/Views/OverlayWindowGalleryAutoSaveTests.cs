@@ -149,4 +149,54 @@ public class OverlayWindowGalleryAutoSaveTests
             Assert.Equal(1, export.CopyCount);
         });
     }
+
+    [Fact]
+    public void OverlayWindow_Save_WritesStraightToTheScreenshotsFolder_WithoutADialog_OnStaThread()
+    {
+        RunOnSta(() =>
+        {
+            var vm = new OverlayViewModel();
+            var gallery = new FakeGalleryService();
+            var window = new OverlayWindow(vm, new FakeExportService(), galleryService: gallery);
+            string? savedPath = null;
+            window.CaptureSaved += (s, path) => savedPath = path;
+
+            vm.BackgroundImage = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+            vm.SelectedRegion = new CaptureRegion(10, 10, 100, 80);
+
+            // Ctrl + S: lưu thẳng, không mở hộp thoại (hộp thoại sẽ chặn luồng test nếu bị mở)
+            window.ProcessShortcut(Key.S, ModifierKeys.Control);
+
+            Assert.Single(gallery.Saved);
+            Assert.Equal(@"C:\fake\shot.png", savedPath);
+        });
+    }
+
+    [Fact]
+    public void OverlayWindow_Save_IgnoresTheAutoSaveSetting_BecauseTheUserAskedToSave_OnStaThread()
+    {
+        var settingsPath = Path.Combine(Path.GetTempPath(), "NeatShot_SaveDirect_" + Guid.NewGuid().ToString("N") + ".json");
+        try
+        {
+            var settings = new NeatShot.Core.Services.Implementations.SettingsService(settingsPath);
+            settings.CurrentSettings.AutoSaveToGallery = false;
+
+            RunOnSta(() =>
+            {
+                var vm = new OverlayViewModel();
+                var gallery = new FakeGalleryService();
+                var window = new OverlayWindow(vm, new FakeExportService(), settingsService: settings, galleryService: gallery);
+                vm.BackgroundImage = new RenderTargetBitmap(400, 300, 96, 96, PixelFormats.Pbgra32);
+                vm.SelectedRegion = new CaptureRegion(10, 10, 100, 80);
+
+                window.ProcessShortcut(Key.S, ModifierKeys.Control);
+
+                Assert.Single(gallery.Saved);
+            });
+        }
+        finally
+        {
+            try { File.Delete(settingsPath); } catch { /* bỏ qua */ }
+        }
+    }
 }

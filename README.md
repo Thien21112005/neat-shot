@@ -69,12 +69,13 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 - Copy to clipboard, save as PNG or JPG, or **pin** the capture as an always-on-top floating window.
 - Copied and pinned captures are **saved automatically** to `Pictures\NeatShot`.
 - **Pin from the clipboard** (`F3`): pin any image you copied from a browser, chat app, Figma or Explorer — no capture needed.
-- **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, draw annotations directly on the pin, copy the annotated result, and keep as many pins open as you need.
+- **Pinned windows:** zoom with the mouse wheel, change opacity with Ctrl + wheel, copy the annotated result, and keep as many pins open as you need. Click a pin to annotate it with the same tools as the capture screen (pen, highlighter, shapes, lines, arrows, text, steps, pixelate, blur, undo/redo); the toolbar floats just below the pin so small pins stay uncovered.
 - **Text extraction (OCR):** fully offline through `Windows.Media.Ocr`. It keeps line breaks and normalizes Vietnamese diacritics.
 - **Screenshot gallery** (tray menu): browse thumbnails, then pin, copy or delete any past capture.
 
 **Everyday**
-- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, and "copy as soon as I release the mouse" for one-step captures.
+- **Settings window** (tray → *Cài đặt…*): change hotkeys on the fly (with a warning if another app already uses a key), pick the save folder, PNG or JPG (with quality), auto-save to the gallery, start with Windows, "copy as soon as I release the mouse" for one-step captures, a light, dark or system theme, and the interface language.
+- **Vietnamese or English interface:** Vietnamese by default; switch to English in *Settings → General → Language*.
 
 ### Keyboard Shortcuts
 
@@ -85,7 +86,8 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Global | `Ctrl + Shift + R` | Capture the last region again |
 | Overlay | Click (no drag) | Select the highlighted window |
 | Overlay | `Enter` / `Ctrl + C` | Copy to clipboard (also saved to the gallery) |
-| Overlay | `Ctrl + S` | Save as PNG / JPG… |
+| Overlay | `Ctrl + S` | Save to the screenshots folder |
+| Overlay | `Ctrl + Shift + S` (or Shift + click Save) | Save as… (choose folder and name) |
 | Overlay | `Ctrl + O` | Extract text (OCR) |
 | Overlay | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Overlay | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Select, Pencil, Rectangle, Ellipse, Line, Arrow, Highlight, Text, Pixelate, Step, Eyedropper |
@@ -94,6 +96,8 @@ NeatShot runs in the system tray. It freezes the whole virtual desktop into one 
 | Pin | Mouse wheel / `+` `-` / `Ctrl + 0` | Zoom in, zoom out, reset |
 | Pin | `Ctrl + wheel` | Change opacity |
 | Pin | `P` / `Ctrl + P` | Show or hide the annotation toolbar |
+| Pin | `V` `H` `R` `E` `L` `A` `T` `N` `X` `B` | Pick a tool while the toolbar is open (select, highlighter, rectangle, ellipse, line, arrow, text, steps, pixelate, blur) |
+| Pin | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Undo / Redo |
 | Pin | `Ctrl + C` | Copy the pinned image, including annotations |
 | Pin | `Esc` | Hide the controls; press again to close the pin |
 | Gallery | `F5` / `Esc` | Refresh / Close |
@@ -142,7 +146,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 
 | Data | Location |
 |---|---|
-| Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (follows the last folder you chose in *Save as*) |
+| Screenshots (gallery) | `%USERPROFILE%\Pictures\NeatShot` (or the folder chosen in Settings / *Save as*); `%USERPROFILE%\NeatShot` if Windows blocks writing there |
 | Settings & color history | `%AppData%\NeatShot\settings.json` (Store version: kept by Windows in the app's private storage) |
 
 ### Architecture
@@ -175,6 +179,7 @@ More detail: [SRS](./docs/SRS-screenshot-app.md) · [Architecture & tech stack](
 ### Troubleshooting
 
 - **`PrtSc` does nothing.** Windows 11 may give `PrtSc` to Snipping Tool. Turn off *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, or use `Ctrl + Shift + A`. The console output at startup shows which hotkeys were registered.
+- **Screenshots end up in `%USERPROFILE%\NeatShot` instead of Pictures.** *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) stops unknown apps from writing to Pictures, Documents or Desktop. NeatShot then saves to `%USERPROFILE%\NeatShot` instead (the "saved" toast shows the folder). To use Pictures again, choose *Allow an app through Controlled folder access* and add `NeatShot.exe`, or pick another folder in Settings.
 - **"No OCR language pack found."** Add a language that supports OCR under *Settings → Time & language → Language & region*.
 - **The tray icon disappeared.** NeatShot re-registers its icon when Explorer restarts. If it is still missing, the app may have exited; start it again.
 
@@ -226,12 +231,13 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 - Sao chép vào Clipboard, lưu PNG hoặc JPG, hoặc **ghim** ảnh thành cửa sổ nổi luôn trên cùng.
 - Ảnh đã sao chép hoặc ghim được **tự động lưu** vào `Pictures\NeatShot`.
 - **Ghim ảnh từ Clipboard** (`F3`): ghim bất kỳ ảnh nào bạn vừa copy từ trình duyệt, Zalo, Figma hay Explorer — không cần chụp.
-- **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, vẽ chú thích ngay trên ảnh ghim, sao chép cả ảnh lẫn chú thích. Ghim được nhiều ảnh cùng lúc.
+- **Ảnh ghim:** lăn chuột để phóng to/thu nhỏ, Ctrl + lăn để chỉnh độ trong suốt, sao chép cả ảnh lẫn chú thích. Click vào ảnh ghim để vẽ chú thích với đủ công cụ như màn hình chụp (bút, dạ quang, khung, đường kẻ, mũi tên, chữ, đánh số, làm vỡ điểm ảnh, làm mờ, hoàn tác/làm lại); thanh công cụ nổi ngay dưới ảnh nên ảnh nhỏ không bị che. Ghim được nhiều ảnh cùng lúc.
 - **Trích xuất chữ (OCR)** hoàn toàn offline qua `Windows.Media.Ocr`, giữ nguyên xuống dòng và chuẩn hoá dấu tiếng Việt.
 - **Thư viện ảnh chụp** (mở từ menu khay): xem thumbnail, ghim lại, sao chép hoặc xoá ảnh cũ.
 
 **Dùng hằng ngày**
-- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, và "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác.
+- **Cửa sổ Cài đặt** (menu khay → *Cài đặt…*): đổi phím tắt ngay lập tức (cảnh báo nếu phím đã bị ứng dụng khác dùng), chọn thư mục lưu, định dạng PNG hoặc JPG (kèm chất lượng), tự lưu vào thư viện, khởi động cùng Windows, "sao chép ngay khi thả chuột" để chụp chỉ với một thao tác, giao diện sáng, tối hoặc theo hệ thống, và ngôn ngữ.
+- **Giao diện Tiếng Việt hoặc English:** mặc định Tiếng Việt; đổi sang English trong *Cài đặt → Chung → Ngôn ngữ*.
 
 ### Phím tắt
 
@@ -242,7 +248,8 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Toàn cục | `Ctrl + Shift + R` | Chụp lại vùng vừa chụp |
 | Màn hình chụp | Click (không kéo) | Chọn cửa sổ đang được viền |
 | Màn hình chụp | `Enter` / `Ctrl + C` | Sao chép (đồng thời lưu vào thư viện) |
-| Màn hình chụp | `Ctrl + S` | Lưu file PNG / JPG… |
+| Màn hình chụp | `Ctrl + S` | Lưu thẳng vào thư mục ảnh |
+| Màn hình chụp | `Ctrl + Shift + S` (hoặc Shift + click nút Lưu) | Lưu thành… (chọn thư mục và tên file) |
 | Màn hình chụp | `Ctrl + O` | Trích xuất chữ |
 | Màn hình chụp | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Màn hình chụp | `V` `P` `R` `O` `L` `A` `H` `T` `B` `N` `I` | Chọn, Bút, Chữ nhật, Oval, Đường thẳng, Mũi tên, Dạ quang, Chữ, Khảm, Đánh số, Hút màu |
@@ -251,6 +258,8 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE).
 | Ảnh ghim | Lăn chuột / `+` `-` / `Ctrl + 0` | Phóng to, thu nhỏ, về 100% |
 | Ảnh ghim | `Ctrl + lăn chuột` | Chỉnh độ trong suốt |
 | Ảnh ghim | `P` / `Ctrl + P` | Bật/tắt thanh công cụ vẽ |
+| Ảnh ghim | `V` `H` `R` `E` `L` `A` `T` `N` `X` `B` | Chọn công cụ khi thanh vẽ đang mở (chọn, dạ quang, khung, elip, đường thẳng, mũi tên, chữ, đánh số, làm vỡ điểm ảnh, làm mờ) |
+| Ảnh ghim | `Ctrl + Z` / `Ctrl + Y` (`Ctrl + Shift + Z`) | Hoàn tác / Làm lại |
 | Ảnh ghim | `Ctrl + C` | Sao chép ảnh ghim (kèm chú thích) |
 | Ảnh ghim | `Esc` | Ẩn thanh điều khiển; bấm lần nữa để đóng ảnh ghim |
 | Thư viện | `F5` / `Esc` | Làm mới / Đóng |
@@ -300,7 +309,7 @@ dotnet test tests/NeatShot.Tests/NeatShot.Tests.csproj --filter "Category!=Deskt
 
 | Dữ liệu | Vị trí |
 |---|---|
-| Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (theo thư mục bạn chọn gần nhất khi *Lưu file*) |
+| Ảnh chụp (thư viện) | `%USERPROFILE%\Pictures\NeatShot` (hoặc thư mục chọn trong Cài đặt / *Lưu thành…*); `%USERPROFILE%\NeatShot` nếu Windows chặn ghi vào đó |
 | Cấu hình & lịch sử màu | `%AppData%\NeatShot\settings.json` (bản Store: Windows lưu trong vùng riêng của app) |
 
 ### Kiến trúc
@@ -309,6 +318,7 @@ Dự án chia lớp Core / Presentation, dùng MVVM với CommunityToolkit.Mvvm 
 
 ### Xử lý sự cố
 
+- **Ảnh được lưu vào `%USERPROFILE%\NeatShot` thay vì Pictures:** tính năng *Controlled folder access* (Windows Security → Virus & threat protection → Ransomware protection) chặn app lạ ghi vào Pictures, Documents, Desktop. Khi đó NeatShot lưu vào `%USERPROFILE%\NeatShot` (thông báo "Đã lưu" ghi rõ thư mục). Muốn lưu lại vào Pictures, chọn *Allow an app through Controlled folder access* rồi thêm `NeatShot.exe`, hoặc đổi thư mục trong Cài đặt.
 - **Bấm `PrtSc` không có tác dụng:** Windows 11 có thể dành phím `PrtSc` cho Snipping Tool. Tắt tuỳ chọn *Settings → Accessibility → Keyboard → "Use the Print screen key to open screen capture"*, hoặc dùng `Ctrl + Shift + A`.
 - **Báo "Không tìm thấy gói ngôn ngữ OCR":** thêm một ngôn ngữ có hỗ trợ OCR trong *Settings → Time & language → Language & region*.
 - **Mất icon dưới khay hệ thống:** NeatShot tự gắn lại icon khi Explorer khởi động lại. Nếu vẫn không thấy, có thể ứng dụng đã thoát; hãy mở lại.

@@ -1,6 +1,7 @@
 <Window x:Class="NeatShot.Presentation.Views.CountdownWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:NeatShot.Common.Localization"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -47,13 +48,13 @@
                            Foreground="White" />
             </Grid>
             <StackPanel Margin="12,0,18,0" VerticalAlignment="Center">
-                <TextBlock Text="Chụp hẹn giờ" FontSize="13" FontWeight="SemiBold" Foreground="#E8EAED" />
-                <TextBlock Text="Mở menu cần chụp · Esc để huỷ" FontSize="11.5" Foreground="#9AA0A6" Margin="0,2,0,0" />
+                <TextBlock Text="{l:T Countdown.Title}" FontSize="13" FontWeight="SemiBold" Foreground="#E8EAED" />
+                <TextBlock Text="{l:T Countdown.Hint}" FontSize="11.5" Foreground="#9AA0A6" Margin="0,2,0,0" />
             </StackPanel>
             <Button x:Name="CancelButton"
                     Style="{StaticResource CardIconButton}"
                     VerticalAlignment="Center"
-                    ToolTip="Huỷ chụp hẹn giờ (Esc)"
+                    ToolTip="{l:T Countdown.CancelTip}"
                     Click="OnCancelClick">
                 <Viewbox Width="13" Height="13">
                     <Path Style="{StaticResource CardIconPath}" StrokeThickness="2.2" Data="{StaticResource CardIconClose}" />

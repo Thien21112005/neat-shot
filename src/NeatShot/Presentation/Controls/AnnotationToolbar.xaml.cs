@@ -42,6 +42,9 @@ public partial class AnnotationToolbar : UserControl
     public event EventHandler? RedoRequested;
     public event EventHandler? CopyRequested;
     public event EventHandler? SaveRequested;
+
+    /// <summary>Shift + click nút Lưu: chọn nơi lưu ("Lưu thành…").</summary>
+    public event EventHandler? SaveAsRequested;
     public event EventHandler? CloseRequested;
     public event EventHandler? PinRequested;
     public event EventHandler? OcrRequested;
@@ -844,7 +847,17 @@ public partial class AnnotationToolbar : UserControl
     private void OnUndoClick(object sender, RoutedEventArgs e) => UndoRequested?.Invoke(this, EventArgs.Empty);
     private void OnRedoClick(object sender, RoutedEventArgs e) => RedoRequested?.Invoke(this, EventArgs.Empty);
     private void OnCopyClick(object sender, RoutedEventArgs e) => CopyRequested?.Invoke(this, EventArgs.Empty);
-    private void OnSaveClick(object sender, RoutedEventArgs e) => SaveRequested?.Invoke(this, EventArgs.Empty);
+    private void OnSaveClick(object sender, RoutedEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+        {
+            SaveAsRequested?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            SaveRequested?.Invoke(this, EventArgs.Empty);
+        }
+    }
     private void OnPinClick(object sender, RoutedEventArgs e) => PinRequested?.Invoke(this, EventArgs.Empty);
     private void OnOcrClick(object sender, RoutedEventArgs e) => OcrRequested?.Invoke(this, EventArgs.Empty);
     private void OnCloseClick(object sender, RoutedEventArgs e) => CloseRequested?.Invoke(this, EventArgs.Empty);

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Core.Interop;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services.Implementations;
@@ -45,7 +46,8 @@ public partial class App : Application
         ConfigureServices(services);
         Services = services.BuildServiceProvider();
 
-        Services.GetRequiredService<ISettingsService>().LoadSettings();
+        var settings = Services.GetRequiredService<ISettingsService>().LoadSettings();
+        Loc.SetLanguage(settings.Language);
         ApplyStartupPreference();
 
         InitializeTrayIcon();
@@ -88,42 +90,64 @@ public partial class App : Application
         services.AddTransient<SettingsWindow>();
     }
 
+    private TrayMenuController? _trayMenuController;
+
     private void InitializeTrayIcon()
+    {
+        _iconHolder = TrayIconHelper.CreateTrayIcon();
+        _trayIcon = new NativeTrayIcon(_iconHolder.Handle, Loc.T("Tray.Tooltip"));
+        _trayIcon.Click += (s, e) => TriggerCapture();
+        _trayIcon.ContextMenuRequested += (s, e) => _trayMenuController?.Open();
+
+        BuildTrayMenu();
+
+        // Đổi ngôn ngữ trong Cài đặt: dựng lại menu và tooltip của icon khay
+        Loc.LanguageChanged += (s, e) =>
+        {
+            BuildTrayMenu();
+            _trayIcon?.SetTooltip(Loc.T("Tray.Tooltip"));
+        };
+    }
+
+    /// <summary>
+    /// Dựng menu chuột phải của icon khay theo ngôn ngữ hiện tại.
+    /// </summary>
+    private void BuildTrayMenu()
     {
         _trayContextMenu = new ContextMenu();
 
-        var captureItem = new MenuItem { Header = "Chụp vùng chọn" };
+        var captureItem = new MenuItem { Header = Loc.T("Tray.Capture") };
         captureItem.Click += (s, e) => TriggerCapture();
         _trayContextMenu.Items.Add(captureItem);
 
-        var fullscreenItem = new MenuItem { Header = "Chụp toàn màn hình" };
+        var fullscreenItem = new MenuItem { Header = Loc.T("Tray.CaptureFullScreen") };
         fullscreenItem.Click += (s, e) => TriggerCapture(selectFullScreen: true);
         _trayContextMenu.Items.Add(fullscreenItem);
 
-        var repeatItem = new MenuItem { Header = "🔁 Chụp lại vùng vừa chụp" };
+        var repeatItem = new MenuItem { Header = Loc.T("Tray.RepeatLast") };
         repeatItem.Click += (s, e) => TriggerCapture(repeatLastRegion: true);
         _trayContextMenu.Items.Add(repeatItem);
 
-        var delayItem = new MenuItem { Header = "⏱️ Chụp hẹn giờ" };
+        var delayItem = new MenuItem { Header = Loc.T("Tray.Delayed") };
         foreach (var seconds in new[] { 3, 5, 10 })
         {
-            var item = new MenuItem { Header = $"Sau {seconds} giây" };
+            var item = new MenuItem { Header = Loc.F("Tray.DelaySeconds", seconds) };
             item.Click += (s, e) => StartDelayedCapture(seconds);
             delayItem.Items.Add(item);
         }
         _trayContextMenu.Items.Add(delayItem);
 
-        var pinClipboardItem = new MenuItem { Header = "📌 Ghim ảnh từ Clipboard" };
+        var pinClipboardItem = new MenuItem { Header = Loc.T("Tray.PinClipboard") };
         pinClipboardItem.Click += (s, e) => PinFromClipboard();
         _trayContextMenu.Items.Add(pinClipboardItem);
 
         _trayContextMenu.Items.Add(new Separator());
 
-        var galleryItem = new MenuItem { Header = "🖼️ Thư viện ảnh chụp" };
+        var galleryItem = new MenuItem { Header = Loc.T("Tray.Gallery") };
         galleryItem.Click += (s, e) => OpenGallery();
         _trayContextMenu.Items.Add(galleryItem);
 
-        var folderItem = new MenuItem { Header = "📁 Mở thư mục ảnh NeatShot" };
+        var folderItem = new MenuItem { Header = Loc.T("Tray.OpenFolder") };
         folderItem.Click += (s, e) => OpenScreenshotsFolder();
         _trayContextMenu.Items.Add(folderItem);
 
@@ -131,14 +155,14 @@ public partial class App : Application
 
         var startupItem = new MenuItem
         {
-            Header = "Khởi động cùng Windows",
+            Header = Loc.T("Tray.StartWithWindows"),
             IsCheckable = true,
             IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled()
         };
         startupItem.Click += (s, e) => SetLaunchAtStartup(startupItem.IsChecked);
         _trayContextMenu.Items.Add(startupItem);
 
-        var settingsItem = new MenuItem { Header = "⚙️ Cài đặt…" };
+        var settingsItem = new MenuItem { Header = Loc.T("Tray.Settings") };
         settingsItem.Click += (s, e) => OpenSettings();
         _trayContextMenu.Items.Add(settingsItem);
 
@@ -155,21 +179,11 @@ public partial class App : Application
             startupItem.IsChecked = Services.GetRequiredService<IStartupService>().IsEnabled();
         };
 
-        var exitItem = new MenuItem { Header = "Thoát" };
+        var exitItem = new MenuItem { Header = Loc.T("Tray.Exit") };
         exitItem.Click += (s, e) => Shutdown();
         _trayContextMenu.Items.Add(exitItem);
 
-        _iconHolder = TrayIconHelper.CreateTrayIcon();
-        _trayIcon = new NativeTrayIcon(_iconHolder.Handle, "NeatShot - Chụp màn hình thông minh (Click để chụp)");
-
-        _trayIcon.Click += (s, e) => TriggerCapture();
-        _trayIcon.ContextMenuRequested += (s, e) =>
-        {
-            if (_trayContextMenu != null)
-            {
-                _trayContextMenu.IsOpen = true;
-            }
-        };
+        _trayMenuController = new TrayMenuController(_trayContextMenu);
     }
 
     /// <summary>
@@ -202,7 +216,7 @@ public partial class App : Application
             var image = ClipboardImageReader.ReadFromClipboard();
             if (image == null)
             {
-                ToastWindow.Show("Clipboard không có ảnh", "Sao chép một ảnh rồi thử lại", ToastKind.Warning);
+                ToastWindow.Show(Loc.T("Toast.ClipboardNoImage"), Loc.T("Toast.ClipboardNoImageHint"), ToastKind.Warning);
                 return;
             }
 
@@ -231,7 +245,12 @@ public partial class App : Application
             }
 
             _activeSettingsWindow = Services.GetRequiredService<SettingsWindow>();
-            _activeSettingsWindow.Closed += (s, e) => _activeSettingsWindow = null;
+            _activeSettingsWindow.Closed += (s, e) =>
+            {
+                _activeSettingsWindow = null;
+                // Ngôn ngữ vừa lưu có hiệu lực ngay cho menu khay và các cửa sổ mở sau đó
+                Loc.SetLanguage(Services.GetRequiredService<ISettingsService>().CurrentSettings.Language);
+            };
             _activeSettingsWindow.Show();
             _activeSettingsWindow.Activate();
         }
@@ -349,7 +368,17 @@ public partial class App : Application
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[App] Lỗi mở thư mục ảnh: {ex.Message}");
+            ToastWindow.Show(Loc.T("Toast.OpenFolderFailed"), ex.Message, ToastKind.Warning);
         }
+    }
+
+    /// <summary>
+    /// Báo đã sao chép/lưu ảnh kèm thư mục đã lưu. Kể cả khi Windows chặn thư mục đã chọn và ảnh được lưu
+    /// sang thư mục dự phòng, vẫn chỉ báo thành công (không cảnh báo về bảo mật làm người dùng hoang mang).
+    /// </summary>
+    private static void NotifyCaptureStored(string message, string? savedPath)
+    {
+        ToastWindow.Show(message, ToastWindow.DescribeSavedLocation(savedPath));
     }
 
     private CountdownWindow? _activeCountdown;
@@ -411,7 +440,8 @@ public partial class App : Application
 
             _activeOverlayWindow = Services.GetRequiredService<OverlayWindow>();
             _activeOverlayWindow.Closed += (s, e) => _activeOverlayWindow = null;
-            _activeOverlayWindow.CaptureCopied += (s, savedPath) => ToastWindow.ShowCopied(savedPath);
+            _activeOverlayWindow.CaptureCopied += (s, savedPath) => NotifyCaptureStored(Loc.T("Toast.Copied"), savedPath);
+            _activeOverlayWindow.CaptureSaved += (s, savedPath) => NotifyCaptureStored(Loc.T("Toast.Saved"), savedPath);
             var preselect = repeatLastRegion
                 ? Services.GetRequiredService<ISettingsService>().CurrentSettings.LastCaptureRegion
                 : null;

@@ -64,6 +64,16 @@ public class AppSettings
     public int JpegQuality { get; set; } = 90;
 
     /// <summary>
+    /// Giao diện cửa sổ Cài đặt: "system" (theo Windows, mặc định), "light" hoặc "dark".
+    /// </summary>
+    public string Theme { get; set; } = "system";
+
+    /// <summary>
+    /// Ngôn ngữ giao diện: "vi" (Tiếng Việt, mặc định) hoặc "en" (English).
+    /// </summary>
+    public string Language { get; set; } = "vi";
+
+    /// <summary>
     /// Tự khởi động cùng Windows và chạy nền ở khay hệ thống.
     /// null = người dùng chưa chọn (bản phát hành mặc định bật, giống Lightshot).
     /// </summary>

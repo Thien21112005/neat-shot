@@ -138,7 +138,7 @@ lightshot
 
 ## 6. Store listing — English (en-US)
 
-Thêm ở **Store listings → Manage additional languages → English (United States)**.
+Gói khai báo cả `vi-VN` và `en-US` (giao diện app có Tiếng Việt và English), nên Partner Center sẽ yêu cầu điền listing cho cả hai ngôn ngữ.
 
 **Description**:
 

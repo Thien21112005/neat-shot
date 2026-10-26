@@ -1,16 +1,17 @@
 <UserControl x:Class="NeatShot.Presentation.Controls.HotkeyBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:NeatShot.Common.Localization"
              Focusable="True"
              FocusVisualStyle="{x:Null}"
              Cursor="Hand"
              MinWidth="190"
              Height="34">
-    <!-- Ô gán phím tắt: bấm vào rồi nhấn tổ hợp phím mới; Esc để huỷ -->
+    <!-- Ô gán phím tắt: bấm vào rồi nhấn tổ hợp phím mới; Esc để huỷ. Màu theo bảng màu sáng/tối của cửa sổ chứa. -->
     <Border x:Name="Frame"
             CornerRadius="6"
-            Background="#0E0F12"
-            BorderBrush="#29FFFFFF"
+            Background="{DynamicResource StInputBg}"
+            BorderBrush="{DynamicResource StControlBorder}"
             BorderThickness="1"
             Padding="10,0">
         <Grid>
@@ -20,18 +21,18 @@
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="DisplayText"
                        VerticalAlignment="Center"
-                       FontFamily="Consolas"
+                       FontFamily="Cascadia Mono, Consolas"
                        FontSize="12.5"
                        FontWeight="SemiBold"
-                       Foreground="#E8EAED"
+                       Foreground="{DynamicResource StText}"
                        TextTrimming="CharacterEllipsis" />
             <TextBlock x:Name="EditHint"
                        Grid.Column="1"
                        Margin="10,0,0,0"
                        VerticalAlignment="Center"
-                       FontSize="11"
-                       Foreground="#7D838B"
-                       Text="Bấm để đổi" />
+                       FontSize="11.5"
+                       Foreground="{DynamicResource StMuted}"
+                       Text="{l:T Hotkey.ClickToChange}" />
         </Grid>
     </Border>
 </UserControl>

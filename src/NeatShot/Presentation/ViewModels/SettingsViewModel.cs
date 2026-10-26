@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NeatShot.Common.Helpers;
+using NeatShot.Common.Localization;
 using NeatShot.Core.Models;
 using NeatShot.Core.Services.Implementations;
 using NeatShot.Core.Services.Interfaces;
@@ -49,6 +50,23 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private bool _autoCopyOnCapture;
 
+    /// <summary>
+    /// Giao diện: "system" / "light" / "dark" (xem <see cref="AppTheme"/>). Cửa sổ Cài đặt đổi màu ngay khi chọn.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSystemTheme))]
+    [NotifyPropertyChangedFor(nameof(IsLightTheme))]
+    [NotifyPropertyChangedFor(nameof(IsDarkTheme))]
+    private string _theme = AppTheme.System;
+
+    /// <summary>
+    /// Ngôn ngữ giao diện: "vi" / "en" (xem <see cref="Loc"/>). Có hiệu lực sau khi lưu.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsVietnamese))]
+    [NotifyPropertyChangedFor(nameof(IsEnglish))]
+    private string _language = Loc.Vietnamese;
+
     [ObservableProperty]
     private string? _statusMessage;
 
@@ -67,6 +85,37 @@ public partial class SettingsViewModel : ObservableObject
     {
         get => ImageFormat != "jpg";
         set => ImageFormat = value ? "png" : "jpg";
+    }
+
+    // Ba lựa chọn dạng RadioButton: chỉ đổi khi một nút được chọn (bỏ qua sự kiện bỏ chọn của nút cũ)
+    public bool IsSystemTheme
+    {
+        get => Theme is not (AppTheme.Light or AppTheme.Dark);
+        set { if (value) Theme = AppTheme.System; }
+    }
+
+    public bool IsLightTheme
+    {
+        get => Theme == AppTheme.Light;
+        set { if (value) Theme = AppTheme.Light; }
+    }
+
+    public bool IsDarkTheme
+    {
+        get => Theme == AppTheme.Dark;
+        set { if (value) Theme = AppTheme.Dark; }
+    }
+
+    public bool IsVietnamese
+    {
+        get => Language != Loc.English;
+        set { if (value) Language = Loc.Vietnamese; }
+    }
+
+    public bool IsEnglish
+    {
+        get => Language == Loc.English;
+        set { if (value) Language = Loc.English; }
     }
 
     public SettingsViewModel(
@@ -106,6 +155,8 @@ public partial class SettingsViewModel : ObservableObject
         JpegQuality = Math.Clamp(settings.JpegQuality, 1, 100);
         LaunchAtStartup = SafeIsStartupEnabled();
         AutoCopyOnCapture = settings.AutoCopyOnCapture;
+        Theme = settings.Theme is AppTheme.Light or AppTheme.Dark ? settings.Theme : AppTheme.System;
+        Language = Loc.Normalize(settings.Language);
     }
 
     private HotkeyGesture ActiveOrSaved(HotkeyAction action, AppSettings settings)
@@ -170,7 +221,7 @@ public partial class SettingsViewModel : ObservableObject
         var duplicate = hotkeys.GroupBy(h => h.Get()).FirstOrDefault(g => g.Count() > 1);
         if (duplicate != null)
         {
-            ShowError($"Phím {duplicate.Key.DisplayText} đang được gán cho nhiều thao tác — mỗi thao tác cần một phím riêng.");
+            ShowError(Loc.F("Settings.DuplicateKey", duplicate.Key.DisplayText));
             return false;
         }
 
@@ -196,6 +247,8 @@ public partial class SettingsViewModel : ObservableObject
         settings.ImageFormat = ImageFormat;
         settings.JpegQuality = Math.Clamp(JpegQuality, 1, 100);
         settings.AutoCopyOnCapture = AutoCopyOnCapture;
+        settings.Theme = Theme;
+        settings.Language = Language;
         settings.LaunchAtStartup = LaunchAtStartup;
         ApplyStartup();
 
@@ -203,12 +256,12 @@ public partial class SettingsViewModel : ObservableObject
 
         if (failedNames.Count > 0)
         {
-            ShowError($"Phím {string.Join(", ", failedNames)} đang được ứng dụng khác sử dụng — đã giữ phím cũ.");
+            ShowError(Loc.F("Settings.KeyInUse", string.Join(", ", failedNames)));
             return false;
         }
 
         HasError = false;
-        StatusMessage = "Đã lưu cài đặt.";
+        StatusMessage = Loc.T("Settings.Saved");
         return true;
     }
 

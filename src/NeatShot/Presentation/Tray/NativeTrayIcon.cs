@@ -83,6 +83,20 @@ public class NativeTrayIcon : IDisposable
         return IntPtr.Zero;
     }
 
+    /// <summary>
+    /// Đổi chữ hiện khi rê chuột lên icon (ví dụ sau khi đổi ngôn ngữ).
+    /// </summary>
+    public void SetTooltip(string tooltip)
+    {
+        _notifyData.szTip = tooltip;
+        if (_isCreated && !_disposed)
+        {
+            _notifyData.uFlags = NativeConstants.NIF_TIP;
+            NativeMethods.Shell_NotifyIcon(NativeConstants.NIM_MODIFY, ref _notifyData);
+            _notifyData.uFlags = NativeConstants.NIF_MESSAGE | NativeConstants.NIF_ICON | NativeConstants.NIF_TIP;
+        }
+    }
+
     public void Dispose()
     {
         if (_disposed) return;

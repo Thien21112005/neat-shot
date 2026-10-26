@@ -10,9 +10,15 @@ public interface IScreenshotGalleryService
 {
     /// <summary>
     /// Lấy đường dẫn thư mục lưu ảnh chụp màn hình (mặc định: C:\Users\<Username>\Pictures\NeatShot).
-    /// Tự động tạo thư mục nếu chưa tồn tại.
+    /// Tự động tạo thư mục nếu chưa tồn tại; nếu thư mục bị chặn ghi thì dùng thư mục dự phòng.
     /// </summary>
     string GetScreenshotsDirectory();
+
+    /// <summary>
+    /// true nếu lần lấy thư mục gần nhất phải dùng thư mục dự phòng vì thư mục đã chọn không ghi được
+    /// (thường do Windows Defender "Controlled folder access" chặn ghi vào Pictures).
+    /// </summary>
+    bool IsUsingFallbackDirectory => false;
 
     /// <summary>
     /// Nạp danh sách các ảnh chụp có trong thư mục, sắp xếp từ mới nhất đến cũ nhất.
